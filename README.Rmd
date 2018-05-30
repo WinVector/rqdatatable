@@ -64,12 +64,12 @@ cat(format(rquery_pipeline))
 ex_data_table(rquery_pipeline)[]
 ```
 
-Initial benchmarking shows `qdataframe` to be 4 times faster than `dplyr` (notes [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
+Initial benchmarking shows `qdatatable` to be 4 times faster than `dplyr` (notes [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
 
 To install `qdatatable` please use `devtools` as follows.
 
 ```{r, eval=FALSE}
 # install.packages("devtools")
-devtools::install_github("WinVector/qdataframe")
+devtools::install_github("WinVector/qdatatable")
 ```
 

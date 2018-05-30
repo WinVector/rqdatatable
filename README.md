@@ -100,7 +100,7 @@ ex_data_table(rquery_pipeline)[]
     ## 1:         1 withdrawal behavior   0.6706221
     ## 2:         2 positive re-framing   0.5589742
 
-Initial benchmarking shows `qdataframe` to be 4 times faster than
+Initial benchmarking shows `qdatatable` to be 4 times faster than
 `dplyr` (notes
 [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
 
@@ -108,5 +108,5 @@ To install `qdatatable` please use `devtools` as follows.
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("WinVector/qdataframe")
+devtools::install_github("WinVector/qdatatable")
 ```
