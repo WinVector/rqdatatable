@@ -88,22 +88,3 @@ ex_data_table.default <- function(optree,
 
 
 
-
-build_order_clause <- function(orderby, rev_orderby) {
-  oterms <- character(0)
-  if(length(orderby)>0) {
-    oterms <- c(oterms, orderby)
-  }
-  if(length(rev_orderby)>0) {
-    oterms <- c(oterms, paste0("-", rev_orderby))
-  }
-  if(length(oterms)<=0) {
-    return(NULL)
-  }
-  paste("order(",
-        paste(oterms, collapse = ", "),
-        ")")
-}
-
-
-

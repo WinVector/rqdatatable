@@ -36,8 +36,11 @@ rquery_pipeline <- local_td(dL) \%.>\%
                exp(assessmentTotal * scale)/
                sum(exp(assessmentTotal * scale)),
              count := sum(one),
-             rank := rank(probability, surveyCategory),
-             partitionby = 'subjectID')
+             rank := rank(),
+             orderby = c("assessmentTotal", "surveyCategory"),
+             reverse = c("assessmentTotal"),
+             partitionby = 'subjectID') \%.>\%
+  orderby(., c("subjectID", "probability"))
 ex_data_table(rquery_pipeline)[]
 
 }

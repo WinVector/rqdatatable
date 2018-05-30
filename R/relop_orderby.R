@@ -1,4 +1,19 @@
 
+# alters argument in place, value returned for convenience
+order_table <- function(x, orderby, reverse) {
+  if(length(setdiff(reverse, orderby))>0) {
+    stop("qdatatable order_table reverse must be contained in orderby")
+  }
+  if(length(orderby)<=0) {
+    return(x)
+  }
+  order <- rep(1L, length(orderby))
+  if(length(reverse)>0) {
+    order[orderby %in% reverse] <- -1L
+  }
+  data.table::setorderv(x, cols = orderby, order = order)
+  x
+}
 
 #' Reorder rows.
 #'
@@ -31,18 +46,7 @@ ex_data_table.relop_orderby <- function(optree,
                      tables = tables,
                      source_usage = source_usage,
                      env = env)
-  oclause <- build_order_clause(optree$orderby, optree$rev_orderby)
-  if(length(oclause)<=0) {
-    return(x)
-  }
-  tmpnam <- ".rquery_ex_orderby_tmp"
-  tmpenv <- new.env(parent = env)
-  assign(tmpnam, x, envir = tmpenv)
-  src <- paste0(tmpnam, "[ ",
-                oclause,
-                " ]")
-  expr <- parse(text = src)
-  eval(expr, envir = tmpenv, enclos = env)
+  order_table(x, optree$orderby, optree$reverse)
 }
 
 

@@ -21,8 +21,11 @@
 #'                exp(assessmentTotal * scale)/
 #'                sum(exp(assessmentTotal * scale)),
 #'              count := sum(one),
-#'              rank := rank(probability, surveyCategory),
-#'              partitionby = 'subjectID')
+#'              rank := rank(),
+#'              orderby = c("assessmentTotal", "surveyCategory"),
+#'              reverse = c("assessmentTotal"),
+#'              partitionby = 'subjectID') %.>%
+#'   orderby(., c("subjectID", "probability"))
 #' ex_data_table(rquery_pipeline)[]
 #'
 #' @export
@@ -32,14 +35,6 @@ ex_data_table.relop_extend <- function(optree,
                                        source_usage = NULL,
                                        env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_extend")
-  oclause <- build_order_clause(optree$orderby, optree$rev_orderby)
-  if(length(oclause)<=0) {
-    oclause = ""
-  }
-  n <- length(optree$parsed)
-  if(n<0) {
-    stop("rquery::ex_data_table.relop_extend() must have at least one assignment")
-  }
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
@@ -47,33 +42,73 @@ ex_data_table.relop_extend <- function(optree,
                      tables = tables,
                      source_usage = source_usage,
                      env = env)
+  # if there is an order, order now apply it
+  x <- order_table(x, optree$orderby, optree$reverse)
+  n <- length(optree$parsed)
+  if(n<0) {
+    return(x)
+  }
+  # work on partition term
   byi <- ""
   if(length(optree$partitionby)>0) {
     pterms <- paste0("\"", optree$partitionby, "\"")
     byi <- paste0(" , by = c(", paste(pterms, collapse = ", "), ")")
   }
+  # work on node
   tmpnam <- ".rquery_ex_extend_tmp"
   tmpenv <- new.env(parent = env)
   assign(tmpnam, x, envir = tmpenv)
-  enames <-
+  enames_raw <-
     vapply(seq_len(n),
            function(i) {
-             paste0("\"", optree$parsed[[i]]$symbols_produced, "\"")
+             optree$parsed[[i]]$symbols_produced
            }, character(1))
-  enames <- paste0("c(", paste(enames, collapse = ", "), ")")
+  enames <- paste0("\"", enames_raw, "\"")
   eexprs <-
     vapply(seq_len(n),
            function(i) {
-             gsub("^[^:]*:=[[:space:]]*", "", as.character(optree$parsed[[i]]$presentation))
+             trimws(gsub("^[^:]*:=[[:space:]]*", "", as.character(optree$parsed[[i]]$presentation)),
+                    which = "both")
            }, character(1))
-  eexprs <- paste0("list(", paste(eexprs, collapse = ", "), ")")
-  # := notation means add columns to current data.table, j notation would move to summize type calc.
-  src <- paste0(tmpnam, "[ ",
-                oclause,
-                " , ", paste(enames, ":=", eexprs),
-                byi,
-                " ]")
-  expr <- parse(text = src)
-  eval(expr, envir = tmpenv, enclos = env)
+  rank_exprs_indices <- grep("^rank[[:space:]]*\\([[:space:]]*\\)$", eexprs)
+  use_rank_col <- length(rank_exprs_indices)>0
+  rank_names <- NULL
+  qdatatable_temp_rank_col <- NULL # don't look like an unbound reference
+  if(use_rank_col) {
+    x[ , qdatatable_temp_rank_col := seq_len(nrow(x))]
+    rank_names <- enames_raw[rank_exprs_indices]
+    enames <- enames[-rank_exprs_indices]
+    eexprs <- eexprs[-rank_exprs_indices]
+  }
+  if(length(enames)>0) {
+    enames <- paste0("c(", paste(enames, collapse = ", "), ")")
+    eexprs <- paste0("list(", paste(eexprs, collapse = ", "), ")")
+    # := notation means add columns to current data.table, j notation would move to summize type calc.
+    src <- paste0(tmpnam, "[ ",
+                  " , ", paste(enames, ":=", eexprs),
+                  byi,
+                  " ]")
+    expr <- parse(text = src)
+    x <- eval(expr, envir = tmpenv, enclos = env)
+  }
+  if(use_rank_col) {
+    qdatatable_temp_rank_col_g <- NULL # don't look like an unbound reference
+    COL <- NULL # don't look like an unbound reference
+    if(length(optree$partitionby)>0) {
+      x[, qdatatable_temp_rank_col_g := data.table::frank(qdatatable_temp_rank_col),
+        by = c(optree$partitionby)]
+    } else {
+      x[, qdatatable_temp_rank_col_g := data.table::frank(qdatatable_temp_rank_col)]
+    }
+    x[ , qdatatable_temp_rank_col := NULL]
+    for(ci in rank_names) {
+      wrapr::let(
+        c(COL = ci),
+        x[ , COL := qdatatable_temp_rank_col_g]
+      )
+    }
+    x[, qdatatable_temp_rank_col_g := NULL]
+  }
+  x
 }
 
