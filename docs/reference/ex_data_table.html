@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Execute a pipeline with <code>data.table</code> sources. — ex_data_table.relop_drop_columns • qdatatable</title>
+<title>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table • qdatatable</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,9 @@
 
 
 
-<meta property="og:title" content="Execute a pipeline with <code>data.table</code> sources. — ex_data_table.relop_drop_columns" />
+<meta property="og:title" content="Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table" />
 
-<meta property="og:description" content="data.tables are looked for by name in the tables argument and in the execution environment.
-Throw on error if this method is called, signalling that a specific data.table implemetation is needed for this method." />
+<meta property="og:description" content="data.tables are looked for by name in the tables argument and in the execution environment." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -89,7 +88,12 @@ Throw on error if this method is called, signalling that a specific data.table i
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
-        
+        <li>
+  <a href="https://github.com/WinVector/qdatatable/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
       </ul>
       
     </div><!--/.nav-collapse -->
@@ -102,76 +106,19 @@ Throw on error if this method is called, signalling that a specific data.table i
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Execute a pipeline with <code>data.table</code> sources.</h1>
-    
+    <h1>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/WinVector/qdatatable//blob/master/R/rquery_fns.R'><code>R/rquery_fns.R</code></a></small>
     <div class="hidden name"><code>ex_data_table.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
     <p><code>data.table</code>s are looked for by name in the <code>tables</code> argument and in the execution environment.</p>
-<p>Throw on error if this method is called, signalling that a specific <code>data.table</code> implemetation is needed for this method.</p>
     
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for relop_drop_columns</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_extend</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_natural_join</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_non_sql</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_null_replace</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_orderby</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_rename_columns</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_select_columns</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_select_rows</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_sql</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_table_source</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_theta_join</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for relop_unionall</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())
-
-<span class='co'># S3 method for default</span>
-<span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
+    <pre class="usage"><span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -205,39 +152,20 @@ Throw on error if this method is called, signalling that a specific data.table i
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <ul>
-<li><p><code>relop_drop_columns</code>: implement drop columns</p></li>
-<li><p><code>relop_extend</code>: implement extend/assign operator</p></li>
-<li><p><code>relop_natural_join</code>: implement natural join</p></li>
-<li><p><code>relop_non_sql</code>: direct function (non-sql) operator (not implemented for <code>data.table</code>)</p></li>
-<li><p><code>relop_null_replace</code>: implement NA/NULL replacement</p></li>
-<li><p><code>relop_orderby</code>: implement row ordering</p></li>
-<li><p><code>relop_project</code>: implement row ordering</p></li>
-<li><p><code>relop_rename_columns</code>: implement column renaming</p></li>
-<li><p><code>relop_select_columns</code>: implement select columns</p></li>
-<li><p><code>relop_select_rows</code>: implement select rows</p></li>
-<li><p><code>relop_sql</code>: direct sql operator (not implemented for <code>data.table</code>)</p></li>
-<li><p><code>relop_table_source</code>: implement data source</p></li>
-<li><p><code>relop_theta_join</code>: implement theta join</p></li>
-<li><p><code>relop_unionall</code>: implement row binding</p></li>
-</ul>
-    
-    <h2 class="hasAnchor" id="methods-by-class-"><a class="anchor" href="#methods-by-class-"></a>Methods (by class)</h2>
-
-    <ul>
-<li><p><code>relop_drop_columns</code>: implement drop columns</p></li>
-<li><p><code>relop_extend</code>: implement extend/assign operator</p></li>
-<li><p><code>relop_natural_join</code>: implement natural join</p></li>
-<li><p><code>relop_non_sql</code>: implement direct function (non-sql) operator</p></li>
-<li><p><code>relop_null_replace</code>: implement NA/NULL replacement</p></li>
-<li><p><code>relop_orderby</code>: implement row ordering</p></li>
-<li><p><code>relop_rename_columns</code>: implement column renaming</p></li>
-<li><p><code>relop_select_columns</code>: implement select columns</p></li>
-<li><p><code>relop_select_rows</code>: implement select rows</p></li>
-<li><p><code>relop_sql</code>: implement direct sql operator</p></li>
-<li><p><code>relop_table_source</code>: implement data source</p></li>
-<li><p><code>relop_theta_join</code>: implement theta join</p></li>
-<li><p><code>relop_unionall</code>: implement row binding</p></li>
-<li><p><code>default</code>: signal no implementation for given class</p></li>
+<li><p><code><a href='ex_data_table.relop_drop_columns.html'>ex_data_table.relop_drop_columns</a></code>: implement drop columns</p></li>
+<li><p><code><a href='ex_data_table.relop_extend.html'>ex_data_table.relop_extend</a></code>: implement extend/assign operator</p></li>
+<li><p><code><a href='ex_data_table.relop_natural_join.html'>ex_data_table.relop_natural_join</a></code>: implement natural join (not yet implemented)</p></li>
+<li><p><code><a href='ex_data_table.relop_non_sql.html'>ex_data_table.relop_non_sql</a></code>: direct function (non-sql) operator (not implemented for <code>data.table</code>)</p></li>
+<li><p><code><a href='ex_data_table.relop_null_replace.html'>ex_data_table.relop_null_replace</a></code>: implement NA/NULL replacement</p></li>
+<li><p><code><a href='ex_data_table.relop_orderby.html'>ex_data_table.relop_orderby</a></code>: implement row ordering</p></li>
+<li><p><code><a href='ex_data_table.relop_project.html'>ex_data_table.relop_project</a></code>: implement row ordering</p></li>
+<li><p><code><a href='ex_data_table.relop_rename_columns.html'>ex_data_table.relop_rename_columns</a></code>: implement column renaming</p></li>
+<li><p><code><a href='ex_data_table.relop_select_columns.html'>ex_data_table.relop_select_columns</a></code>: implement select columns</p></li>
+<li><p><code><a href='ex_data_table.relop_select_rows.html'>ex_data_table.relop_select_rows</a></code>: implement select rows</p></li>
+<li><p><code><a href='ex_data_table.relop_sql.html'>ex_data_table.relop_sql</a></code>: direct sql operator (not implemented for <code>data.table</code>)</p></li>
+<li><p><code><a href='ex_data_table.relop_table_source.html'>ex_data_table.relop_table_source</a></code>: implement data source</p></li>
+<li><p><code><a href='ex_data_table.relop_theta_join.html'>ex_data_table.relop_theta_join</a></code>: implement theta join  (not yet implemented)</p></li>
+<li><p><code><a href='ex_data_table.relop_unionall.html'>ex_data_table.relop_unionall</a></code>: implement row binding</p></li>
 </ul>
     
 
@@ -266,8 +194,6 @@ Throw on error if this method is called, signalling that a specific data.table i
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-
-      <li><a href="#methods-by-class-">Methods (by class)</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

@@ -1,13 +1,28 @@
 
 
-#' @describeIn ex_data_table implement column renaming
+#' Rename columns.
+#'
+#' \code{data.table} based implementation.
+#'
+#' @inheritParams ex_data_table
+#'
+#' @examples
+#'
+#' dL <- build_frame(
+#'     "x", "y" |
+#'     2L , "b" |
+#'     1L , "a" |
+#'     3L , "c" )
+#' rquery_pipeline <- local_td(dL) %.>%
+#'   rename_columns(., c("x" = "y", "y" = "x"))
+#' ex_data_table(rquery_pipeline)[]
+#'
 #' @export
 ex_data_table.relop_rename_columns <- function(optree,
                                                ...,
                                                tables = list(),
                                                source_usage = NULL,
                                                env = parent.frame()) {
-  stop("rquery::ex_data_table.relop_rename_columns not implemented yet") # TODO: test and release
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_rename_columns")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)

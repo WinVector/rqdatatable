@@ -1,7 +1,11 @@
 
 
 
-#' @describeIn ex_data_table implement theta join
+#' Theta join.
+#'
+#' To be implemented by \code{data.table} (not yet implemented).
+#'
+#' @inheritParams ex_data_table
 #' @export
 ex_data_table.relop_theta_join <- function(optree,
                                            ...,

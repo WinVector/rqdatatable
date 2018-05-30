@@ -1,5 +1,17 @@
 
-#' @describeIn ex_data_table implement drop columns
+#' Implement drop columns.
+#'
+#' \code{data.table} based implementation.
+#'
+#' @inheritParams ex_data_table
+#'
+#' @examples
+#'
+#' dL <- data.frame(x = 1, y = 2, z = 3)
+#' rquery_pipeline <- local_td(dL) %.>%
+#'   drop_columns(., "y")
+#' ex_data_table(rquery_pipeline)[]
+#'
 #' @export
 ex_data_table.relop_drop_columns <- function(optree,
                                              ...,

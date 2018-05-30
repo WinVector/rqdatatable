@@ -34,7 +34,7 @@ dL <- wrapr::build_frame(
 scale <- 0.237
 
 # example rquery pipeline
-rquery_pileline <- local_td(dL) %.>%
+rquery_pipeline <- local_td(dL) %.>%
   extend_nse(.,
              one := 1) %.>%
   extend_nse(.,
@@ -57,12 +57,12 @@ rquery_pileline <- local_td(dL) %.>%
 Show expanded form of query tree.
 
 ```{r, comment=""}
-cat(format(rquery_pileline))
+cat(format(rquery_pipeline))
 ```
 
 
 ```{r}
-ex_data_table(rquery_pileline)
+ex_data_table(rquery_pipeline)[]
 ```
 
 

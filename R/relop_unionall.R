@@ -1,13 +1,27 @@
 
 
-#' @describeIn ex_data_table implement row binding
+#' Bind tables together by rows.
+#'
+#' \code{data.table} based implementation.
+#'
+#' @inheritParams ex_data_table
+#'
+#' @examples
+#'
+#' dL <- build_frame(
+#'     "x", "y" |
+#'     2L , "b" |
+#'     1L , "a" |
+#'     3L , "c" )
+#' rquery_pipeline <- unionall(list(local_td(dL), local_td(dL)))
+#' ex_data_table(rquery_pipeline)[]
+#'
 #' @export
 ex_data_table.relop_unionall <- function(optree,
                                          ...,
                                          tables = list(),
                                          source_usage = NULL,
                                          env = parent.frame()) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_unionall") # TODO: test and release
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }

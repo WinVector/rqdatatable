@@ -1,7 +1,10 @@
 
 
-
-#' @describeIn ex_data_table implement direct function (non-sql) operator
+#' Direct non-sql (function) node, not implented for \code{data.table} case.
+#'
+#' Placeholder to through legible "not implemented" message.
+#'
+#' @inheritParams ex_data_table
 #' @export
 ex_data_table.relop_non_sql <- function(optree,
                                         ...,

@@ -1,5 +1,9 @@
 
-#' @describeIn ex_data_table implement natural join
+#' Natural join.
+#'
+#' To be implemented by \code{data.table} (not yet implemented).
+#'
+#' @inheritParams ex_data_table
 #' @export
 ex_data_table.relop_natural_join <- function(optree,
                                              ...,

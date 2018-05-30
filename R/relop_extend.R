@@ -1,5 +1,30 @@
 
-#' @describeIn ex_data_table implement extend/assign operator
+
+#' Implement extend/assign operator.
+#'
+#' \code{data.table} based implementation.
+#'
+#' @inheritParams ex_data_table
+#'
+#' @examples
+#'
+#' scale <- 0.237
+#' dL <- build_frame(
+#'     "subjectID", "surveyCategory"     , "assessmentTotal", "one" |
+#'     1          , "withdrawal behavior", 5                , 1     |
+#'     1          , "positive re-framing", 2                , 1     |
+#'     2          , "withdrawal behavior", 3                , 1     |
+#'     2          , "positive re-framing", 4                , 1     )
+#' rquery_pipeline <- local_td(dL) %.>%
+#'   extend_nse(.,
+#'              probability :=
+#'                exp(assessmentTotal * scale)/
+#'                sum(exp(assessmentTotal * scale)),
+#'              count := sum(one),
+#'              rank := rank(probability, surveyCategory),
+#'              partitionby = 'subjectID')
+#' ex_data_table(rquery_pipeline)[]
+#'
 #' @export
 ex_data_table.relop_extend <- function(optree,
                                        ...,

@@ -22,25 +22,25 @@ wrapr::build_frame
 
 
 
-#' Execute a pipeline with \code{data.table} sources.
+#' Execute an \code{rquery} pipeline with \code{data.table} sources.
 #'
 #' \code{data.table}s are looked for by name in the \code{tables} argument and in the execution environment.
 #'
 #'\itemize{
-#'  \item \code{relop_drop_columns}: implement drop columns
-#'  \item \code{relop_extend}: implement extend/assign operator
-#'  \item \code{relop_natural_join}: implement natural join
-#'  \item \code{relop_non_sql}: direct function (non-sql) operator (not implemented for \code{data.table})
-#'  \item \code{relop_null_replace}: implement NA/NULL replacement
-#'  \item \code{relop_orderby}: implement row ordering
-#'  \item \code{relop_project}: implement row ordering
-#'  \item \code{relop_rename_columns}: implement column renaming
-#'  \item \code{relop_select_columns}: implement select columns
-#'  \item \code{relop_select_rows}: implement select rows
-#'  \item \code{relop_sql}: direct sql operator (not implemented for \code{data.table})
-#'  \item \code{relop_table_source}: implement data source
-#'  \item \code{relop_theta_join}: implement theta join
-#'  \item \code{relop_unionall}: implement row binding
+#'  \item \code{\link{ex_data_table.relop_drop_columns}}: implement drop columns
+#'  \item \code{\link{ex_data_table.relop_extend}}: implement extend/assign operator
+#'  \item \code{\link{ex_data_table.relop_natural_join}}: implement natural join (not yet implemented)
+#'  \item \code{\link{ex_data_table.relop_non_sql}}: direct function (non-sql) operator (not implemented for \code{data.table})
+#'  \item \code{\link{ex_data_table.relop_null_replace}}: implement NA/NULL replacement
+#'  \item \code{\link{ex_data_table.relop_orderby}}: implement row ordering
+#'  \item \code{\link{ex_data_table.relop_project}}: implement row ordering
+#'  \item \code{\link{ex_data_table.relop_rename_columns}}: implement column renaming
+#'  \item \code{\link{ex_data_table.relop_select_columns}}: implement select columns
+#'  \item \code{\link{ex_data_table.relop_select_rows}}: implement select rows
+#'  \item \code{\link{ex_data_table.relop_sql}}: direct sql operator (not implemented for \code{data.table})
+#'  \item \code{\link{ex_data_table.relop_table_source}}: implement data source
+#'  \item \code{\link{ex_data_table.relop_theta_join}}: implement theta join  (not yet implemented)
+#'  \item \code{\link{ex_data_table.relop_unionall}}: implement row binding
 #' }
 #'
 #' @param optree relop operations tree.
@@ -73,7 +73,7 @@ ex_data_table <- function(optree,
 #'
 #' Throw on error if this method is called, signalling that a specific \code{data.table} implemetation is needed for this method.
 #'
-#' @describeIn ex_data_table signal no implementation for given class
+#' @inheritParams ex_data_table
 #' @export
 ex_data_table.default <- function(optree,
                                   ...,
