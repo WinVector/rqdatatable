@@ -64,7 +64,7 @@ cat(format(rquery_pipeline))
 ex_data_table(rquery_pipeline)[]
 ```
 
-Initial benchmarking shows `qdatatable` to be 4 times faster than `dplyr` (notes [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
+Initial benchmarking of `qdatatable` is very favorable (notes [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
 
 To install `qdatatable` please use `devtools` as follows.
 
