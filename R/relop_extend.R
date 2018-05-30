@@ -43,7 +43,7 @@ ex_data_table.relop_extend <- function(optree,
                      source_usage = source_usage,
                      env = env)
   # if there is an order, order now apply it
-  x <- order_table(x, optree$orderby, optree$reverse)
+  x <- order_table(x, c(optree$partitionby, optree$orderby), optree$reverse)
   n <- length(optree$parsed)
   if(n<0) {
     return(x)
@@ -70,7 +70,10 @@ ex_data_table.relop_extend <- function(optree,
              trimws(gsub("^[^:]*:=[[:space:]]*", "", as.character(optree$parsed[[i]]$presentation)),
                     which = "both")
            }, character(1))
-  rank_exprs_indices <- grep("^rank[[:space:]]*\\([[:space:]]*\\)$", eexprs)
+  rank_exprs_indices <- sort(unique(c(
+    grep("^rank[[:space:]]*\\([[:space:]]*\\)$", eexprs),
+    grep("^row_number[[:space:]]*\\([[:space:]]*\\)$", eexprs)
+  )))
   use_rank_col <- length(rank_exprs_indices)>0
   rank_names <- NULL
   qdatatable_temp_rank_col <- NULL # don't look like an unbound reference
@@ -91,14 +94,15 @@ ex_data_table.relop_extend <- function(optree,
     expr <- parse(text = src)
     x <- eval(expr, envir = tmpenv, enclos = env)
   }
+  # fast ranking (seems more compatible with this workflow than data.table::frank())
   if(use_rank_col) {
     qdatatable_temp_rank_col_g <- NULL # don't look like an unbound reference
     COL <- NULL # don't look like an unbound reference
     if(length(optree$partitionby)>0) {
-      x[, qdatatable_temp_rank_col_g := data.table::frank(qdatatable_temp_rank_col),
+      x[, qdatatable_temp_rank_col_g := 1 + qdatatable_temp_rank_col - min(qdatatable_temp_rank_col),
         by = c(optree$partitionby)]
     } else {
-      x[, qdatatable_temp_rank_col_g := data.table::frank(qdatatable_temp_rank_col)]
+      x[, qdatatable_temp_rank_col_g := qdatatable_temp_rank_col]
     }
     x[ , qdatatable_temp_rank_col := NULL]
     for(ci in rank_names) {
