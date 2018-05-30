@@ -4,7 +4,7 @@
 
 
 #' @importFrom data.table :=
-#' @importFrom rquery columns_used
+#' @importFrom rquery columns_used column_names
 NULL
 
 #' @importFrom wrapr %.>%
@@ -29,7 +29,7 @@ wrapr::build_frame
 #'\itemize{
 #'  \item \code{\link{ex_data_table.relop_drop_columns}}: implement drop columns
 #'  \item \code{\link{ex_data_table.relop_extend}}: implement extend/assign operator
-#'  \item \code{\link{ex_data_table.relop_natural_join}}: implement natural join (not yet implemented)
+#'  \item \code{\link{ex_data_table.relop_natural_join}}: implement natural join
 #'  \item \code{\link{ex_data_table.relop_non_sql}}: direct function (non-sql) operator (not implemented for \code{data.table})
 #'  \item \code{\link{ex_data_table.relop_null_replace}}: implement NA/NULL replacement
 #'  \item \code{\link{ex_data_table.relop_orderby}}: implement row ordering
@@ -39,7 +39,7 @@ wrapr::build_frame
 #'  \item \code{\link{ex_data_table.relop_select_rows}}: implement select rows
 #'  \item \code{\link{ex_data_table.relop_sql}}: direct sql operator (not implemented for \code{data.table})
 #'  \item \code{\link{ex_data_table.relop_table_source}}: implement data source
-#'  \item \code{\link{ex_data_table.relop_theta_join}}: implement theta join  (not yet implemented)
+#'  \item \code{\link{ex_data_table.relop_theta_join}}: implement theta join  (not implemented for \code{data.table})
 #'  \item \code{\link{ex_data_table.relop_unionall}}: implement row binding
 #' }
 #'

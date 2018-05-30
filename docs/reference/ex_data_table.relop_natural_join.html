@@ -30,7 +30,8 @@
 
 <meta property="og:title" content="Natural join. — ex_data_table.relop_natural_join" />
 
-<meta property="og:description" content="To be implemented by data.table (not yet implemented)." />
+<meta property="og:description" content="data.table based implementation.  Note: does not yet match rquery common column coalesce semantics,
+so all common columns must be join conditions." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -113,7 +114,8 @@
 
     <div class="ref-description">
     
-    <p>To be implemented by <code>data.table</code> (not yet implemented).</p>
+    <p><code>data.table</code> based implementation.  Note: does not yet match <code>rquery</code> common column coalesce semantics,
+so all common columns must be join conditions.</p>
     
     </div>
 
@@ -147,12 +149,33 @@
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/wrapr/topics/build_frame'>build_frame</a></span>(
+    <span class='st'>"x"</span>, <span class='st'>"y"</span> <span class='kw'>|</span>
+    <span class='fl'>1L</span> , <span class='st'>"a"</span> <span class='kw'>|</span>
+    <span class='fl'>2L</span> , <span class='st'>"b"</span> )
+<span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/wrapr/topics/build_frame'>build_frame</a></span>(
+    <span class='st'>"x"</span>, <span class='st'>"z"</span> <span class='kw'>|</span>
+    <span class='fl'>2L</span> , <span class='st'>"x"</span> <span class='kw'>|</span>
+    <span class='fl'>3L</span> , <span class='st'>"y"</span> )
+<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span>
+  <span class='fu'>natural_join</span>(<span class='fu'>local_td</span>(<span class='no'>a</span>), <span class='fu'>local_td</span>(<span class='no'>b</span>),
+               <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"x"</span>,
+               <span class='kw'>jointype</span> <span class='kw'>=</span> <span class='st'>"FULL"</span>)
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)[]</div><div class='output co'>#&gt;    x  y  z
+#&gt; 1: 1  a NA
+#&gt; 2: 2  b  x
+#&gt; 3: 3 NA  y</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

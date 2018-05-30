@@ -19,5 +19,23 @@
 \item{env}{environment to work in.}
 }
 \description{
-To be implemented by \code{data.table} (not yet implemented).
+\code{data.table} based implementation.  Note: does not yet match \code{rquery} common column coalesce semantics,
+so all common columns must be join conditions.
+}
+\examples{
+
+a <- build_frame(
+    "x", "y" |
+    1L , "a" |
+    2L , "b" )
+b <- build_frame(
+    "x", "z" |
+    2L , "x" |
+    3L , "y" )
+rquery_pipeline <-
+  natural_join(local_td(a), local_td(b),
+               by = "x",
+               jointype = "FULL")
+ex_data_table(rquery_pipeline)[]
+
 }
