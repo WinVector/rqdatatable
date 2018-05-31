@@ -6,7 +6,7 @@ output: github_document
 
 [`qdatatable`](https://github.com/WinVector/qdatatable) is an implementation of
 the [`rquery`](https://github.com/WinVector/rquery) piped relational algebra 
-hosted on [`data.tabl`](http://r-datatable.com).  `qdatatabl` allow the expression
+hosted on [`data.table`](http://r-datatable.com).  `qdatatable` allow the expression
 of complex transformations as a series of relational operators.  For example 
 scoring a logistic regression model (which requires grouping, ordering, and ranking)
 is organized as follows.  For more on this example please see 
