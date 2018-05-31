@@ -47,6 +47,7 @@ wrapr::build_frame
 #' @param ... not used, force later arguments to bind by name.
 #' @param tables named list map from table names used in nodes to data.tables and data.frames.
 #' @param source_usage list mapping source table names to vectors of columns used.
+#' @param source_limit if not null limit all table sources to no more than this many rows (used for debugging).
 #' @param env environment to work in.
 #' @return resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).
 #'
@@ -65,6 +66,7 @@ ex_data_table <- function(optree,
                           ...,
                           tables = list(),
                           source_usage = NULL,
+                          source_limit = NULL,
                           env = parent.frame()) {
   UseMethod("ex_data_table", optree)
 }
@@ -79,6 +81,7 @@ ex_data_table.default <- function(optree,
                                   ...,
                                   tables = list(),
                                   source_usage = NULL,
+                                  source_limit = NULL,
                                   env = parent.frame()) {
   stop(paste("rquery::ex_data_table() does not have an implementation for class: ",
              paste(class(optree), collapse = ", "),

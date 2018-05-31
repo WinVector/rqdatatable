@@ -23,6 +23,7 @@ ex_data_table.relop_table_source <- function(optree,
                                              ...,
                                              tables = list(),
                                              source_usage = NULL,
+                                             source_limit = NULL,
                                              env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_table_source")
   name <- optree$table_name
@@ -43,18 +44,30 @@ ex_data_table.relop_table_source <- function(optree,
                paste(class(res), collapse = ", "),
                ")"))
   }
-  cols <- NULL
+  cols_have <- colnames(res)
+  cols_want <- NULL
   if(!is.null(source_usage)) {
-    cols <- source_usage[[name]]
+    cols_want <- source_usage[[name]]
+  } else {
+    cols_want <- column_names(optree)
+  }
+  missing_cols <- setdiff(cols_want, cols_have)
+  if(length(missing_cols)>0) {
+    stop(paste("rquery::ex_data_table.relop_table_source missing required columns",
+               paste(missing_cols, collapse = ", ")))
   }
   if(!data.table::is.data.table(res)) {
-    if(length(cols)>0) {
-      res <- data.table::as.data.table(res[, cols, drop = FALSE])
+    if((!is.null(source_limit)) && (source_limit<nrow(res))) {
+      res <- data.table::as.data.table(res[seq_len(source_limit), cols_want, drop = FALSE])
     } else {
-      res <- data.table::as.data.table(res)
+      res <- data.table::as.data.table(res[, cols_want, drop = FALSE])
     }
   } else {
-    res <- data.table::copy(res[, cols, with = FALSE]) # try to break reference semantics
+    if((!is.null(source_limit)) && (source_limit<nrow(res))) {
+      res <- data.table::copy(res[seq_len(source_limit), cols_want, with = FALSE]) # try to break reference semantics
+    } else {
+      res <- data.table::copy(res[, cols_want, with = FALSE]) # try to break reference semantics
+    }
   }
   res
 }

@@ -5,7 +5,7 @@
 \title{Execute an \code{rquery} pipeline with \code{data.table} sources.}
 \usage{
 ex_data_table(optree, ..., tables = list(), source_usage = NULL,
-  env = parent.frame())
+  source_limit = NULL, env = parent.frame())
 }
 \arguments{
 \item{optree}{relop operations tree.}
@@ -15,6 +15,8 @@ ex_data_table(optree, ..., tables = list(), source_usage = NULL,
 \item{tables}{named list map from table names used in nodes to data.tables and data.frames.}
 
 \item{source_usage}{list mapping source table names to vectors of columns used.}
+
+\item{source_limit}{if not null limit all table sources to no more than this many rows (used for debugging).}
 
 \item{env}{environment to work in.}
 }

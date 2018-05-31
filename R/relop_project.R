@@ -27,6 +27,7 @@ ex_data_table.relop_project <- function(optree,
                                         ...,
                                         tables = list(),
                                         source_usage = NULL,
+                                        source_limit = NULL,
                                         env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_project")
   n <- length(optree$parsed)
@@ -39,6 +40,7 @@ ex_data_table.relop_project <- function(optree,
   x <- ex_data_table(optree$source[[1]],
                      tables = tables,
                      source_usage = source_usage,
+                     source_limit = source_limit,
                      env = env)
   byi <- ""
   if(length(optree$groupby)>0) {

@@ -27,6 +27,7 @@ ex_data_table.relop_natural_join <- function(optree,
                                              ...,
                                              tables = list(),
                                              source_usage = NULL,
+                                             source_limit = NULL,
                                              env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_natural_join")
   if(is.null(source_usage)) {
@@ -37,6 +38,7 @@ ex_data_table.relop_natural_join <- function(optree,
                      ex_data_table(si,
                                    tables = tables,
                                    source_usage = source_usage,
+                                   source_limit = source_limit,
                                    env = env)
                    })
   A <- inputs[[1]]

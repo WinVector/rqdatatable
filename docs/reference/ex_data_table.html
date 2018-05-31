@@ -118,7 +118,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>ex_data_table</span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(), <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
+  <span class='kw'>source_limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,6 +138,10 @@
     <tr>
       <th>source_usage</th>
       <td><p>list mapping source table names to vectors of columns used.</p></td>
+    </tr>
+    <tr>
+      <th>source_limit</th>
+      <td><p>if not null limit all table sources to no more than this many rows (used for debugging).</p></td>
     </tr>
     <tr>
       <th>env</th>

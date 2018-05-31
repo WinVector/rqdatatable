@@ -21,6 +21,7 @@ ex_data_table.relop_unionall <- function(optree,
                                          ...,
                                          tables = list(),
                                          source_usage = NULL,
+                                         source_limit = NULL,
                                          env = parent.frame()) {
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
@@ -30,6 +31,7 @@ ex_data_table.relop_unionall <- function(optree,
                      ex_data_table(si,
                                    tables = tables,
                                    source_usage = source_usage,
+                                   source_limit = source_limit,
                                    env = env)
                    })
   data.table::rbindlist(inputs)

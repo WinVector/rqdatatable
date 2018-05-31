@@ -10,6 +10,7 @@ ex_data_table.relop_non_sql <- function(optree,
                                         ...,
                                         tables = list(),
                                         source_usage = NULL,
+                                        source_limit = NULL,
                                         env = parent.frame()) {
   stop("rquery::ex_data_table.relop_non_sql direct non-sql (function) nodes can not used on data.table arguments")
 }
