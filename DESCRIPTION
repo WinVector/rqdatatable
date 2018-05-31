@@ -1,4 +1,4 @@
-Package: qdatatable
+Package: rqdatatable
 Type: Package
 Title: 'rquery' for 'data.table'
 Version: 0.1.0
@@ -9,8 +9,8 @@ Authors@R: c(
     )
 Maintainer: John Mount <jmount@win-vector.com>
 Description: Implement the 'rquery' piped query algebra using 'data.table'.
-URL: https://github.com/WinVector/qdatatable/, https://winvector.github.io/qdatatable/
-BugReports: https://github.com/WinVector/qdatatable/issues
+URL: https://github.com/WinVector/rqdatatable/, https://winvector.github.io/rqdatatable/
+BugReports: https://github.com/WinVector/rqdatatable/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

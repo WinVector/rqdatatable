@@ -14,7 +14,7 @@ We can work an example similar to the [`rquery`](https://winvector.github.io/rqu
 back-end.
 
 ```{r}
-library("qdatatable")
+library("rqdatatable")
 library("data.table")
 ```
 
