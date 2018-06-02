@@ -50,13 +50,13 @@ ex_data_table.relop_natural_join <- function(optree,
   if(optree$jointype=="INNER") {
 
   } else if(optree$jointype=="INNER") {
-    A[B, nomatch = 0]
+    merge(A, B, by = optree$by, all=TRUE)
   } else if(optree$jointype=="LEFT") {
-    A[B]
+    merge(A, B, by = optree$by, all.x=TRUE)
   } else if(optree$jointype=="RIGHT") {
-    B[A]
+    merge(A, B, by = optree$by, all.y=TRUE)
   } else if(optree$jointype=="FULL") {
-    merge(A, B, all=TRUE)
+    merge(A, B, by = optree$by, all=TRUE)
   } else {
     stop(paste("jointype was", optree$jointype, " but should be one of INNER, LEFT, RIGHT, or FULL"))
   }
