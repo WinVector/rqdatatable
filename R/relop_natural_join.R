@@ -50,7 +50,7 @@ ex_data_table.relop_natural_join <- function(optree,
   if(optree$jointype=="INNER") {
 
   } else if(optree$jointype=="INNER") {
-    merge(A, B, by = optree$by, all=TRUE)
+    merge(A, B, by = optree$by, all=FALSE)
   } else if(optree$jointype=="LEFT") {
     merge(A, B, by = optree$by, all.x=TRUE)
   } else if(optree$jointype=="RIGHT") {

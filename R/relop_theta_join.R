@@ -26,11 +26,6 @@ ex_data_table.relop_theta_join <- function(optree,
                                    source_limit = source_limit,
                                    env = env)
                    })
-  # TODO: implement join details (left/right/inner/outter and predicate)
-  A <- inputs[[1]]
-  B <- inputs[[2]]
-  i.b <- NULL # don't look like an unbound reference
-  A[B, on = optree$by, bb = i.b]
 }
 
 
