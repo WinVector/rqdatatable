@@ -8,13 +8,9 @@ For example scoring a logistic regression model (which requires grouping, orderi
 library("rqdatatable")
 ```
 
-    ## Loading required package: rquery
-
-    ## Loading required package: wrapr
-
 ``` r
 # data example
-dL <- wrapr::build_frame(
+dL <- build_frame(
    "subjectID", "surveyCategory"     , "assessmentTotal" |
    1          , "withdrawal behavior", 5                 |
    1          , "positive re-framing", 2                 |
@@ -38,7 +34,7 @@ rquery_pipeline <- local_td(dL) %.>%
              partitionby = 'subjectID',
              orderby = c('probability', 'surveyCategory'),
              reverse = c('probability', 'surveyCategory')) %.>% 
-  rename_columns(., 'diagnosis' := 'surveyCategory') %.>%
+  rename_columns(., c('diagnosis' = 'surveyCategory')) %.>%
   select_columns(., c('subjectID', 
                       'diagnosis', 
                       'probability')) %.>%
@@ -87,7 +83,7 @@ Can also execute on new tables.
 ``` r
 rquery_executor <- list(f = rqdatatable::ex_data_table)
 
-wrapr::build_frame(
+build_frame(
    "subjectID", "surveyCategory"     , "assessmentTotal" |
    7          , "withdrawal behavior", 5                 |
    7          , "positive re-framing", 20                ) %.>%

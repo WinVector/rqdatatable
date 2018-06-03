@@ -164,7 +164,7 @@ so all common columns must be join conditions.</p>
     <span class='fl'>2L</span> , <span class='st'>"x"</span> <span class='kw'>|</span>
     <span class='fl'>3L</span> , <span class='st'>"y"</span> )
 <span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span>
-  <span class='fu'>natural_join</span>(<span class='fu'>local_td</span>(<span class='no'>a</span>), <span class='fu'>local_td</span>(<span class='no'>b</span>),
+  <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/natural_join'>natural_join</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>a</span>), <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>b</span>),
                <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"x"</span>,
                <span class='kw'>jointype</span> <span class='kw'>=</span> <span class='st'>"FULL"</span>)
 <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)[]</div><div class='output co'>#&gt;    x    y    z

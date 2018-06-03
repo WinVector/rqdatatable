@@ -11,9 +11,24 @@ NULL
 #' @export
 wrapr::`%.>%`
 
+#' @importFrom wrapr qc
+#' @export
+wrapr::qc
+
 #' @importFrom wrapr build_frame
 #' @export
 wrapr::build_frame
+
+#' @importFrom wrapr draw_frame
+#' @export
+wrapr::draw_frame
+
+#' @importFrom wrapr qchar_frame
+#' @export
+wrapr::qchar_frame
+
+
+
 
 
 # don't let . look like an unbound reference

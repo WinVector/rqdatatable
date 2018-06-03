@@ -83,10 +83,8 @@
 <p><a href="https://github.com/WinVector/rqdatatable"><code>rqdatatable</code></a> is an implementation of the <a href="https://github.com/WinVector/rquery"><code>rquery</code></a> piped relational algebra hosted on <a href="http://r-datatable.com"><code>data.table</code></a>. <code>rquery</code> allow the expression of complex transformations as a series of relational operators and <code>rqdatatable</code> implements the operators using <code>data.table</code>.</p>
 <p>For example scoring a logistic regression model (which requires grouping, ordering, and ranking) is organized as follows. For more on this example please see <a href="http://www.win-vector.com/blog/2017/08/lets-have-some-sympathy-for-the-part-time-r-user/">“Let’s Have Some Sympathy For The Part-time R User”</a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rqdatatable"</span>)</code></pre></div>
-<pre><code>## Loading required package: rquery</code></pre>
-<pre><code>## Loading required package: wrapr</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># data example</span>
-dL &lt;-<span class="st"> </span>wrapr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(
+dL &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(
    <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span>
 <span class="st">   </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span>
 <span class="st">   </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>                 <span class="op">|</span>
@@ -95,23 +93,23 @@ dL &lt;-<span class="st"> </span>wrapr<span class="op">::</span><span class="kw"
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">scale &lt;-<span class="st"> </span><span class="fl">0.237</span>
 
 <span class="co"># example rquery pipeline</span>
-rquery_pipeline &lt;-<span class="st"> </span><span class="kw">local_td</span>(dL) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw">extend_nse</span>(.,
+rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(dL) <span class="op">%.&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend_nse">extend_nse</a></span>(.,
              probability <span class="op">:</span><span class="er">=</span>
 <span class="st">               </span><span class="kw">exp</span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">normalize_cols</span>(.,
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/normalize_cols">normalize_cols</a></span>(.,
                  <span class="st">"probability"</span>,
                  <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw">pick_top_k</span>(.,
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/pick_top_k">pick_top_k</a></span>(.,
              <span class="dt">k =</span> <span class="dv">1</span>,
              <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>,
              <span class="dt">orderby =</span> <span class="kw">c</span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>),
              <span class="dt">reverse =</span> <span class="kw">c</span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>)) <span class="op">%.&gt;%</span><span class="st"> </span>
-<span class="st">  </span><span class="kw">rename_columns</span>(., <span class="st">'diagnosis'</span> <span class="op">:</span><span class="er">=</span><span class="st"> 'surveyCategory'</span>) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw">select_columns</span>(., <span class="kw">c</span>(<span class="st">'subjectID'</span>, 
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/rename_columns">rename_columns</a></span>(., <span class="kw">c</span>(<span class="st">'diagnosis'</span> =<span class="st"> 'surveyCategory'</span>)) <span class="op">%.&gt;%</span>
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/select_columns">select_columns</a></span>(., <span class="kw">c</span>(<span class="st">'subjectID'</span>, 
                       <span class="st">'diagnosis'</span>, 
                       <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw">orderby</span>(., <span class="dt">cols =</span> <span class="st">'subjectID'</span>)</code></pre></div>
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/orderby">orderby</a></span>(., <span class="dt">cols =</span> <span class="st">'subjectID'</span>)</code></pre></div>
 <p>We can show the expanded form of query tree.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">format</span>(rquery_pipeline))</code></pre></div>
 <pre><code>table('dL'; 
@@ -142,7 +140,7 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw">local_td</span>(d
 <p>Can also execute on new tables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rquery_executor &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">f =</span> rqdatatable<span class="op">::</span>ex_data_table)
 
-wrapr<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(
+<span class="kw"><a href="http://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(
    <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span>
 <span class="st">   </span><span class="dv">7</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span>
 <span class="st">   </span><span class="dv">7</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">20</span>                ) <span class="op">%.&gt;%</span>
