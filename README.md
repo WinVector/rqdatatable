@@ -97,7 +97,7 @@ wrapr::build_frame(
     ##    subjectID           diagnosis probability
     ## 1:         7 positive re-framing   0.9722128
 
-Initial bench-marking of `rqdatatable` is very favorable (notes [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
+Initial bench-marking of `rqdatatable` is very favorable (notes [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
 To install `rqdatatable` please use `devtools` as follows.
 
