@@ -82,6 +82,21 @@ ex_data_table(rquery_pipeline)[]
     ## 1:         1 withdrawal behavior   0.6706221
     ## 2:         2 positive re-framing   0.5589742
 
+Can also execute on new tables.
+
+``` r
+rquery_executor <- list(f = rqdatatable::ex_data_table)
+
+wrapr::build_frame(
+   "subjectID", "surveyCategory"     , "assessmentTotal" |
+   7          , "withdrawal behavior", 5                 |
+   7          , "positive re-framing", 20                ) %.>%
+  rquery_pipeline
+```
+
+    ##    subjectID           diagnosis probability
+    ## 1:         7 positive re-framing   0.9722128
+
 Initial bench-marking of `rqdatatable` is very favorable (notes [here](https://github.com/WinVector/rquery/blob/master/extras/data_table.md)).
 
 To install `rqdatatable` please use `devtools` as follows.

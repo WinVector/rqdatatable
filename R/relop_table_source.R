@@ -28,7 +28,7 @@ ex_data_table.relop_table_source <- function(optree,
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_table_source")
   name <- optree$table_name
   res <- NULL
-  if(name %in% tables) {
+  if(name %in% names(tables)) {
     res <- tables[[name]]
   } else {
     res <- get(name, envir = env)
