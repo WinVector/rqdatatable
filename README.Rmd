@@ -76,6 +76,27 @@ build_frame(
    7          , "withdrawal behavior", 5                 |
    7          , "positive re-framing", 20                ) %.>%
   rquery_pipeline
+
+build_frame(
+   "subjectID", "surveyCategory"     , "assessmentTotal" |
+   9          , "withdrawal behavior", 15                |
+   9          , "positive re-framing", 2                 ) %>>% (
+  extend_nse(.,
+             probability :=
+               exp(assessmentTotal * scale))  %.>% 
+  normalize_cols(.,
+                 "probability",
+                 partitionby = 'subjectID') %.>%
+  pick_top_k(.,
+             k = 1,
+             partitionby = 'subjectID',
+             orderby = c('probability', 'surveyCategory'),
+             reverse = c('probability', 'surveyCategory')) %.>% 
+  rename_columns(., c('diagnosis' = 'surveyCategory')) %.>%
+  select_columns(., c('subjectID', 
+                      'diagnosis', 
+                      'probability')) %.>%
+  orderby(., cols = 'subjectID') )
 ```
 
 

@@ -93,6 +93,32 @@ build_frame(
     ##    subjectID           diagnosis probability
     ## 1:         7 positive re-framing   0.9722128
 
+``` r
+build_frame(
+   "subjectID", "surveyCategory"     , "assessmentTotal" |
+   9          , "withdrawal behavior", 15                |
+   9          , "positive re-framing", 2                 ) %>>% (
+  extend_nse(.,
+             probability :=
+               exp(assessmentTotal * scale))  %.>% 
+  normalize_cols(.,
+                 "probability",
+                 partitionby = 'subjectID') %.>%
+  pick_top_k(.,
+             k = 1,
+             partitionby = 'subjectID',
+             orderby = c('probability', 'surveyCategory'),
+             reverse = c('probability', 'surveyCategory')) %.>% 
+  rename_columns(., c('diagnosis' = 'surveyCategory')) %.>%
+  select_columns(., c('subjectID', 
+                      'diagnosis', 
+                      'probability')) %.>%
+  orderby(., cols = 'subjectID') )
+```
+
+    ##    subjectID           diagnosis probability
+    ## 1:         9 withdrawal behavior   0.9561022
+
 Initial bench-marking of `rqdatatable` is very favorable (notes [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
 To install `rqdatatable` please use `devtools` as follows.
