@@ -11,6 +11,10 @@ NULL
 #' @export
 wrapr::`%.>%`
 
+#' @importFrom wrapr let
+#' @export
+wrapr::let
+
 #' @importFrom wrapr qc
 #' @export
 wrapr::qc
