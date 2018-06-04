@@ -96,8 +96,8 @@ dL &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumenta
 <span class="co"># example rquery pipeline</span>
 rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(dL) <span class="op">%.&gt;%</span>
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend_nse">extend_nse</a></span>(.,
-             <span class="dt">probability =</span>
-               <span class="kw">exp</span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span>
+             probability <span class="op">:</span><span class="er">=</span>
+<span class="st">               </span><span class="kw">exp</span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/normalize_cols">normalize_cols</a></span>(.,
                  <span class="st">"probability"</span>,
                  <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span>
@@ -153,8 +153,8 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
 <span class="st">   </span><span class="dv">9</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">15</span>                <span class="op">|</span>
 <span class="st">   </span><span class="dv">9</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>                 ) <span class="op">%&gt;&gt;%</span><span class="st"> </span>(
   <span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend_nse">extend_nse</a></span>(.,
-             <span class="dt">probability =</span>
-               <span class="kw">exp</span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span>
+             probability <span class="op">:</span><span class="er">=</span>
+<span class="st">               </span><span class="kw">exp</span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/normalize_cols">normalize_cols</a></span>(.,
                  <span class="st">"probability"</span>,
                  <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span>

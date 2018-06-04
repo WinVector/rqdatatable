@@ -26,7 +26,7 @@ scale <- 0.237
 # example rquery pipeline
 rquery_pipeline <- local_td(dL) %.>%
   extend_nse(.,
-             probability =
+             probability :=
                exp(assessmentTotal * scale))  %.>% 
   normalize_cols(.,
                  "probability",
@@ -101,7 +101,7 @@ build_frame(
    9          , "withdrawal behavior", 15                |
    9          , "positive re-framing", 2                 ) %>>% (
   extend_nse(.,
-             probability =
+             probability :=
                exp(assessmentTotal * scale))  %.>% 
   normalize_cols(.,
                  "probability",
