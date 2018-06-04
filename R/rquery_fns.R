@@ -7,6 +7,10 @@
 #' @importFrom rquery columns_used column_names
 NULL
 
+#' @importFrom wrapr mk_tmp_name_source
+#' @export
+wrapr::mk_tmp_name_source
+
 #' @importFrom wrapr %.>%
 #' @export
 wrapr::`%.>%`
@@ -18,6 +22,14 @@ wrapr::let
 #' @importFrom wrapr qc
 #' @export
 wrapr::qc
+
+#' @importFrom wrapr qc
+#' @export
+wrapr::qc
+
+#' @importFrom wrapr qe
+#' @export
+wrapr::qe
 
 #' @importFrom wrapr build_frame
 #' @export
