@@ -5,7 +5,7 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 [`rqdatatable`](https://github.com/WinVector/rqdatatable) is an implementation of
-the [`rquery`](https://github.com/WinVector/rquery) piped relational algebra 
+the [`rquery`](https://github.com/WinVector/rquery) piped Codd-style relational algebra 
 hosted on [`data.table`](http://r-datatable.com).  `rquery` allow the expression
 of complex transformations as a series of relational operators and
 `rqdatatable` implements the operators using `data.table`.

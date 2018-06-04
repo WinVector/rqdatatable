@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[`rqdatatable`](https://github.com/WinVector/rqdatatable) is an implementation of the [`rquery`](https://github.com/WinVector/rquery) piped relational algebra hosted on [`data.table`](http://r-datatable.com). `rquery` allow the expression of complex transformations as a series of relational operators and `rqdatatable` implements the operators using `data.table`.
+[`rqdatatable`](https://github.com/WinVector/rqdatatable) is an implementation of the [`rquery`](https://github.com/WinVector/rquery) piped Codd-style relational algebra hosted on [`data.table`](http://r-datatable.com). `rquery` allow the expression of complex transformations as a series of relational operators and `rqdatatable` implements the operators using `data.table`.
 
 For example scoring a logistic regression model (which requires grouping, ordering, and ranking) is organized as follows. For more on this example please see ["Let’s Have Some Sympathy For The Part-time R User"](http://www.win-vector.com/blog/2017/08/lets-have-some-sympathy-for-the-part-time-r-user/).
 
