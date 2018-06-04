@@ -81,15 +81,31 @@
 \alias{reexports}
 \alias{unionall}
 \alias{reexports}
+\alias{mk_tmp_name_source}
+\alias{reexports}
+\alias{map_to_char}
+\alias{reexports}
 \alias{\%.>\%}
 \alias{reexports}
+\alias{\%:=\%}
+\alias{reexports}
+\alias{let}
+\alias{reexports}
 \alias{qc}
+\alias{reexports}
+\alias{qc}
+\alias{reexports}
+\alias{qe}
 \alias{reexports}
 \alias{build_frame}
 \alias{reexports}
 \alias{draw_frame}
 \alias{reexports}
 \alias{qchar_frame}
+\alias{reexports}
+\alias{apply_left}
+\alias{reexports}
+\alias{apply_right}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -99,6 +115,6 @@ below to see their documentation.
 \describe{
   \item{rquery}{\code{\link[rquery]{\%>>\%}}, \code{\link[rquery]{assign_slice}}, \code{\link[rquery]{column_names}}, \code{\link[rquery]{columns_used}}, \code{\link[rquery]{commencify}}, \code{\link[rquery]{complete_design}}, \code{\link[rquery]{count_null_cols}}, \code{\link[rquery]{db_td}}, \code{\link[rquery]{drop_columns}}, \code{\link[rquery]{execute}}, \code{\link[rquery]{extend_nse}}, \code{\link[rquery]{extend_se}}, \code{\link[rquery]{format_node}}, \code{\link[rquery]{if_else_block}}, \code{\link[rquery]{if_else_op}}, \code{\link[rquery]{local_td}}, \code{\link[rquery]{map_column_values}}, \code{\link[rquery]{mark_null_cols}}, \code{\link[rquery]{mk_td}}, \code{\link[rquery]{natural_join}}, \code{\link[rquery]{non_sql_node}}, \code{\link[rquery]{normalize_cols}}, \code{\link[rquery]{null_replace}}, \code{\link[rquery]{op_diagram}}, \code{\link[rquery]{orderby}}, \code{\link[rquery]{pick_top_k}}, \code{\link[rquery]{project_nse}}, \code{\link[rquery]{project_se}}, \code{\link[rquery]{rename_columns}}, \code{\link[rquery]{rquery_apply_to_data_frame}}, \code{\link[rquery]{select_columns}}, \code{\link[rquery]{select_rows_nse}}, \code{\link[rquery]{select_rows_se}}, \code{\link[rquery]{set_indicator}}, \code{\link[rquery]{table_source}}, \code{\link[rquery]{tables_used}}, \code{\link[rquery]{theta_join_nse}}, \code{\link[rquery]{theta_join_se}}, \code{\link[rquery]{unionall}}}
 
-  \item{wrapr}{\code{\link[wrapr]{\%.>\%}}, \code{\link[wrapr]{qc}}, \code{\link[wrapr]{build_frame}}, \code{\link[wrapr]{draw_frame}}, \code{\link[wrapr]{qchar_frame}}}
+  \item{wrapr}{\code{\link[wrapr]{mk_tmp_name_source}}, \code{\link[wrapr]{map_to_char}}, \code{\link[wrapr]{\%.>\%}}, \code{\link[wrapr]{\%:=\%}}, \code{\link[wrapr]{let}}, \code{\link[wrapr]{qc}}, \code{\link[wrapr]{qc}}, \code{\link[wrapr]{qe}}, \code{\link[wrapr]{build_frame}}, \code{\link[wrapr]{draw_frame}}, \code{\link[wrapr]{qchar_frame}}, \code{\link[wrapr]{apply_left}}, \code{\link[wrapr]{apply_right}}}
 }}
 

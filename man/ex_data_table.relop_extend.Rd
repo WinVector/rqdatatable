@@ -34,11 +34,11 @@ dL <- build_frame(
     2          , "positive re-framing", 4                , 1     )
 rquery_pipeline <- local_td(dL) \%.>\%
   extend_nse(.,
-             probability :=
+             probability \%:=\%
                exp(assessmentTotal * scale)/
                sum(exp(assessmentTotal * scale)),
-             count := sum(one),
-             rank := rank(),
+             count \%:=\% sum(one),
+             rank \%:=\% rank(),
              orderby = c("assessmentTotal", "surveyCategory"),
              reverse = c("assessmentTotal"),
              partitionby = 'subjectID') \%.>\%

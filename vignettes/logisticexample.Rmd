@@ -36,17 +36,17 @@ scale <- 0.237
 # example rquery pipeline
 rquery_pipeline <- local_td(dL) %.>%
   extend_nse(.,
-             one := 1) %.>%
+             one = 1) %.>%
   extend_nse(.,
-             probability :=
+             probability =
                exp(assessmentTotal * scale)/
                sum(exp(assessmentTotal * scale)),
-             count := sum(one),
-             rank := rank(probability, surveyCategory),
+             count = sum(one),
+             rank = rank(probability, surveyCategory),
              partitionby = 'subjectID') %.>%
   extend_nse(.,
-             isdiagnosis := rank == count,
-             diagnosis := surveyCategory) %.>%
+             isdiagnosis = rank == count,
+             diagnosis = surveyCategory) %.>%
   select_rows_nse(., 
                   isdiagnosis == TRUE) %.>%
   select_columns(., 

@@ -1,6 +1,9 @@
 
 
-
+strip_up_through_first_assignment <- function(s) {
+  trimws(gsub("^[^=]*=[%]?[[:space:]]*", "", s),
+         which = "both")
+}
 
 #' Implement extend/assign operator.
 #'
@@ -19,11 +22,11 @@
 #'     2          , "positive re-framing", 4                , 1     )
 #' rquery_pipeline <- local_td(dL) %.>%
 #'   extend_nse(.,
-#'              probability :=
+#'              probability %:=%
 #'                exp(assessmentTotal * scale)/
 #'                sum(exp(assessmentTotal * scale)),
-#'              count := sum(one),
-#'              rank := rank(),
+#'              count %:=% sum(one),
+#'              rank %:=% rank(),
 #'              orderby = c("assessmentTotal", "surveyCategory"),
 #'              reverse = c("assessmentTotal"),
 #'              partitionby = 'subjectID') %.>%
@@ -71,8 +74,7 @@ ex_data_table.relop_extend <- function(optree,
   eexprs <-
     vapply(seq_len(n),
            function(i) {
-             trimws(gsub("^[^:]*:=[[:space:]]*", "", as.character(optree$parsed[[i]]$presentation)),
-                    which = "both")
+             strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
            }, character(1))
   rank_exprs_indices <- sort(unique(c(
     grep("^rank[[:space:]]*\\([[:space:]]*\\)$", eexprs),

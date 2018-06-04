@@ -162,11 +162,11 @@
     <span class='fl'>2</span>          , <span class='st'>"positive re-framing"</span>, <span class='fl'>4</span>                , <span class='fl'>1</span>     )
 <span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>dL</span>) <span class='kw'>%.&gt;%</span>
   <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/extend_nse'>extend_nse</a></span>(<span class='no'>.</span>,
-             <span class='no'>probability</span> <span class='kw'>:=</span>
+             <span class='no'>probability</span> <span class='kw'>%:=%</span>
                <span class='fu'>exp</span>(<span class='no'>assessmentTotal</span> * <span class='no'>scale</span>)/
                <span class='fu'>sum</span>(<span class='fu'>exp</span>(<span class='no'>assessmentTotal</span> * <span class='no'>scale</span>)),
-             <span class='no'>count</span> <span class='kw'>:=</span> <span class='fu'>sum</span>(<span class='no'>one</span>),
-             <span class='no'>rank</span> <span class='kw'>:=</span> <span class='fu'>rank</span>(),
+             <span class='no'>count</span> <span class='kw'>%:=%</span> <span class='fu'>sum</span>(<span class='no'>one</span>),
+             <span class='no'>rank</span> <span class='kw'>%:=%</span> <span class='fu'>rank</span>(),
              <span class='kw'>orderby</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"assessmentTotal"</span>, <span class='st'>"surveyCategory"</span>),
              <span class='kw'>reverse</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"assessmentTotal"</span>),
              <span class='kw'>partitionby</span> <span class='kw'>=</span> <span class='st'>'subjectID'</span>) <span class='kw'>%.&gt;%</span>

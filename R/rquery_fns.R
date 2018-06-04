@@ -4,16 +4,24 @@
 
 
 #' @importFrom data.table :=
-#' @importFrom rquery columns_used column_names
 NULL
+
 
 #' @importFrom wrapr mk_tmp_name_source
 #' @export
 wrapr::mk_tmp_name_source
 
+#' @importFrom wrapr map_to_char
+#' @export
+wrapr::map_to_char
+
 #' @importFrom wrapr %.>%
 #' @export
 wrapr::`%.>%`
+
+#' @importFrom wrapr %:=%
+#' @export
+wrapr::`%:=%`
 
 #' @importFrom wrapr let
 #' @export
@@ -43,6 +51,13 @@ wrapr::draw_frame
 #' @export
 wrapr::qchar_frame
 
+#' @importFrom wrapr apply_left
+#' @export
+wrapr::apply_left
+
+#' @importFrom wrapr apply_right
+#' @export
+wrapr::apply_right
 
 
 

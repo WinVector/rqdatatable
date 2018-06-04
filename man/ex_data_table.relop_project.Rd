@@ -33,7 +33,7 @@ dL <- build_frame(
     2          , "positive re-framing", 4                 )
 test_p <- local_td(dL) \%.>\%
   extend_nse(.,
-             one := 1) \%.>\%
+             one \%:=\% 1) \%.>\%
   project_nse(.,
               maxscore = max(assessmentTotal),
               groupby = 'subjectID')

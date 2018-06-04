@@ -15,7 +15,7 @@
 #'     2          , "positive re-framing", 4                 )
 #' test_p <- local_td(dL) %.>%
 #'   extend_nse(.,
-#'              one := 1) %.>%
+#'              one %:=% 1) %.>%
 #'   project_nse(.,
 #'               maxscore = max(assessmentTotal),
 #'               groupby = 'subjectID')
@@ -60,7 +60,7 @@ ex_data_table.relop_project <- function(optree,
   eexprs <-
     vapply(seq_len(n),
            function(i) {
-             gsub("^[^:]*:=[[:space:]]*", "", as.character(optree$parsed[[i]]$presentation))
+             strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
            }, character(1))
   # := notation means add columns to current data.table, j notation would move to summize type calc.
   src <- paste0(tmpnam, "[ ",
