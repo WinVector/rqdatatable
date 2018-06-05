@@ -23,6 +23,9 @@
 \description{
 \code{data.table} based implementation.
 }
+\details{
+Will re-order columns if are ordering terms.
+}
 \examples{
 
 scale <- 0.237

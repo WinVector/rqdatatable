@@ -9,6 +9,8 @@ strip_up_through_first_assignment <- function(s) {
 #'
 #' \code{data.table} based implementation.
 #'
+#' Will re-order columns if are ordering terms.
+#'
 #' @inheritParams ex_data_table
 #'
 #' @examples
@@ -40,6 +42,7 @@ ex_data_table.relop_extend <- function(optree,
                                        source_usage = NULL,
                                        source_limit = NULL,
                                        env = parent.frame()) {
+  use_group_min_method <- FALSE
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_extend")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
@@ -49,11 +52,13 @@ ex_data_table.relop_extend <- function(optree,
                      source_usage = source_usage,
                      source_limit = source_limit,
                      env = env)
-  # if there is an order, order now apply it
-  x <- order_table(x, c(optree$partitionby, optree$orderby), optree$reverse)
   n <- length(optree$parsed)
   if(n<0) {
     return(x)
+  }
+  # if there is an order, order now apply it (pre-pending partition)
+  if(length(optree$orderby)>0) {
+    x <- order_table(x, c(optree$partitionby, optree$orderby), optree$reverse)
   }
   # work on partition term
   byi <- ""
@@ -80,14 +85,19 @@ ex_data_table.relop_extend <- function(optree,
     grep("^rank[[:space:]]*\\([[:space:]]*\\)$", eexprs),
     grep("^row_number[[:space:]]*\\([[:space:]]*\\)$", eexprs)
   )))
-  use_rank_col <- length(rank_exprs_indices)>0
   rank_names <- NULL
   qdatatable_temp_rank_col <- NULL # don't look like an unbound reference
-  if(use_rank_col) {
-    x[ , qdatatable_temp_rank_col := seq_len(nrow(x))]
-    rank_names <- enames_raw[rank_exprs_indices]
-    enames <- enames[-rank_exprs_indices]
-    eexprs <- eexprs[-rank_exprs_indices]
+  have_rank_calcs <- length(rank_exprs_indices)>0
+  if(have_rank_calcs) {
+    if(use_group_min_method) {
+      x[ , qdatatable_temp_rank_col := seq_len(nrow(x))]
+      rank_names <- enames_raw[rank_exprs_indices]
+      enames <- enames[-rank_exprs_indices]
+      eexprs <- eexprs[-rank_exprs_indices]
+    } else {
+      x[ , qdatatable_temp_rank_col := 1.0]
+      eexprs[rank_exprs_indices] = "cumsum(qdatatable_temp_rank_col)"
+    }
   }
   if(length(enames)>0) {
     enames <- paste0("c(", paste(enames, collapse = ", "), ")")
@@ -101,23 +111,26 @@ ex_data_table.relop_extend <- function(optree,
     x <- eval(expr, envir = tmpenv, enclos = env)
   }
   # fast ranking (seems more compatible with this workflow than data.table::frank())
-  if(use_rank_col) {
-    qdatatable_temp_rank_col_g <- NULL # don't look like an unbound reference
-    COL <- NULL # don't look like an unbound reference
-    if(length(optree$partitionby)>0) {
-      x[, qdatatable_temp_rank_col_g := 1 + qdatatable_temp_rank_col - min(qdatatable_temp_rank_col),
-        by = c(optree$partitionby)]
-    } else {
-      x[, qdatatable_temp_rank_col_g := qdatatable_temp_rank_col]
+  # could also try a grouped cumsum()
+  if(have_rank_calcs) {
+    if(use_group_min_method) {
+      qdatatable_temp_rank_col_g <- NULL # don't look like an unbound reference
+      COL <- NULL # don't look like an unbound reference
+      if(length(optree$partitionby)>0) {
+        x[, qdatatable_temp_rank_col_g := 1 + qdatatable_temp_rank_col - min(qdatatable_temp_rank_col),
+          by = c(optree$partitionby)]
+      } else {
+        x[, qdatatable_temp_rank_col_g := qdatatable_temp_rank_col]
+      }
+      for(ci in rank_names) {
+        wrapr::let(
+          c(COL = ci),
+          x[ , COL := qdatatable_temp_rank_col_g]
+        )
+      }
+      x[, qdatatable_temp_rank_col_g := NULL]
     }
     x[ , qdatatable_temp_rank_col := NULL]
-    for(ci in rank_names) {
-      wrapr::let(
-        c(COL = ci),
-        x[ , COL := qdatatable_temp_rank_col_g]
-      )
-    }
-    x[, qdatatable_temp_rank_col_g := NULL]
   }
   x
 }
