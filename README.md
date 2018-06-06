@@ -83,8 +83,6 @@ ex_data_table(rquery_pipeline)[]
 Can also execute on new tables.
 
 ``` r
-rquery_executor <- list(f = rqdatatable::ex_data_table)
-
 build_frame(
    "subjectID", "surveyCategory"     , "assessmentTotal" |
    7          , "withdrawal behavior", 5                 |
