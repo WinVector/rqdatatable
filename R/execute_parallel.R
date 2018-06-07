@@ -16,6 +16,10 @@ parallel_f <- function(tables, ...) {
 #' Execute an \code{rquery} pipeline with \code{data.table} in parallel.
 #'
 #' Execute an \code{rquery} pipeline with \code{data.table} in parallel partitioned by a given column.
+#' Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
+#' Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
+#' structured to ensure this.
+#' Also \code{data.table} itself already seems to exploit some thread-level parallelism (one often sees user time > elapsed time).
 #'
 #'
 #' @param optree relop operations tree.
