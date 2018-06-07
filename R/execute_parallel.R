@@ -79,8 +79,11 @@ ex_data_table_parallel <- function(optree,
   for(ni in names(ntables)) {
     ti <- ntables[[ni]]
     if(partition_column %in% colnames(ti)) {
-      levels <- unique(c(levels, ti[[partition_column]]))
+      levels <- unique(c(levels, as.character(ti[[partition_column]])))
     }
+  }
+  if(length(levels)<=0) {
+    stop(paste("rquery::ex_data_table_parallel no values found for partition column", partition_column))
   }
   # build a list of tablesets
   tablesets <- lapply(levels,
@@ -89,7 +92,7 @@ ex_data_table_parallel <- function(optree,
                         for(ni in names(ntables)) {
                           ti <- ntables[[ni]]
                           if(partition_column %in% colnames(ti)) {
-                            nti[[ni]] <- ti[ti[[partition_column]]==li, , drop = FALSE]
+                            nti[[ni]] <- ti[as.character(ti[[partition_column]])==li, , drop = FALSE]
                           }
                         }
                         nti

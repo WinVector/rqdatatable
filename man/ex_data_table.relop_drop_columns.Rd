@@ -5,7 +5,7 @@
 \title{Implement drop columns.}
 \usage{
 \method{ex_data_table}{relop_drop_columns}(optree, ..., tables = list(),
-  source_usage = NULL, env = parent.frame())
+  source_limit = NULL, source_usage = NULL, env = parent.frame())
 }
 \arguments{
 \item{optree}{relop operations tree.}
@@ -13,6 +13,8 @@
 \item{...}{not used, force later arguments to bind by name.}
 
 \item{tables}{named list map from table names used in nodes to data.tables and data.frames.}
+
+\item{source_limit}{if not null limit all table sources to no more than this many rows (used for debugging).}
 
 \item{source_usage}{list mapping source table names to vectors of columns used.}
 

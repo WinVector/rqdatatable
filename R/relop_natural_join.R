@@ -48,15 +48,13 @@ ex_data_table.relop_natural_join <- function(optree,
     stop("ex_data_table.relop_natural_join all common columns must be in by-clause")
   }
   if(optree$jointype=="INNER") {
-
-  } else if(optree$jointype=="INNER") {
-    merge(A, B, by = optree$by, all=FALSE)
+    merge(A, B, by = optree$by, all=FALSE, allow.cartesian=TRUE)
   } else if(optree$jointype=="LEFT") {
-    merge(A, B, by = optree$by, all.x=TRUE)
+    merge(A, B, by = optree$by, all.x=TRUE, allow.cartesian=TRUE)
   } else if(optree$jointype=="RIGHT") {
-    merge(A, B, by = optree$by, all.y=TRUE)
+    merge(A, B, by = optree$by, all.y=TRUE, allow.cartesian=TRUE)
   } else if(optree$jointype=="FULL") {
-    merge(A, B, by = optree$by, all=TRUE)
+    merge(A, B, by = optree$by, all=TRUE, allow.cartesian=TRUE)
   } else {
     stop(paste("jointype was", optree$jointype, " but should be one of INNER, LEFT, RIGHT, or FULL"))
   }

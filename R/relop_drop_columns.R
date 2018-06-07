@@ -16,6 +16,7 @@
 ex_data_table.relop_drop_columns <- function(optree,
                                              ...,
                                              tables = list(),
+                                             source_limit = NULL,
                                              source_usage = NULL,
                                              env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_drop_columns")
@@ -25,6 +26,7 @@ ex_data_table.relop_drop_columns <- function(optree,
   }
   x <- ex_data_table(optree$source[[1]],
                      tables = tables,
+                     source_limit = source_limit,
                      source_usage = source_usage,
                      env = env)
   x[, cols, with=FALSE]

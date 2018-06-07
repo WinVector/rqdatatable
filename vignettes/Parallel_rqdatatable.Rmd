@@ -20,63 +20,59 @@ cl <- parallel::makeCluster(2)
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
 
 set.seed(2362)
-mk_example <- function(nrow, ncol) {
-  lst <- lapply(seq_len(ncol),
-         function(i) {
-           ci <- runif(nrow)
-           names(ci) <- paste0("v_", i)
-           ci
-         })
-  names(lst) <- paste0("v_", seq_len(ncol))
-  f <- as.data.frame(lst)
-  f$g <- sample.int(100, nrow, replace = TRUE)
-  f$partition <- f$g %% 5 
-  f
+mk_example <- function(nkey, nrow, nrep = 5) {
+  keys <- paste0("key_", seq_len(nkey))
+  nrep <- 5
+  key_table <- data.frame(
+    key = rep(keys, 5),
+    data = runif(nkey),
+    stringsAsFactors = FALSE)
+  instance_table <- data.frame(
+    id = seq_len(nrow),
+    key = sample(keys, nrow, replace = TRUE),
+    group = sample(letters[1:9], nrow, replace = TRUE),
+    info = runif(nrow),
+    stringsAsFactors = FALSE)
+  list(key_table = key_table,
+       instance_table = instance_table)
 }
 
-ncol = 5
-dL <- mk_example(200, ncol)
+dlist <- mk_example(20, 100)
+data <- dlist$instance_table
+annotation <- dlist$key_table
 
-# build a ridiculous pipeline
-optree <- local_td(dL)
-nsteps <- 10
-for(i in seq_len(nsteps)) {
-  rcol <- paste0("nc_", i)
-  scol <- paste0("v_", sample.int(ncol, 1))
-  ocol <- paste0("v_", sample.int(ncol, 1))
-  optree <- optree %.>%
-    extend_se(., 
-              rcol %:=% paste0("cumsum(dnorm(", scol, "))"),
-              partitionby = "g", 
-              orderby = c(ocol, scol)) %.>%
-    extend_se(., 
-              rcol %:=% paste0("cumsum(dnorm(", scol, "))"),
-              partitionby = "partition", 
-              orderby = c(ocol, scol),
-              reverse = c(ocol, scol)) 
-  if(i>1) {
-    pcol <- paste0("nc_", i-1)
-    optree <- optree %.>%
-    extend_se(., rcol %:=% paste(rcol, "+", pcol))
-  }
-}
-optree <- optree %.>%
-  select_columns(., paste0("nc_", nsteps)) %.>%
-  orderby(., paste0("nc_", nsteps))
-#cat(format(optree))
+
+# possible data lookup: find rows that
+# have lookup data <= info
+optree <- local_td(data) %.>%
+  natural_join(., local_td(annotation), jointype = "INNER", by = "key") %.>%
+  select_rows_nse(., data <= info) %.>%
+  pick_top_k(., 
+             k = 1,
+             partitionby = "id",
+             orderby = "data",
+             reverse = "data",
+             keep_order_column = FALSE) %.>%
+  orderby(., "id")
+cat(format(optree))
+
                    
 
 res1 <- ex_data_table(optree)
 head(res1)
+nrow(res1)
 
-res2 <- ex_data_table_parallel(optree, "partition", cl)
+res2 <- ex_data_table_parallel(optree, "group", cl)
 head(res2)
+nrow(res2)
 
-dL <- mk_example(1000000, ncol)
+dlist <- mk_example(10000, 10000, 10)
+data <- dlist$instance_table
+annotation <- dlist$key_table
 
 system.time(ex_data_table(optree))
 
-system.time(ex_data_table_parallel(optree, "partition", cl))
+system.time(ex_data_table_parallel(optree, "group", cl))
 
 
 parallel::stopCluster(cl)
