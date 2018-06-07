@@ -1,0 +1,168 @@
+---
+title: "Parallel rqdatatable"
+author: "John Mount"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Parallel rqdatatable}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+One can try to execute optrees in paralle. However, in unless the pipeline is very expensive
+the overhead of partitiong and distributing the work will far overwhelm any parallel speedup.
+
+```{r}
+library("rqdatatable")
+cl <- parallel::makeCluster(2)
+#parallel::clusterEvalQ(cl, library("rquery"))
+#parallel::clusterEvalQ(cl, library("rqdatatable"))
+
+set.seed(2362)
+mk_example <- function(nsubjects, nirrelcols) {
+  d <- rbind(data.frame(subjectID = seq_len(nsubjects), 
+                        surveyCategory = "withdrawal behavior",
+                        stringsAsFactors = FALSE),
+             data.frame(subjectID = seq_len(nsubjects), 
+                        surveyCategory = "positive re-framing",
+                        stringsAsFactors = FALSE))
+  d <- d[order(d$subjectID, d$surveyCategory), , drop = FALSE]
+  d$assessmentTotal <- rbinom(nrow(d), 10, 0.3)
+  for(i in seq_len(nirrelcols)) {
+    d[[paste0("irrelevantCol_", i)]] <- runif(nrow(d))
+  }
+  rownames(d) <- NULL
+  d
+}
+
+dL <- mk_example(200, 5)
+dL$partition <- as.character(dL$subjectID %% 5)
+
+optree <- local_td(dL) %.>%
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             probability :=
+               exp(assessmentTotal * 0.237))  %.>% 
+  normalize_cols(.,
+                 "probability",
+                 partitionby = 'subjectID') %.>%
+   extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             probability :=
+               exp(assessmentTotal * 0.237))  %.>% 
+  normalize_cols(.,
+                 "probability",
+                 partitionby = 'subjectID') %.>%
+   extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             wco := cumsum(as.numeric(assessmentTotal)),
+             partitionby = "subjectID",
+             orderby = c("subjectID", "surveyCategory")) %.>% 
+  extend_nse(.,
+             wco2 := cumsum(as.numeric(subjectID)),
+             partitionby = "surveyCategory") %.>% 
+  orderby(., cols = 'subjectID', reverse = 'subjectID')  %.>% 
+  orderby(., cols = 'surveyCategory') %.>% 
+  extend_nse(.,
+             probability :=
+               exp(assessmentTotal * 0.237))  %.>% 
+  normalize_cols(.,
+                 "probability",
+                 partitionby = 'subjectID') %.>%
+  pick_top_k(.,
+             k = 1,
+             partitionby = 'subjectID',
+             orderby = c('probability', 'surveyCategory'),
+             reverse = c('probability', 'surveyCategory')) %.>% 
+  rename_columns(., c('diagnosis' = 'surveyCategory')) %.>%
+  select_columns(., c('subjectID', 
+                      'diagnosis', 
+                      'probability')) %.>%
+  orderby(., cols = 'subjectID')
+
+res1 <- ex_data_table(optree)
+head(res1)
+
+res2 <- ex_data_table_parallel(optree, "partition", cl)
+head(res2)
+
+dL <- mk_example(2000, 5)
+dL$partition <- as.character(dL$subjectID %% 5)
+
+system.time(ex_data_table(optree))
+
+system.time(ex_data_table_parallel(optree, "partition", cl))
+
+
+parallel::stopCluster(cl)
+rm(list = "cl")
+```
