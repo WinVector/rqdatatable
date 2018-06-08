@@ -1,5 +1,34 @@
 
 
+#' Helper to build data.table capable non-sql nodes.
+#'
+#' @param . or data.frame input.
+#' @param f function that takes a data.table to a data.frame (or data.table).
+#' @param ... force later arguments to bind by name.
+#' @param columns_produced character columns produces by f.
+#' @param display_form display form for node.
+#' @return relop non-sql node implementation.
+#'
+#' @seealso \code{\link[rqdatatable]{ex_data_table.relop_non_sql}}
+#'
+#' @export
+#'
+ex_data_table_funciton_node <- function(., f,
+                                        ...,
+                                        columns_produced,
+                                        display_form) {
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::ex_data_table_funciton_node")
+  non_sql_node(.,
+               f_db = function(...) { stop("db function not implemented") },
+               f_df = f,
+               incoming_table_name = "incoming_table_name",
+               outgoing_table_name = "outgoing_table_name",
+               columns_produced = columns_produced,
+               display_form = display_form,
+               orig_columns = FALSE)
+}
+
+
 #' Direct non-sql (function) node, not implented for \code{data.table} case.
 #'
 #' Passes a single table to a function that takes a single data.frame as its arguement, and returns a single data.frame.
@@ -26,14 +55,10 @@
 #'   }
 #'   columns_produced =
 #'      c("Variable", "Estimate", "Std. Error", "t value", "Pr(>|t|)", group_col)
-#'   non_sql_node(.,
-#'                f_db = function(...) { stop("db function not implemented")},
-#'                f_df = f,
-#'                incoming_table_name = "incoming_table_name",
-#'                outgoing_table_name = "outgoing_table_name",
-#'                columns_produced = columns_produced,
-#'                display_form = paste0(yvar, "~", xvar, " grouped by ", group_col),
-#'                orig_columns = FALSE)
+#'   ex_data_table_funciton_node(
+#'     ., f,
+#'     columns_produced = columns_produced,
+#'     display_form = paste0(yvar, "~", xvar, " grouped by ", group_col))
 #' }
 #'
 #' # work an example

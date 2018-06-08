@@ -174,14 +174,12 @@
                     })
     <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/rbindlist'>rbindlist</a></span>(<span class='no'>clist</span>)
   }
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/non_sql_node'>non_sql_node</a></span>(<span class='no'>.</span>,
-               <span class='kw'>f_db</span> <span class='kw'>=</span> <span class='kw'>function</span>(<span class='no'>...</span>) { <span class='fu'>stop</span>(<span class='st'>"db function not implemented"</span>)},
-               <span class='kw'>f_df</span> <span class='kw'>=</span> <span class='no'>f</span>,
-               <span class='kw'>incoming_table_name</span> <span class='kw'>=</span> <span class='st'>"incoming_table_name"</span>,
-               <span class='kw'>outgoing_table_name</span> <span class='kw'>=</span> <span class='st'>"outgoing_table_name"</span>,
-               <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Variable"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"Std. Error"</span>, <span class='st'>"t value"</span>, <span class='st'>"Pr(&gt;|t|)"</span>, <span class='no'>group_col</span>),
-               <span class='kw'>display_form</span> <span class='kw'>=</span> <span class='fu'>paste0</span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>, <span class='st'>" grouped by "</span>, <span class='no'>group_col</span>),
-               <span class='kw'>orig_columns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='no'>columns_produced</span> <span class='kw'>=</span>
+     <span class='fu'>c</span>(<span class='st'>"Variable"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"Std. Error"</span>, <span class='st'>"t value"</span>, <span class='st'>"Pr(&gt;|t|)"</span>, <span class='no'>group_col</span>)
+  <span class='fu'><a href='ex_data_table_funciton_node.html'>ex_data_table_funciton_node</a></span>(
+    <span class='no'>.</span>, <span class='no'>f</span>,
+    <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='no'>columns_produced</span>,
+    <span class='kw'>display_form</span> <span class='kw'>=</span> <span class='fu'>paste0</span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>, <span class='st'>" grouped by "</span>, <span class='no'>group_col</span>))
 }
 
 <span class='co'># work an example</span>

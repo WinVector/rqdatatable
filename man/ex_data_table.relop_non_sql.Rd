@@ -45,14 +45,10 @@ grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "
   }
   columns_produced =
      c("Variable", "Estimate", "Std. Error", "t value", "Pr(>|t|)", group_col)
-  non_sql_node(.,
-               f_db = function(...) { stop("db function not implemented")},
-               f_df = f,
-               incoming_table_name = "incoming_table_name",
-               outgoing_table_name = "outgoing_table_name",
-               columns_produced = columns_produced,
-               display_form = paste0(yvar, "~", xvar, " grouped by ", group_col),
-               orig_columns = FALSE)
+  ex_data_table_funciton_node(
+    ., f,
+    columns_produced = columns_produced,
+    display_form = paste0(yvar, "~", xvar, " grouped by ", group_col))
 }
 
 # work an example
