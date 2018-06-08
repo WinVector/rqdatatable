@@ -62,7 +62,7 @@ rq_df_funciton_node <- function(., f,
                                 columns_produced,
                                 display_form,
                                 orig_columns = FALSE) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::rq_df_funciton_node")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::rq_df_funciton_node")
   if(orig_columns) {
     cols <- column_names(.)
     missing <- setdiff(columns_produced, cols)
@@ -139,7 +139,7 @@ rq_df_grouped_funciton_node <- function(., f,
                                         columns_produced,
                                         group_col,
                                         display_form) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::rq_df_grouped_funciton_node")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::rq_df_grouped_funciton_node")
   cols <- column_names(.)
   if(!(group_col %in% cols)) {
     stop("rq_df_grouped_funciton_node grouping column must be in input")
@@ -191,7 +191,7 @@ ex_data_table.relop_non_sql <- function(optree,
                                         source_usage = NULL,
                                         source_limit = NULL,
                                         env = parent.frame()) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::ex_data_table.relop_non_sql")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_non_sql")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
@@ -202,7 +202,7 @@ ex_data_table.relop_non_sql <- function(optree,
                      env = env)
   f_df <- optree$f_df
   if(is.null(f_df)) {
-    stop("rqdataframe::ex_data_table.relop_non_sql df is NULL")
+    stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
   }
   res <- f_df(x)
   if(!is.data.frame(res)) {

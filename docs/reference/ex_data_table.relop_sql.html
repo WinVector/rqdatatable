@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Direct sql node, not implented for <code>data.table</code> case. — ex_data_table.relop_sql • rqdatatable</title>
+<title>Direct sql node. — ex_data_table.relop_sql • rqdatatable</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,11 @@
 
 
 
-<meta property="og:title" content="Direct sql node, not implented for <code>data.table</code> case. — ex_data_table.relop_sql" />
+<meta property="og:title" content="Direct sql node. — ex_data_table.relop_sql" />
 
-<meta property="og:description" content="Placeholder to through legible "not implemented" message." />
+<meta property="og:description" content="Execute one step using the rquery.rquery_db_executor SQL supplier.  Note: it is not
+a good practice to use SQL nodes in data.table intended pipelines (loss of class information and
+cost of data transfer)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,14 +111,16 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Direct sql node, not implented for <code>data.table</code> case.</h1>
+    <h1>Direct sql node.</h1>
     <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable//blob/master/R/relop_sql.R'><code>R/relop_sql.R</code></a></small>
     <div class="hidden name"><code>ex_data_table.relop_sql.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Placeholder to through legible "not implemented" message.</p>
+    <p>Execute one step using the rquery.rquery_db_executor SQL supplier.  Note: it is not
+a good practice to use SQL nodes in data.table intended pipelines (loss of class information and
+cost of data transfer).</p>
     
     </div>
 
@@ -154,12 +158,68 @@
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='co'># WARNING: example tries to change rquery.rquery_db_executor option to RSQLite and back.</span>
+<span class='kw'>if</span> (<span class='fu'>requireNamespace</span>(<span class='st'>"DBI"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='kw'>&amp;&amp;</span>
+    <span class='fu'>requireNamespace</span>(<span class='st'>"RSQLite"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
+  <span class='co'># example database connection</span>
+  <span class='no'>my_db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbConnect'>dbConnect</a></span>(<span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/RSQLite/topics/SQLite'>SQLite</a></span>(),
+                          <span class='st'>":memory:"</span>)
+  <span class='no'>old_o</span> <span class='kw'>&lt;-</span> <span class='fu'>options</span>(<span class='fu'>list</span>(<span class='st'>"rquery.rquery_db_executor"</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>db</span> <span class='kw'>=</span> <span class='no'>my_db</span>)))
+
+  <span class='co'># example data</span>
+  <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>v1</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>NA</span>, <span class='fl'>3</span>),
+                  <span class='kw'>v2</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>NA</span>, <span class='st'>"b"</span>, <span class='fl'>NA</span>, <span class='st'>"c"</span>),
+                  <span class='kw'>v3</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>7</span>, <span class='fl'>8</span>),
+                  <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+  <span class='co'># example xform</span>
+  <span class='no'>vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/column_names'>column_names</a></span>(<span class='no'>d</span>)
+  <span class='co'># build a NA/NULLs per-row counting expression.</span>
+  <span class='co'># names are "quoted" by wrapping them with as.name().</span>
+  <span class='co'># constants can be quoted by an additional list wrapping.</span>
+  <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='no'>vars</span>,
+                 <span class='kw'>function</span>(<span class='no'>vi</span>) {
+                   <span class='fu'>list</span>(<span class='st'>"+ (CASE WHEN ("</span>,
+                        <span class='fu'>as.name</span>(<span class='no'>vi</span>),
+                        <span class='st'>"IS NULL ) THEN 1.0 ELSE 0.0 END)"</span>)
+                 })
+  <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'>unlist</span>(<span class='no'>expr</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='fu'>list</span>(<span class='fl'>0.0</span>), <span class='no'>expr</span>)
+
+  <span class='co'># instantiate the operator node</span>
+  <span class='no'>op_tree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
+    <span class='fu'>sql_node</span>(<span class='no'>.</span>, <span class='st'>"num_missing"</span> <span class='kw'>%:=%</span> <span class='fu'>list</span>(<span class='no'>expr</span>))
+  <span class='fu'>cat</span>(<span class='fu'>format</span>(<span class='no'>op_tree</span>))
+
+  <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>op_tree</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>d</span> <span class='kw'>=</span> <span class='no'>d</span>)) <span class='kw'>%.&gt;%</span>
+    <span class='fu'>print</span>(<span class='no'>.</span>)
+  <span class='co'>#d %.&gt;% op_tree</span>
+
+  <span class='fu'>options</span>(<span class='no'>old_o</span>)
+  <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbDisconnect'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
+}</div><div class='output co'>#&gt; table('d'; 
+#&gt;   v1,
+#&gt;   v2,
+#&gt;   v3) %.&gt;%
+#&gt;  sql_node(.,
+#&gt;           num_missing %:=% 0 + (CASE WHEN ( v1 IS NULL ) THEN 1.0 ELSE 0.0 END) + (CASE WHEN ( v2 IS NULL ) THEN 1.0 ELSE 0.0 END) + (CASE WHEN ( v3 IS NULL ) THEN 1.0 ELSE 0.0 END),
+#&gt;              *=TRUE)
+#&gt;    v3 num_missing v1   v2
+#&gt; 1: NA           2  1 &lt;NA&gt;
+#&gt; 2: NA           1  2    b
+#&gt; 3:  7           2 NA &lt;NA&gt;
+#&gt; 4:  8           0  3    c</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
