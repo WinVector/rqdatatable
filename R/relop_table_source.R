@@ -30,7 +30,7 @@ ex_data_table.relop_table_source <- function(optree,
                                              source_usage = NULL,
                                              source_limit = NULL,
                                              env = parent.frame()) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_table_source")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_table_source")
   name <- optree$table_name
   res <- NULL
   if(name %in% names(tables)) {
@@ -39,11 +39,11 @@ ex_data_table.relop_table_source <- function(optree,
     res <- get(name, envir = env)
   }
   if(is.null(res)) {
-    stop(paste("rquery::ex_data_table.relop_table_source, could not find: ",
+    stop(paste("rqdatatable::ex_data_table.relop_table_source, could not find: ",
                name))
   }
   if(!is.data.frame(res)) {
-    stop(paste("rquery::ex_data_table.relop_table_source ",
+    stop(paste("rqdatatable::ex_data_table.relop_table_source ",
                name,
                " is not a data.frame (class: ",
                paste(class(res), collapse = ", "),
@@ -58,7 +58,7 @@ ex_data_table.relop_table_source <- function(optree,
   }
   missing_cols <- setdiff(cols_want, cols_have)
   if(length(missing_cols)>0) {
-    stop(paste("rquery::ex_data_table.relop_table_source missing required columns",
+    stop(paste("rqdatatable::ex_data_table.relop_table_source missing required columns",
                paste(missing_cols, collapse = ", ")))
   }
   if(!data.table::is.data.table(res)) {

@@ -21,5 +21,5 @@
 \item{env}{environment to work in.}
 }
 \description{
-Placeholder to through legible "not implemented" message.
+Passes a single table to a function that takes a single data.frame as its arguement, and returns a single data.frame.
 }

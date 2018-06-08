@@ -13,8 +13,8 @@ ex_data_table.relop_theta_join <- function(optree,
                                            source_usage = NULL,
                                            source_limit = NULL,
                                            env = parent.frame()) {
-  stop("rquery::ex_data_table.relop_theta_join not implemented yet") # TODO: implement
-  wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_theta_join")
+  stop("rqdatatable::ex_data_table.relop_theta_join not implemented yet") # TODO: implement
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_theta_join")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }

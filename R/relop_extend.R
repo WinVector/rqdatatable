@@ -43,7 +43,7 @@ ex_data_table.relop_extend <- function(optree,
                                        source_limit = NULL,
                                        env = parent.frame()) {
   use_group_min_method <- FALSE
-  wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_extend")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_extend")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }

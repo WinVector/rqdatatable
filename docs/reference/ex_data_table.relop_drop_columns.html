@@ -81,6 +81,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/Parallel_rqdatatable.html">Parallel rqdatatable</a>
+    </li>
+    <li>
       <a href="../articles/logisticexample.html">Logistic Example</a>
     </li>
   </ul>
@@ -119,7 +122,7 @@
 
     <pre class="usage"><span class='co'># S3 method for relop_drop_columns</span>
 <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree</span>, <span class='no'>...</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
+  <span class='kw'>source_limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,6 +138,10 @@
     <tr>
       <th>tables</th>
       <td><p>named list map from table names used in nodes to data.tables and data.frames.</p></td>
+    </tr>
+    <tr>
+      <th>source_limit</th>
+      <td><p>if not null limit all table sources to no more than this many rows (used for debugging).</p></td>
     </tr>
     <tr>
       <th>source_usage</th>

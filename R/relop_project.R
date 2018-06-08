@@ -29,10 +29,10 @@ ex_data_table.relop_project <- function(optree,
                                         source_usage = NULL,
                                         source_limit = NULL,
                                         env = parent.frame()) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rquery::ex_data_table.relop_project")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_project")
   n <- length(optree$parsed)
   if(n<0) {
-    stop("rquery::ex_data_table.relop_project() must have at least one assignment")
+    stop("rqdatatable::ex_data_table.relop_project() must have at least one assignment")
   }
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
@@ -47,7 +47,7 @@ ex_data_table.relop_project <- function(optree,
     pterms <- paste0("\"", optree$groupby, "\"")
     byi <- paste0(" , by = c(", paste(pterms, collapse = ", "), ")")
   } else {
-    stop("rquery::ex_data_table.relop_project() must have at least one grouping term")
+    stop("rqdatatable::ex_data_table.relop_project() must have at least one grouping term")
   }
   tmpnam <- ".rquery_ex_extend_tmp"
   tmpenv <- new.env(parent = env)

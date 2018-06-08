@@ -11,5 +11,5 @@ ex_data_table.relop_sql <- function(optree,
                                     source_usage = NULL,
                                     source_limit = NULL,
                                     env = parent.frame()) {
-  stop("rquery::ex_data_table.relop_sql sql nodes can not used on data.table arguments")
+  stop("rqdatatable::ex_data_table.relop_sql sql nodes can not used on data.table arguments")
 }

@@ -54,14 +54,14 @@ ex_data_table_parallel <- function(optree,
     }
     # front-load some error checking
     if(!is.data.frame(ti)) {
-      stop(paste("rquery::ex_data_table_parallel all arguments must resolve to data.frames",
+      stop(paste("rqdatatable::ex_data_table_parallel all arguments must resolve to data.frames",
            ni, paste(class(ti), collapse = " ")))
     }
     nsi <- source_usage[[ni]]
     nti <- colnames(ti)
     missing <- setdiff(nsi, nti)
     if(length(missing)>0) {
-      stop(paste("rquery::ex_data_table_parallel missing required columns",
+      stop(paste("rqdatatable::ex_data_table_parallel missing required columns",
                  ni, paste(missing, collapse = " ")))
     }
     if((partition_column %in% nti) && (!(partition_column %in% nsi))) {
@@ -83,7 +83,7 @@ ex_data_table_parallel <- function(optree,
     }
   }
   if(length(levels)<=0) {
-    stop(paste("rquery::ex_data_table_parallel no values found for partition column", partition_column))
+    stop(paste("rqdatatable::ex_data_table_parallel no values found for partition column", partition_column))
   }
   # build a list of tablesets
   tablesets <- lapply(levels,

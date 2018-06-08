@@ -129,7 +129,7 @@ ex_data_table.default <- function(optree,
                                   source_usage = NULL,
                                   source_limit = NULL,
                                   env = parent.frame()) {
-  stop(paste("rquery::ex_data_table() does not have an implementation for class: ",
+  stop(paste("rqdatatable::ex_data_table() does not have an implementation for class: ",
              paste(class(optree), collapse = ", "),
              "yet"))
 }
