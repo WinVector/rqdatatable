@@ -153,70 +153,19 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'># a node generator is something an expert can</span>
-<span class='co'># write and part-time R users can use.</span>
-<span class='no'>grouped_regression_node</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>.</span>, <span class='no'>group_col</span> <span class='kw'>=</span> <span class='st'>"group"</span>, <span class='no'>xvar</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='no'>yvar</span> <span class='kw'>=</span> <span class='st'>"y"</span>) {
-  <span class='fu'>force</span>(<span class='no'>group_col</span>)
-  <span class='no'>formula_str</span> <span class='kw'>&lt;-</span> <span class='fu'>paste</span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>)
-  <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>df</span>) {
-    <span class='no'>dlist</span> <span class='kw'>&lt;-</span> <span class='fu'>split</span>(<span class='no'>df</span>, <span class='no'>df</span><span class='kw'>[[</span><span class='no'>group_col</span>]])
-    <span class='no'>clist</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='no'>dlist</span>,
-                    <span class='kw'>function</span>(<span class='no'>di</span>) {
-                      <span class='no'>mi</span> <span class='kw'>&lt;-</span> <span class='fu'>lm</span>(<span class='fu'>as.formula</span>(<span class='no'>formula_str</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>di</span>)
-                      <span class='no'>ci</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='fu'>summary</span>(<span class='no'>mi</span>)$<span class='no'>coefficients</span>)
-                      <span class='no'>ci</span>$<span class='no'>Variable</span> <span class='kw'>&lt;-</span> <span class='fu'>rownames</span>(<span class='no'>ci</span>)
-                      <span class='fu'>rownames</span>(<span class='no'>ci</span>) <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
-                      <span class='no'>ci</span><span class='kw'>[[</span><span class='no'>group_col</span>]] <span class='kw'>&lt;-</span> <span class='no'>di</span><span class='kw'>[[</span><span class='no'>group_col</span>]]<span class='kw'>[[</span><span class='fl'>1</span>]]
-                      <span class='no'>ci</span>
-                    })
-    <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/rbindlist'>rbindlist</a></span>(<span class='no'>clist</span>)
-  }
-  <span class='no'>columns_produced</span> <span class='kw'>=</span>
-     <span class='fu'>c</span>(<span class='st'>"Variable"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"Std. Error"</span>, <span class='st'>"t value"</span>, <span class='st'>"Pr(&gt;|t|)"</span>, <span class='no'>group_col</span>)
-  <span class='fu'><a href='ex_data_table_funciton_node.html'>ex_data_table_funciton_node</a></span>(
-    <span class='no'>.</span>, <span class='no'>f</span>,
-    <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='no'>columns_produced</span>,
-    <span class='kw'>display_form</span> <span class='kw'>=</span> <span class='fu'>paste0</span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>, <span class='st'>" grouped by "</span>, <span class='no'>group_col</span>))
-}
+    <div class='dont-index'><p><code><a href='rq_df_funciton_node.html'>rq_df_funciton_node</a></code>, <code><a href='rq_df_grouped_funciton_node.html'>rq_df_grouped_funciton_node</a></code></p></div>
+    
 
-<span class='co'># work an example</span>
-<span class='fu'>set.seed</span>(<span class='fl'>3265</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>),
-                <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>),
-                <span class='kw'>group</span> <span class='kw'>=</span> <span class='fu'>sample</span>(<span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>5</span>], <span class='fl'>1000</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-                <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
-  <span class='fu'>grouped_regression_node</span>(<span class='no'>.</span>)
-
-<span class='fu'>cat</span>(<span class='fu'>format</span>(<span class='no'>rquery_pipeline</span>))</div><div class='output co'>#&gt; table('d'; 
-#&gt;   x,
-#&gt;   y,
-#&gt;   group) %.&gt;%
-#&gt;  non_sql_node(., y~x grouped by group)</div><div class='input'>
-<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)[]</div><div class='output co'>#&gt;         Estimate Std. Error    t value   Pr(&gt;|t|)    Variable group
-#&gt;  1:  0.090716766 0.07125705  1.2730918 0.20447817 (Intercept)     a
-#&gt;  2: -0.044853006 0.06701987 -0.6692494 0.50411599           x     a
-#&gt;  3:  0.063457904 0.06802746  0.9328278 0.35208658 (Intercept)     b
-#&gt;  4:  0.058692951 0.06868752  0.8544922 0.39390284           x     b
-#&gt;  5:  0.129306526 0.07003884  1.8462116 0.06650366 (Intercept)     c
-#&gt;  6:  0.012482453 0.07217097  0.1729567 0.86287979           x     c
-#&gt;  7:  0.031991890 0.06543806  0.4888881 0.62544100 (Intercept)     d
-#&gt;  8: -0.008130064 0.06308408 -0.1288766 0.89758099           x     d
-#&gt;  9: -0.012349987 0.06804600 -0.1814947 0.85615030 (Intercept)     e
-#&gt; 10: -0.008883978 0.07675926 -0.1157382 0.90796806           x     e</div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
 
   </div>
 </div>

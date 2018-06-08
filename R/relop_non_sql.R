@@ -7,31 +7,11 @@
 #' @param ... force later arguments to bind by name.
 #' @param columns_produced character columns produces by f.
 #' @param display_form display form for node.
+#' @param orig_columns orig_columns, if TRUE assume all input columns are present in derived table.
 #' @return relop non-sql node implementation.
 #'
-#' @seealso \code{\link[rqdatatable]{ex_data_table.relop_non_sql}}
+#' @seealso \code{\link[rqdatatable]{ex_data_table.relop_non_sql}}, \code{\link{rq_df_grouped_funciton_node}}
 #'
-#' @export
-#'
-ex_data_table_funciton_node <- function(., f,
-                                        ...,
-                                        columns_produced,
-                                        display_form) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::ex_data_table_funciton_node")
-  non_sql_node(.,
-               f_db = function(...) { stop("db function not implemented") },
-               f_df = f,
-               incoming_table_name = "incoming_table_name",
-               outgoing_table_name = "outgoing_table_name",
-               columns_produced = columns_produced,
-               display_form = display_form,
-               orig_columns = FALSE)
-}
-
-
-#' Direct non-sql (function) node, not implented for \code{data.table} case.
-#'
-#' Passes a single table to a function that takes a single data.frame as its arguement, and returns a single data.frame.
 #'
 #' @examples
 #'
@@ -55,7 +35,7 @@ ex_data_table_funciton_node <- function(., f,
 #'   }
 #'   columns_produced =
 #'      c("Variable", "Estimate", "Std. Error", "t value", "Pr(>|t|)", group_col)
-#'   ex_data_table_funciton_node(
+#'   rq_df_funciton_node(
 #'     ., f,
 #'     columns_produced = columns_produced,
 #'     display_form = paste0(yvar, "~", xvar, " grouped by ", group_col))
@@ -74,6 +54,134 @@ ex_data_table_funciton_node <- function(., f,
 #' cat(format(rquery_pipeline))
 #'
 #' ex_data_table(rquery_pipeline)[]
+#'
+#' @export
+#'
+rq_df_funciton_node <- function(., f,
+                                ...,
+                                columns_produced,
+                                display_form,
+                                orig_columns = FALSE) {
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::rq_df_funciton_node")
+  if(orig_columns) {
+    cols <- column_names(.)
+    missing <- setdiff(columns_produced, cols)
+    columns_produced <- c(columns_produced, missing)
+  }
+  non_sql_node(.,
+               f_db = function(...) { stop("db function not implemented") },
+               f_df = f,
+               incoming_table_name = "incoming_table_name",
+               outgoing_table_name = "outgoing_table_name",
+               columns_produced = columns_produced,
+               display_form = display_form,
+               orig_columns = orig_columns)
+}
+
+
+
+
+
+#' Helper to build data.table capable non-sql nodes.
+#'
+#' @param . or data.frame input.
+#' @param f function that takes a data.table to a data.frame (or data.table).
+#' @param ... force later arguments to bind by name.
+#' @param columns_produced character columns produces by f.
+#' @param group_col character, column to split by.
+#' @param display_form display form for node.
+#' @return relop non-sql node implementation.
+#'
+#' @seealso \code{\link[rqdatatable]{ex_data_table.relop_non_sql}}, \code{\link{rq_df_funciton_node}}
+#'
+#'
+#' @examples
+#'
+#' # a node generator is something an expert can
+#' # write and part-time R users can use.
+#' grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "y") {
+#'   force(group_col)
+#'   formula_str <- paste(yvar, "~", xvar)
+#'   f <- function(di) {
+#'     mi <- lm(as.formula(formula_str), data = di)
+#'     ci <- as.data.frame(summary(mi)$coefficients)
+#'     ci$Variable <- rownames(ci)
+#'     rownames(ci) <- NULL
+#'     ci
+#'   }
+#'   columns_produced =
+#'     c("Variable", "Estimate", "Std. Error", "t value", "Pr(>|t|)", group_col)
+#'   rq_df_grouped_funciton_node(
+#'     ., f,
+#'     columns_produced = columns_produced,
+#'     group_col = group_col,
+#'     display_form = paste0(yvar, "~", xvar, " grouped by ", group_col))
+#' }
+#'
+#' # work an example
+#' set.seed(3265)
+#' d <- data.frame(x = rnorm(1000),
+#'                 y = rnorm(1000),
+#'                 group = sample(letters[1:5], 1000, replace = TRUE),
+#'                 stringsAsFactors = FALSE)
+#'
+#' rquery_pipeline <- local_td(d) %.>%
+#'   grouped_regression_node(.)
+#'
+#' cat(format(rquery_pipeline))
+#'
+#' ex_data_table(rquery_pipeline)[]
+#'
+#' @export
+#'
+rq_df_grouped_funciton_node <- function(., f,
+                                        ...,
+                                        columns_produced,
+                                        group_col,
+                                        display_form) {
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdataframe::rq_df_grouped_funciton_node")
+  cols <- column_names(.)
+  if(!(group_col %in% cols)) {
+    stop("rq_df_grouped_funciton_node grouping column must be in input")
+  }
+  if(!(group_col %in% columns_produced)) {
+    columns_produced <- c(columns_produced, group_col)
+  }
+  force(group_col)
+  fg <- function(df) {
+    dlist <- split(df, df[[group_col]])
+    clist <- lapply(dlist,
+                    function(di) {
+                      gi <- NULL
+                      if(nrow(di)>0) {
+                        gi <- di[[group_col]][[1]]
+                      }
+                      di <- f(di)
+                      if(!is.null(gi)) {
+                        di[[group_col]] <- gi
+                      }
+                      di
+                    })
+    data.table::rbindlist(clist)
+  }
+  non_sql_node(.,
+               f_db = function(...) { stop("db function not implemented") },
+               f_df = fg,
+               incoming_table_name = "incoming_table_name",
+               outgoing_table_name = "outgoing_table_name",
+               columns_produced = columns_produced,
+               display_form = paste(display_form, "grouped by", group_col),
+               orig_columns = FALSE)
+}
+
+
+#' Direct non-sql (function) node, not implented for \code{data.table} case.
+#'
+#' Passes a single table to a function that takes a single data.frame as its arguement, and returns a single data.frame.
+#'
+#'
+#'
+#' @seealso \code{\link{rq_df_funciton_node}}, \code{\link{rq_df_grouped_funciton_node}}
 #'
 #' @inheritParams ex_data_table
 #' @export
@@ -104,7 +212,7 @@ ex_data_table.relop_non_sql <- function(optree,
     res <- data.table::as.data.table(res)
   }
   if(!isTRUE(all.equal(sort(colnames(res)), sort(optree$columns_produced)))) {
-    stop("qdataframe::ex_data_table.relop_non_sql columns produced did not match specification")
+    stop("qdataframe::ex_data_table.relop_non_sql columns produced did not meet specification")
   }
   res
 }
