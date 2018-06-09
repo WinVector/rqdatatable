@@ -30,8 +30,7 @@
 
 <meta property="og:title" content="Natural join. — ex_data_table.relop_natural_join" />
 
-<meta property="og:description" content="data.table based implementation.  Note: does not yet match rquery common column coalesce semantics,
-so all common columns must be join conditions." />
+<meta property="og:description" content="data.table based implementation." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -114,8 +113,7 @@ so all common columns must be join conditions." />
 
     <div class="ref-description">
     
-    <p><code>data.table</code> based implementation.  Note: does not yet match <code>rquery</code> common column coalesce semantics,
-so all common columns must be join conditions.</p>
+    <p><code>data.table</code> based implementation.</p>
     
     </div>
 
@@ -165,23 +163,30 @@ so all common columns must be join conditions.</p>
       <span class='st'>"a"</span>  , <span class='fl'>5</span>  ,  <span class='fl'>13</span>    <span class='kw'>|</span>
       <span class='st'>"b"</span>  , <span class='fl'>6</span>  ,  <span class='fl'>14</span>    <span class='kw'>|</span>
       <span class='st'>"d"</span>  , <span class='fl'>7</span>  ,  <span class='fl'>15</span>    )
-<span class='co'># can't have shared non-key columns in rqdatatable yet</span>
-<span class='no'>d1</span>$<span class='no'>val</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
-<span class='no'>d2</span>$<span class='no'>val</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
 
 <span class='co'># key matching join</span>
 <span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/natural_join'>natural_join</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d1</span>), <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d2</span>),
                        <span class='kw'>jointype</span> <span class='kw'>=</span> <span class='st'>"FULL"</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>'key'</span>)
-<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree</span>)[]</div><div class='output co'>#&gt;    key val1 val2
-#&gt; 1:   a   10   13
-#&gt; 2:   b   11   14
-#&gt; 3:   c   12   NA
-#&gt; 4:   d   NA   15</div><div class='input'>
-# can't have shared non-key columns in rqdatatable yet
-# # full cross-product join
-# optree2 <- natural_join(local_td(d1), local_td(d2),
-#                         jointype = "FULL", by = NULL)
-# ex_data_table(optree2)[]
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree</span>)[]</div><div class='output co'>#&gt; [1] "full join"</div><div class='output co'>#&gt;    key val val1 val2
+#&gt; 1:   a   1   10   13
+#&gt; 2:   b   2   11   14
+#&gt; 3:   c   3   12   NA
+#&gt; 4:   d   7   NA   15</div><div class='input'>
+<span class='co'># full cross-product join</span>
+<span class='co'># (usually with jointype = "FULL", but "LEFT" is more</span>
+<span class='co'># compatible with rquery field merg semantics).</span>
+<span class='no'>optree2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/natural_join'>natural_join</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d1</span>), <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d2</span>),
+                        <span class='kw'>jointype</span> <span class='kw'>=</span> <span class='st'>"LEFT"</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree2</span>)[]</div><div class='output co'>#&gt;    key val val1 val2
+#&gt; 1:   a   1   10   13
+#&gt; 2:   a   1   10   14
+#&gt; 3:   a   1   10   15
+#&gt; 4:   b   2   11   13
+#&gt; 5:   b   2   11   14
+#&gt; 6:   b   2   11   15
+#&gt; 7:   c   3   12   13
+#&gt; 8:   c   3   12   14
+#&gt; 9:   c   3   12   15</div><div class='input'># notice ALL non-"by" fields take coalese to left table.
 
 </div></pre>
   </div>

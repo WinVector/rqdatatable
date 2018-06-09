@@ -21,8 +21,7 @@
 \item{env}{environment to work in.}
 }
 \description{
-\code{data.table} based implementation.  Note: does not yet match \code{rquery} common column coalesce semantics,
-so all common columns must be join conditions.
+\code{data.table} based implementation.
 }
 \examples{
 
@@ -36,19 +35,18 @@ d2 <- build_frame(
       "a"  , 5  ,  13    |
       "b"  , 6  ,  14    |
       "d"  , 7  ,  15    )
-# can't have shared non-key columns in rqdatatable yet
-d1$val <- NULL
-d2$val <- NULL
 
 # key matching join
 optree <- natural_join(local_td(d1), local_td(d2),
                        jointype = "FULL", by = 'key')
 ex_data_table(optree)[]
 
-# can't have shared non-key columns in rqdatatable yet
-# # full cross-product join
-# optree2 <- natural_join(local_td(d1), local_td(d2),
-#                         jointype = "FULL", by = NULL)
-# ex_data_table(optree2)[]
+# full cross-product join
+# (usually with jointype = "FULL", but "LEFT" is more
+# compatible with rquery field merg semantics).
+optree2 <- natural_join(local_td(d1), local_td(d2),
+                        jointype = "LEFT", by = NULL)
+ex_data_table(optree2)[]
+# notice ALL non-"by" fields take coalese to left table.
 
 }
