@@ -15,13 +15,19 @@ have_parallel <- requireNamespace("parallel", quietly = TRUE)
 
 ```{r ex, eval=have_parallel}
 library("rqdatatable")
+library("microbenchmark")
+library("WVPlots")
+
 cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rquery"))
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
 
 set.seed(2362)
-mk_example <- function(nkey, nrep) {
+mk_example <- function(nkey, nrep, ngroup = 20) {
   keys <- paste0("key_", seq_len(nkey))
+  key_group <- sample(as.character(seq_len(ngroup)), 
+                      length(keys), replace = TRUE)
+  names(key_group) <- keys
   key_table <- data.frame(
     key = rep(keys, nrep),
     stringsAsFactors = FALSE)
@@ -31,6 +37,9 @@ mk_example <- function(nkey, nrep) {
     stringsAsFactors = FALSE)
   instance_table$id <- seq_len(nrow(instance_table))
   instance_table$info <- runif(nrow(instance_table))
+  # groups should be no finer than keys
+  key_table$key_group <- key_group[key_table$key]
+  instance_table$key_group <- key_group[instance_table$key]
   list(key_table = key_table,
        instance_table = instance_table)
 }
@@ -60,7 +69,7 @@ res1 <- ex_data_table(optree)
 head(res1)
 nrow(res1)
 
-res2 <- ex_data_table_parallel(optree, "key", cl)
+res2 <- ex_data_table_parallel(optree, "key_group", cl)
 head(res2)
 nrow(res2)
 
@@ -68,10 +77,17 @@ dlist <- mk_example(100, 1000)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
-system.time(ex_data_table(optree))
+timings <- microbenchmark(
+  ex_data_table(optree),
+  ex_data_table_parallel(optree, "key_group", cl),
+  times = 5L)
 
-system.time(ex_data_table_parallel(optree, "key", cl))
+print(timings)
 
+timings <- as.data.frame(timings)
+timings$seconds <- timings$time/1e+9
+ScatterBoxPlotH(timings, xvar = "seconds", yvar = "expr", 
+                title="task time by method")
 
 parallel::stopCluster(cl)
 rm(list = "cl")
