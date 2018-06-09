@@ -167,7 +167,7 @@ head(resd)
     ## 6 key_7     7 0.642 20          0.573 20               1
 
 ``` r
-dlist <- mk_example(100, 1000)
+dlist <- mk_example(100, 500)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
@@ -175,20 +175,20 @@ timings <- microbenchmark(
   ex_data_table(optree),
   ex_data_table_parallel(optree, "key_group", cl),
   dplyr_pipeline(data, annotation),
-  times = 5L)
+  times = 10L)
 
 print(timings)
 ```
 
     ## Unit: seconds
     ##                                             expr       min        lq
-    ##                            ex_data_table(optree)  81.44652  83.24257
-    ##  ex_data_table_parallel(optree, "key_group", cl)  28.38191  30.15846
-    ##                 dplyr_pipeline(data, annotation) 114.32027 115.80974
+    ##                            ex_data_table(optree) 11.455902 11.717105
+    ##  ex_data_table_parallel(optree, "key_group", cl)  6.863079  6.994193
+    ##                 dplyr_pipeline(data, annotation) 17.882035 17.949630
     ##       mean    median        uq       max neval
-    ##   84.16198  83.36124  84.46936  88.29024     5
-    ##   35.25878  36.92311  39.89761  40.93283     5
-    ##  128.25947 123.10017 136.26301 151.80418     5
+    ##  12.540151 12.698474 13.023719 13.480221    10
+    ##   7.183781  7.037916  7.485714  7.514723    10
+    ##  18.373438 18.155752 18.819746 19.360643    10
 
 ``` r
 timings <- as.data.frame(timings)

@@ -79,6 +79,8 @@ ex_data_table_parallel <- function(optree,
       ntables[[ni]] <- ti[seq_len(source_limit), nsi, drop = FALSE]
     }
   }
+  env <- NULL
+  tables <- NULL
   # get a list of values of the partition column
   levels <- c()
   for(ni in names(ntables)) {
@@ -103,12 +105,14 @@ ex_data_table_parallel <- function(optree,
                         }
                         nti
                       })
+  ntables <- NULL
   if(debug) {
     res <- lapply(tablesets, parallel_f, optree = optree)
   } else {
     # dispatch the operation in parallel
     res <- parallel::clusterApplyLB(cl, tablesets, parallel_f, optree = optree)
   }
+  tablesets <- NULL
   res <- data.table::rbindlist(res)
   if("relop_orderby" %in% class(optree)) {
     reord <- orderby(local_td(res), cols = optree$orderby, reverse = optree$reverse)

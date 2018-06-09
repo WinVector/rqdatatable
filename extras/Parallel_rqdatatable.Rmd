@@ -87,7 +87,7 @@ dplyr_pipeline <- function(data, annotation) {
 resd <- dplyr_pipeline(data, annotation)
 head(resd)
 
-dlist <- mk_example(100, 1000)
+dlist <- mk_example(100, 500)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
@@ -95,7 +95,7 @@ timings <- microbenchmark(
   ex_data_table(optree),
   ex_data_table_parallel(optree, "key_group", cl),
   dplyr_pipeline(data, annotation),
-  times = 5L)
+  times = 10L)
 
 print(timings)
 
