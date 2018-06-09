@@ -45,6 +45,7 @@ ex_data_table_parallel <- function(optree,
                                    source_limit = NULL,
                                    debug = FALSE,
                                    env = parent.frame()) {
+  print(paste("start", Sys.time()))
   if(!requireNamespace("parallel", quietly = TRUE)) {
     stop("rqdatatable::ex_data_table_parallel requires the parallel package be installed.")
   }
@@ -91,27 +92,32 @@ ex_data_table_parallel <- function(optree,
     stop(paste("rqdatatable::ex_data_table_parallel no values found for partition column", partition_column))
   }
   # build a list of tablesets
+  print(paste("start split", Sys.time()))
   tablesets <- lapply(levels,
                       function(li) {
                         nti <- ntables
                         for(ni in names(ntables)) {
                           ti <- ntables[[ni]]
                           if(partition_column %in% colnames(ti)) {
-                            nti[[ni]] <- ti[as.character(ti[[partition_column]])==li, , drop = FALSE]
+                            ti <- ti[as.character(ti[[partition_column]])==li, , drop = FALSE]
                           }
+                          nti[[ni]] <- as.data.frame(ti)
                         }
                         nti
                       })
+  print(paste("start apply split", Sys.time()))
   if(debug) {
     res <- lapply(tablesets, parallel_f, optree = optree)
   } else {
     # dispatch the operation in parallel
-    res <- parallel::clusterApplyLB(cl, tablesets, parallel_f, optree = optree)
+    res <- parallel::clusterApply(cl, tablesets, parallel_f, optree = optree)
   }
+  print(Sys.time())
   res <- data.table::rbindlist(res)
   if("relop_orderby" %in% class(optree)) {
     reord <- orderby(local_td(res), cols = optree$orderby, reverse = optree$reverse)
     res <- ex_data_table(optree = reord)
   }
+  print(paste("done", Sys.time()))
   res
 }

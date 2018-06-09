@@ -2,4 +2,7 @@
 ^\.Rproj\.user$
 ^docs$
 ^README.Rmd$
+^extras$
+^.DS_Store$
+
 

@@ -2,11 +2,7 @@
 title: "Parallel rqdatatable"
 author: "John Mount"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Parallel rqdatatable}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: github_document
 ---
 
 One can try to execute `relop` trees in parallel. However, in unless the pipeline is very expensive
@@ -19,29 +15,27 @@ have_parallel <- requireNamespace("parallel", quietly = TRUE)
 
 ```{r ex, eval=have_parallel}
 library("rqdatatable")
-cl <- parallel::makeCluster(2)
+cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rquery"))
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
 
 set.seed(2362)
 mk_example <- function(nkey, nrow, nrep = 5) {
   keys <- paste0("key_", seq_len(nkey))
-  nrep <- 5
   key_table <- data.frame(
-    key = rep(keys, 5),
-    data = runif(nkey),
+    key = rep(keys, nrep),
     stringsAsFactors = FALSE)
+  key_table$data <- runif(nrow(key_table))
   instance_table <- data.frame(
     id = seq_len(nrow),
     key = sample(keys, nrow, replace = TRUE),
-    group = sample(letters[1:9], nrow, replace = TRUE),
     info = runif(nrow),
     stringsAsFactors = FALSE)
   list(key_table = key_table,
        instance_table = instance_table)
 }
 
-dlist <- mk_example(20, 100)
+dlist <- mk_example(10, 100, 10)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
@@ -66,17 +60,17 @@ res1 <- ex_data_table(optree)
 head(res1)
 nrow(res1)
 
-res2 <- ex_data_table_parallel(optree, "group", cl)
+res2 <- ex_data_table_parallel(optree, "key", cl)
 head(res2)
 nrow(res2)
 
-dlist <- mk_example(10000, 10000, 10)
+dlist <- mk_example(1000, 100000, 1000)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
 system.time(ex_data_table(optree))
 
-system.time(ex_data_table_parallel(optree, "group", cl))
+system.time(ex_data_table_parallel(optree, "key", cl))
 
 
 parallel::stopCluster(cl)
