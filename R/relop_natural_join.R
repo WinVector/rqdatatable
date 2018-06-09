@@ -8,19 +8,30 @@
 #'
 #' @examples
 #'
-#' a <- build_frame(
-#'     "x", "y" |
-#'     1L , "a" |
-#'     2L , "b" )
-#' b <- build_frame(
-#'     "x", "z" |
-#'     2L , "x" |
-#'     3L , "y" )
-#' rquery_pipeline <-
-#'   natural_join(local_td(a), local_td(b),
-#'                by = "x",
-#'                jointype = "FULL")
-#' ex_data_table(rquery_pipeline)[]
+#' d1 <- build_frame(
+#'     "key", "val", "val1" |
+#'       "a"  , 1  ,  10    |
+#'       "b"  , 2  ,  11    |
+#'       "c"  , 3  ,  12    )
+#' d2 <- build_frame(
+#'     "key", "val", "val2" |
+#'       "a"  , 5  ,  13    |
+#'       "b"  , 6  ,  14    |
+#'       "d"  , 7  ,  15    )
+#' # can't have shared non-key columns in rqdatatable yet
+#' d1$val <- NULL
+#' d2$val <- NULL
+#'
+#' # key matching join
+#' optree <- natural_join(local_td(d1), local_td(d2),
+#'                        jointype = "FULL", by = 'key')
+#' ex_data_table(optree)[]
+#'
+#' # can't have shared non-key columns in rqdatatable yet
+#' # # full cross-product join
+#' # optree2 <- natural_join(local_td(d1), local_td(d2),
+#' #                         jointype = "FULL", by = NULL)
+#' # ex_data_table(optree2)[]
 #'
 #' @export
 ex_data_table.relop_natural_join <- function(optree,
@@ -45,7 +56,7 @@ ex_data_table.relop_natural_join <- function(optree,
   B <- inputs[[2]]
   common <- sort(intersect(column_names(A), column_names(B)))
   if(!isTRUE(all.equal(common, sort(optree$by)))) {
-    stop("ex_data_table.relop_natural_join all common columns must be in by-clause")
+    stop("ex_data_table.relop_natural_join currently for data.table implementation all common columns must be in by-clause")
   }
   if(optree$jointype=="INNER") {
     merge(A, B, by = optree$by, all=FALSE, allow.cartesian=TRUE)

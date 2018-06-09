@@ -155,22 +155,34 @@ so all common columns must be join conditions.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/wrapr/topics/build_frame'>build_frame</a></span>(
-    <span class='st'>"x"</span>, <span class='st'>"y"</span> <span class='kw'>|</span>
-    <span class='fl'>1L</span> , <span class='st'>"a"</span> <span class='kw'>|</span>
-    <span class='fl'>2L</span> , <span class='st'>"b"</span> )
-<span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/wrapr/topics/build_frame'>build_frame</a></span>(
-    <span class='st'>"x"</span>, <span class='st'>"z"</span> <span class='kw'>|</span>
-    <span class='fl'>2L</span> , <span class='st'>"x"</span> <span class='kw'>|</span>
-    <span class='fl'>3L</span> , <span class='st'>"y"</span> )
-<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span>
-  <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/natural_join'>natural_join</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>a</span>), <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>b</span>),
-               <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>"x"</span>,
-               <span class='kw'>jointype</span> <span class='kw'>=</span> <span class='st'>"FULL"</span>)
-<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)[]</div><div class='output co'>#&gt;    x    y    z
-#&gt; 1: 1    a &lt;NA&gt;
-#&gt; 2: 2    b    x
-#&gt; 3: 3 &lt;NA&gt;    y</div><div class='input'>
+<span class='no'>d1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/wrapr/topics/build_frame'>build_frame</a></span>(
+    <span class='st'>"key"</span>, <span class='st'>"val"</span>, <span class='st'>"val1"</span> <span class='kw'>|</span>
+      <span class='st'>"a"</span>  , <span class='fl'>1</span>  ,  <span class='fl'>10</span>    <span class='kw'>|</span>
+      <span class='st'>"b"</span>  , <span class='fl'>2</span>  ,  <span class='fl'>11</span>    <span class='kw'>|</span>
+      <span class='st'>"c"</span>  , <span class='fl'>3</span>  ,  <span class='fl'>12</span>    )
+<span class='no'>d2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/wrapr/topics/build_frame'>build_frame</a></span>(
+    <span class='st'>"key"</span>, <span class='st'>"val"</span>, <span class='st'>"val2"</span> <span class='kw'>|</span>
+      <span class='st'>"a"</span>  , <span class='fl'>5</span>  ,  <span class='fl'>13</span>    <span class='kw'>|</span>
+      <span class='st'>"b"</span>  , <span class='fl'>6</span>  ,  <span class='fl'>14</span>    <span class='kw'>|</span>
+      <span class='st'>"d"</span>  , <span class='fl'>7</span>  ,  <span class='fl'>15</span>    )
+<span class='co'># can't have shared non-key columns in rqdatatable yet</span>
+<span class='no'>d1</span>$<span class='no'>val</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
+<span class='no'>d2</span>$<span class='no'>val</span> <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
+
+<span class='co'># key matching join</span>
+<span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/natural_join'>natural_join</a></span>(<span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d1</span>), <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d2</span>),
+                       <span class='kw'>jointype</span> <span class='kw'>=</span> <span class='st'>"FULL"</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='st'>'key'</span>)
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree</span>)[]</div><div class='output co'>#&gt;    key val1 val2
+#&gt; 1:   a   10   13
+#&gt; 2:   b   11   14
+#&gt; 3:   c   12   NA
+#&gt; 4:   d   NA   15</div><div class='input'>
+# can't have shared non-key columns in rqdatatable yet
+# # full cross-product join
+# optree2 <- natural_join(local_td(d1), local_td(d2),
+#                         jointype = "FULL", by = NULL)
+# ex_data_table(optree2)[]
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

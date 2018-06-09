@@ -100,11 +100,11 @@ nrow(res1)
 res2 <- ex_data_table_parallel(optree, "key", cl)
 ```
 
-    ## [1] "start 2018-06-09 09:01:52"
-    ## [1] "start split 2018-06-09 09:01:52"
-    ## [1] "start apply split 2018-06-09 09:01:52"
-    ## [1] "2018-06-09 09:01:52 PDT"
-    ## [1] "done 2018-06-09 09:01:52"
+    ## [1] "start 2018-06-09 09:44:38"
+    ## [1] "start split 2018-06-09 09:44:38"
+    ## [1] "start apply split 2018-06-09 09:44:38"
+    ## [1] "2018-06-09 09:44:38 PDT"
+    ## [1] "done 2018-06-09 09:44:38"
 
 ``` r
 head(res2)
@@ -133,20 +133,20 @@ system.time(ex_data_table(optree))
 ```
 
     ##    user  system elapsed 
-    ##  20.146   5.347  24.659
+    ##  21.766   9.261  31.369
 
 ``` r
 system.time(ex_data_table_parallel(optree, "key", cl))
 ```
 
-    ## [1] "start 2018-06-09 09:02:17"
-    ## [1] "start split 2018-06-09 09:02:17"
-    ## [1] "start apply split 2018-06-09 09:02:17"
-    ## [1] "2018-06-09 09:02:26 PDT"
-    ## [1] "done 2018-06-09 09:02:26"
+    ## [1] "start 2018-06-09 09:45:10"
+    ## [1] "start split 2018-06-09 09:45:10"
+    ## [1] "start apply split 2018-06-09 09:45:10"
+    ## [1] "2018-06-09 09:45:20 PDT"
+    ## [1] "done 2018-06-09 09:45:20"
 
     ##    user  system elapsed 
-    ##   0.407   0.073   9.479
+    ##   0.399   0.081  10.657
 
 ``` r
 parallel::stopCluster(cl)
