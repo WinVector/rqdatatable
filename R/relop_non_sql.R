@@ -183,6 +183,15 @@ rq_df_grouped_funciton_node <- function(., f,
 #'
 #' @seealso \code{\link{rq_df_funciton_node}}, \code{\link{rq_df_grouped_funciton_node}}
 #'
+#' @examples
+#'
+#' set.seed(3252)
+#' d <- data.frame(a = rnorm(1000), b = rnorm(1000))
+#' optree <- local_td(d) %.>%
+#'   quantile_node(.)
+#' ex_data_table(optree)
+#' summary(d)
+#'
 #' @inheritParams ex_data_table
 #' @export
 ex_data_table.relop_non_sql <- function(optree,

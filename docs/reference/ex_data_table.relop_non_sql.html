@@ -155,6 +155,25 @@
     <div class='dont-index'><p><code><a href='rq_df_funciton_node.html'>rq_df_funciton_node</a></code>, <code><a href='rq_df_grouped_funciton_node.html'>rq_df_grouped_funciton_node</a></code></p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='fu'>set.seed</span>(<span class='fl'>3252</span>)
+<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>), <span class='kw'>b</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>))
+<span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
+  <span class='fu'>quantile_node</span>(<span class='no'>.</span>)
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    quantile_probability           a           b
+#&gt; 1:                 0.00 -3.50439920 -3.28609345
+#&gt; 2:                 0.25 -0.68953634 -0.65437269
+#&gt; 3:                 0.50  0.06202078 -0.02633575
+#&gt; 4:                 0.75  0.70671528  0.68149724
+#&gt; 5:                 1.00  2.80643560  2.74298098</div><div class='input'><span class='fu'>summary</span>(<span class='no'>d</span>)</div><div class='output co'>#&gt;        a                  b            
+#&gt;  Min.   :-3.50440   Min.   :-3.286093  
+#&gt;  1st Qu.:-0.68729   1st Qu.:-0.653802  
+#&gt;  Median : 0.06250   Median :-0.023986  
+#&gt;  Mean   : 0.02377   Mean   : 0.009731  
+#&gt;  3rd Qu.: 0.70683   3rd Qu.: 0.682012  
+#&gt;  Max.   : 2.80644   Max.   : 2.742981  </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -162,7 +181,9 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
