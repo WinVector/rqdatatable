@@ -20,22 +20,22 @@ cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
 
 set.seed(2362)
-mk_example <- function(nkey, nrow, nrep = 5) {
+mk_example <- function(nkey, nrep) {
   keys <- paste0("key_", seq_len(nkey))
   key_table <- data.frame(
     key = rep(keys, nrep),
     stringsAsFactors = FALSE)
   key_table$data <- runif(nrow(key_table))
   instance_table <- data.frame(
-    id = seq_len(nrow),
-    key = sample(keys, nrow, replace = TRUE),
-    info = runif(nrow),
+    key = rep(keys, nrep),
     stringsAsFactors = FALSE)
+  instance_table$id <- seq_len(nrow(instance_table))
+  instance_table$info <- runif(nrow(instance_table))
   list(key_table = key_table,
        instance_table = instance_table)
 }
 
-dlist <- mk_example(10, 100, 10)
+dlist <- mk_example(10, 5)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
@@ -64,7 +64,7 @@ res2 <- ex_data_table_parallel(optree, "key", cl)
 head(res2)
 nrow(res2)
 
-dlist <- mk_example(1000, 100000, 1000)
+dlist <- mk_example(100, 1000)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 

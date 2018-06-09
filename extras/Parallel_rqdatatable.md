@@ -21,22 +21,22 @@ cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
 
 set.seed(2362)
-mk_example <- function(nkey, nrow, nrep = 5) {
+mk_example <- function(nkey, nrep) {
   keys <- paste0("key_", seq_len(nkey))
   key_table <- data.frame(
     key = rep(keys, nrep),
     stringsAsFactors = FALSE)
   key_table$data <- runif(nrow(key_table))
   instance_table <- data.frame(
-    id = seq_len(nrow),
-    key = sample(keys, nrow, replace = TRUE),
-    info = runif(nrow),
+    key = rep(keys, nrep),
     stringsAsFactors = FALSE)
+  instance_table$id <- seq_len(nrow(instance_table))
+  instance_table$info <- runif(nrow(instance_table))
   list(key_table = key_table,
        instance_table = instance_table)
 }
 
-dlist <- mk_example(10, 100, 10)
+dlist <- mk_example(10, 5)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
@@ -57,8 +57,8 @@ cat(format(optree))
 ```
 
     ## table('data'; 
-    ##   id,
     ##   key,
+    ##   id,
     ##   info) %.>%
     ##  natural_join(.,
     ##   table('annotation'; 
@@ -82,50 +82,50 @@ res1 <- ex_data_table(optree)
 head(res1)
 ```
 
-    ##         data id      info    key
-    ## 1: 0.6798646  1 0.7035685  key_7
-    ## 2: 0.7137628  2 0.7289375  key_8
-    ## 3: 0.3450735  3 0.5269276 key_10
-    ## 4: 0.6152025  4 0.8234298  key_2
-    ## 5: 0.6152025  5 0.7716559  key_2
-    ## 6: 0.6236996  7 0.6633022  key_6
+    ##         data id      info   key
+    ## 1: 0.4678928  1 0.6376330 key_1
+    ## 2: 0.3876909  2 0.6090348 key_2
+    ## 3: 0.5704148  3 0.9038968 key_3
+    ## 4: 0.2251412  4 0.2523321 key_4
+    ## 5: 0.2710549  5 0.5148019 key_5
+    ## 6: 0.7465447  6 0.9497908 key_6
 
 ``` r
 nrow(res1)
 ```
 
-    ## [1] 88
+    ## [1] 41
 
 ``` r
 res2 <- ex_data_table_parallel(optree, "key", cl)
 ```
 
-    ## [1] "start 2018-06-09 08:52:52"
-    ## [1] "start split 2018-06-09 08:52:52"
-    ## [1] "start apply split 2018-06-09 08:52:52"
-    ## [1] "2018-06-09 08:52:52 PDT"
-    ## [1] "done 2018-06-09 08:52:52"
+    ## [1] "start 2018-06-09 09:01:52"
+    ## [1] "start split 2018-06-09 09:01:52"
+    ## [1] "start apply split 2018-06-09 09:01:52"
+    ## [1] "2018-06-09 09:01:52 PDT"
+    ## [1] "done 2018-06-09 09:01:52"
 
 ``` r
 head(res2)
 ```
 
-    ##         data id      info    key
-    ## 1: 0.6798646  1 0.7035685  key_7
-    ## 2: 0.7137628  2 0.7289375  key_8
-    ## 3: 0.3450735  3 0.5269276 key_10
-    ## 4: 0.6152025  4 0.8234298  key_2
-    ## 5: 0.6152025  5 0.7716559  key_2
-    ## 6: 0.6236996  7 0.6633022  key_6
+    ##         data id      info   key
+    ## 1: 0.4678928  1 0.6376330 key_1
+    ## 2: 0.3876909  2 0.6090348 key_2
+    ## 3: 0.5704148  3 0.9038968 key_3
+    ## 4: 0.2251412  4 0.2523321 key_4
+    ## 5: 0.2710549  5 0.5148019 key_5
+    ## 6: 0.7465447  6 0.9497908 key_6
 
 ``` r
 nrow(res2)
 ```
 
-    ## [1] 88
+    ## [1] 41
 
 ``` r
-dlist <- mk_example(1000, 100000, 1000)
+dlist <- mk_example(100, 1000)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
@@ -133,20 +133,20 @@ system.time(ex_data_table(optree))
 ```
 
     ##    user  system elapsed 
-    ##  23.336   9.852  34.334
+    ##  20.146   5.347  24.659
 
 ``` r
 system.time(ex_data_table_parallel(optree, "key", cl))
 ```
 
-    ## [1] "start 2018-06-09 08:53:27"
-    ## [1] "start split 2018-06-09 08:53:27"
-    ## [1] "start apply split 2018-06-09 08:53:39"
-    ## [1] "2018-06-09 08:53:58 PDT"
-    ## [1] "done 2018-06-09 08:53:58"
+    ## [1] "start 2018-06-09 09:02:17"
+    ## [1] "start split 2018-06-09 09:02:17"
+    ## [1] "start apply split 2018-06-09 09:02:17"
+    ## [1] "2018-06-09 09:02:26 PDT"
+    ## [1] "done 2018-06-09 09:02:26"
 
     ##    user  system elapsed 
-    ##  10.757   2.009  30.386
+    ##   0.407   0.073   9.479
 
 ``` r
 parallel::stopCluster(cl)

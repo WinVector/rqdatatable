@@ -110,7 +110,7 @@ ex_data_table_parallel <- function(optree,
     res <- lapply(tablesets, parallel_f, optree = optree)
   } else {
     # dispatch the operation in parallel
-    res <- parallel::clusterApply(cl, tablesets, parallel_f, optree = optree)
+    res <- parallel::clusterApplyLB(cl, tablesets, parallel_f, optree = optree)
   }
   print(Sys.time())
   res <- data.table::rbindlist(res)
