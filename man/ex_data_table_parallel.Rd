@@ -34,4 +34,5 @@ Note: usually the overhead of partitioning and distributing the work will by far
 Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
 structured to ensure this.
 Also \code{data.table} itself already seems to exploit some thread-level parallelism (one often sees user time > elapsed time).
+Requires the \code{parallel} package.
 }

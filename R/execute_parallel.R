@@ -20,6 +20,7 @@ parallel_f <- function(tables, ...) {
 #' Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
 #' structured to ensure this.
 #' Also \code{data.table} itself already seems to exploit some thread-level parallelism (one often sees user time > elapsed time).
+#' Requires the \code{parallel} package.
 #'
 #'
 #' @param optree relop operations tree.
@@ -44,6 +45,10 @@ ex_data_table_parallel <- function(optree,
                                    source_limit = NULL,
                                    debug = FALSE,
                                    env = parent.frame()) {
+  if(!requireNamespace("parallel", quietly = TRUE)) {
+    stop("rqdatatable::ex_data_table_parallel requires the parallel package be installed.")
+  }
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_parallel")
   source_usage <- columns_used(optree)
   # make sure all needed tables are in the ntables list
   ntables <- list()

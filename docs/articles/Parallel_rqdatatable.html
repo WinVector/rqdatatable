@@ -82,7 +82,7 @@
       <h1>Parallel rqdatatable</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2018-06-08</h4>
+            <h4 class="date">2018-06-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable//blob/master/vignettes/Parallel_rqdatatable.Rmd"><code>vignettes/Parallel_rqdatatable.Rmd</code></a></small>
       <div class="hidden name"><code>Parallel_rqdatatable.Rmd</code></div>
@@ -92,6 +92,7 @@
     
     
 <p>One can try to execute <code>relop</code> trees in parallel. However, in unless the pipeline is very expensive the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup. Also <code>data.table</code> itself already seems to exploit some thread-level parallelism (notice user time &gt; elapsed time).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">have_parallel &lt;-<span class="st"> </span><span class="kw">requireNamespace</span>(<span class="st">"parallel"</span>, <span class="dt">quietly =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rqdatatable"</span>)</code></pre></div>
 <pre><code>## Loading required package: rquery</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cl &lt;-<span class="st"> </span>parallel<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/parallel/topics/makeCluster">makeCluster</a></span>(<span class="dv">2</span>)
@@ -183,10 +184,10 @@ annotation &lt;-<span class="st"> </span>dlist<span class="op">$</span>key_table
 
 <span class="kw">system.time</span>(<span class="kw"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(optree))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.065   0.013   0.041</code></pre>
+##   0.254   0.003   0.083</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">system.time</span>(<span class="kw"><a href="../reference/ex_data_table_parallel.html">ex_data_table_parallel</a></span>(optree, <span class="st">"group"</span>, cl))</code></pre></div>
 <pre><code>##    user  system elapsed 
-##   0.189   0.049   0.230</code></pre>
+##   0.231   0.032   0.251</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">parallel<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/parallel/topics/makeCluster">stopCluster</a></span>(cl)
 <span class="kw">rm</span>(<span class="dt">list =</span> <span class="st">"cl"</span>)</code></pre></div>
   </div>

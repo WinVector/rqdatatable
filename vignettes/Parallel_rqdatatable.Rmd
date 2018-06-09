@@ -13,7 +13,11 @@ One can try to execute `relop` trees in parallel. However, in unless the pipelin
 the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
 Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time > elapsed time).
 
-```{r}
+```{r setup}
+have_parallel <- requireNamespace("parallel", quietly = TRUE)
+```
+
+```{r ex, eval=have_parallel}
 library("rqdatatable")
 cl <- parallel::makeCluster(2)
 #parallel::clusterEvalQ(cl, library("rquery"))

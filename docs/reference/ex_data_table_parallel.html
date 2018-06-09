@@ -34,7 +34,8 @@
 Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
 Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
 structured to ensure this.
-Also data.table itself already seems to exploit some thread-level parallelism (one often sees user time &gt; elapsed time)." />
+Also data.table itself already seems to exploit some thread-level parallelism (one often sees user time &gt; elapsed time).
+Requires the parallel package." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -124,7 +125,8 @@ Also data.table itself already seems to exploit some thread-level parallelism (o
 Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
 Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
 structured to ensure this.
-Also <code>data.table</code> itself already seems to exploit some thread-level parallelism (one often sees user time &gt; elapsed time).</p>
+Also <code>data.table</code> itself already seems to exploit some thread-level parallelism (one often sees user time &gt; elapsed time).
+Requires the <code>parallel</code> package.</p>
     
     </div>
 
