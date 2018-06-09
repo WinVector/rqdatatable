@@ -159,6 +159,7 @@
     <pre class="examples"><div class='input'>
 <span class='fu'>set.seed</span>(<span class='fl'>3252</span>)
 <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>data.frame</span>(<span class='kw'>a</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>), <span class='kw'>b</span> <span class='kw'>=</span> <span class='fu'>rnorm</span>(<span class='fl'>1000</span>))
+
 <span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
   <span class='fu'>quantile_node</span>(<span class='no'>.</span>)
 <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    quantile_probability           a           b
@@ -166,7 +167,16 @@
 #&gt; 2:                 0.25 -0.68953634 -0.65437269
 #&gt; 3:                 0.50  0.06202078 -0.02633575
 #&gt; 4:                 0.75  0.70671528  0.68149724
-#&gt; 5:                 1.00  2.80643560  2.74298098</div><div class='input'><span class='fu'>summary</span>(<span class='no'>d</span>)</div><div class='output co'>#&gt;        a                  b            
+#&gt; 5:                 1.00  2.80643560  2.74298098</div><div class='input'>
+<span class='no'>p2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
+  <span class='fu'>rsummary_node</span>(<span class='no'>.</span>)
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>p2</span>)[]</div><div class='output co'>#&gt;    column index   class nrows nna nunique       min      max        mean
+#&gt; 1:      a     1 numeric  1000   0    1000 -3.504399 2.806436 0.023769312
+#&gt; 2:      b     2 numeric  1000   0    1000 -3.286093 2.742981 0.009730607
+#&gt;           sd lexmin lexmax
+#&gt; 1: 1.0276878     NA     NA
+#&gt; 2: 0.9885712     NA     NA</div><div class='input'>
+<span class='fu'>summary</span>(<span class='no'>d</span>)</div><div class='output co'>#&gt;        a                  b            
 #&gt;  Min.   :-3.50440   Min.   :-3.286093  
 #&gt;  1st Qu.:-0.68729   1st Qu.:-0.653802  
 #&gt;  Median : 0.06250   Median :-0.023986  

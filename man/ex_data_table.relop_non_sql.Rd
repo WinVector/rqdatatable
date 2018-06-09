@@ -27,9 +27,15 @@ Passes a single table to a function that takes a single data.frame as its arguem
 
 set.seed(3252)
 d <- data.frame(a = rnorm(1000), b = rnorm(1000))
+
 optree <- local_td(d) \%.>\%
   quantile_node(.)
 ex_data_table(optree)
+
+p2 <- local_td(d) \%.>\%
+  rsummary_node(.)
+ex_data_table(p2)[]
+
 summary(d)
 
 }
