@@ -23,7 +23,7 @@
 \description{
 Execute one step using the rquery.rquery_db_executor SQL supplier.  Note: it is not
 a good practice to use SQL nodes in data.table intended pipelines (loss of class information and
-cost of data transfer).
+cost of data transfer).  This implementation is only here for completeness.
 }
 \examples{
 
@@ -62,7 +62,7 @@ if (requireNamespace("DBI", quietly = TRUE) &&
 
   ex_data_table(op_tree, tables = list(d = d)) \%.>\%
     print(.)
-  #d \%.>\% op_tree
+  # d \%.>\% op_tree
 
   options(old_o)
   DBI::dbDisconnect(my_db)

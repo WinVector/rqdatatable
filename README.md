@@ -121,6 +121,12 @@ build_frame(
 
 Initial bench-marking of `rqdatatable` is very favorable (notes [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
+`rqdatatable` is a fairly complete implementation of `rquery`. The main differences include:
+
+-   The `rqdatatable` `non_sql_node()` implementation uses a different function handle than the `rquery` SQL implementations of "non-SQL" functions. The consequence is `rqdatatable` does not inherit implementations for the `non_sql_node`s: `rquery::rsummary()`, `rquery::quantile()`, and `rquery::materialize_node()`.
+-   `rqdatatable` does implement `theta_join()`, however that is only by round-tripping through a database handle specified by the `rquery.rquery_db_executor` option (so it is not a very desirable implementation).
+-   `rqdatatable` does implement `sql_node()`, however that is only by round-tripping through a database handle specified by the `rquery.rquery_db_executor` option (so it is not a very desirable implementation).
+
 To install `rqdatatable` please use `devtools` as follows.
 
 ``` r

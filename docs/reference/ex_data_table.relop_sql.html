@@ -32,7 +32,7 @@
 
 <meta property="og:description" content="Execute one step using the rquery.rquery_db_executor SQL supplier.  Note: it is not
 a good practice to use SQL nodes in data.table intended pipelines (loss of class information and
-cost of data transfer)." />
+cost of data transfer).  This implementation is only here for completeness." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -117,7 +117,7 @@ cost of data transfer)." />
     
     <p>Execute one step using the rquery.rquery_db_executor SQL supplier.  Note: it is not
 a good practice to use SQL nodes in data.table intended pipelines (loss of class information and
-cost of data transfer).</p>
+cost of data transfer).  This implementation is only here for completeness.</p>
     
     </div>
 
@@ -192,7 +192,7 @@ cost of data transfer).</p>
 
   <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>op_tree</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>d</span> <span class='kw'>=</span> <span class='no'>d</span>)) <span class='kw'>%.&gt;%</span>
     <span class='fu'>print</span>(<span class='no'>.</span>)
-  <span class='co'>#d %.&gt;% op_tree</span>
+  <span class='co'># d %.&gt;% op_tree</span>
 
   <span class='fu'>options</span>(<span class='no'>old_o</span>)
   <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbDisconnect'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
