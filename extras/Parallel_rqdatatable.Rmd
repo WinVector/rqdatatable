@@ -17,6 +17,7 @@ have_parallel <- requireNamespace("parallel", quietly = TRUE)
 library("rqdatatable")
 library("microbenchmark")
 library("WVPlots")
+library("dplyr")
 
 cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rquery"))
@@ -63,7 +64,6 @@ optree <- local_td(data) %.>%
   orderby(., "id")
 cat(format(optree))
 
-                   
 
 res1 <- ex_data_table(optree)
 head(res1)
@@ -73,6 +73,20 @@ res2 <- ex_data_table_parallel(optree, "key_group", cl)
 head(res2)
 nrow(res2)
 
+dplyr_pipeline <- function(data, annotation) {
+  data %>%
+    inner_join(annotation, by = "key") %>%
+    filter(data <= info) %>%
+    group_by(id) %>%
+    arrange(-data) %>%
+    mutate(rownum = row_number()) %>%
+    ungroup() %>%
+    filter(rownum == 1) %>%
+    arrange(id)
+}
+resd <- dplyr_pipeline(data, annotation)
+head(resd)
+
 dlist <- mk_example(100, 1000)
 data <- dlist$instance_table
 annotation <- dlist$key_table
@@ -80,6 +94,7 @@ annotation <- dlist$key_table
 timings <- microbenchmark(
   ex_data_table(optree),
   ex_data_table_parallel(optree, "key_group", cl),
+  dplyr_pipeline(data, annotation),
   times = 5L)
 
 print(timings)

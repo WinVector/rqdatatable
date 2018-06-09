@@ -18,7 +18,21 @@ library("rqdatatable")
 ``` r
 library("microbenchmark")
 library("WVPlots")
+library("dplyr")
+```
 
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rquery"))
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
@@ -127,6 +141,32 @@ nrow(res2)
     ## [1] 38
 
 ``` r
+dplyr_pipeline <- function(data, annotation) {
+  data %>%
+    inner_join(annotation, by = "key") %>%
+    filter(data <= info) %>%
+    group_by(id) %>%
+    arrange(-data) %>%
+    mutate(rownum = row_number()) %>%
+    ungroup() %>%
+    filter(rownum == 1) %>%
+    arrange(id)
+}
+resd <- dplyr_pipeline(data, annotation)
+head(resd)
+```
+
+    ## # A tibble: 6 x 7
+    ##   key      id  info key_group.x  data key_group.y rownum
+    ##   <chr> <int> <dbl> <chr>       <dbl> <chr>        <int>
+    ## 1 key_1     1 0.330 20          0.225 20               1
+    ## 2 key_2     2 0.615 8           0.609 8                1
+    ## 3 key_3     3 0.293 10          0.280 10               1
+    ## 4 key_4     4 0.781 5           0.419 5                1
+    ## 5 key_5     5 0.448 14          0.271 14               1
+    ## 6 key_7     7 0.642 20          0.573 20               1
+
+``` r
 dlist <- mk_example(100, 1000)
 data <- dlist$instance_table
 annotation <- dlist$key_table
@@ -134,18 +174,21 @@ annotation <- dlist$key_table
 timings <- microbenchmark(
   ex_data_table(optree),
   ex_data_table_parallel(optree, "key_group", cl),
+  dplyr_pipeline(data, annotation),
   times = 5L)
 
 print(timings)
 ```
 
     ## Unit: seconds
-    ##                                             expr      min       lq
-    ##                            ex_data_table(optree) 80.50610 90.11854
-    ##  ex_data_table_parallel(optree, "key_group", cl) 27.37802 29.24340
-    ##      mean   median        uq       max neval
-    ##  93.77499 92.50298 101.68539 104.06193     5
-    ##  31.69469 30.72369  34.06809  37.06025     5
+    ##                                             expr       min        lq
+    ##                            ex_data_table(optree)  81.44652  83.24257
+    ##  ex_data_table_parallel(optree, "key_group", cl)  28.38191  30.15846
+    ##                 dplyr_pipeline(data, annotation) 114.32027 115.80974
+    ##       mean    median        uq       max neval
+    ##   84.16198  83.36124  84.46936  88.29024     5
+    ##   35.25878  36.92311  39.89761  40.93283     5
+    ##  128.25947 123.10017 136.26301 151.80418     5
 
 ``` r
 timings <- as.data.frame(timings)
