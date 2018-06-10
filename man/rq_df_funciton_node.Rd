@@ -4,7 +4,7 @@
 \alias{rq_df_funciton_node}
 \title{Helper to build data.table capable non-sql nodes.}
 \usage{
-rq_df_funciton_node(., f, ..., columns_produced, display_form,
+rq_df_funciton_node(., f, ..., f_db = NULL, columns_produced, display_form,
   orig_columns = FALSE)
 }
 \arguments{
@@ -13,6 +13,8 @@ rq_df_funciton_node(., f, ..., columns_produced, display_form,
 \item{f}{function that takes a data.table to a data.frame (or data.table).}
 
 \item{...}{force later arguments to bind by name.}
+
+\item{f_db}{implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)}
 
 \item{columns_produced}{character columns produces by f.}
 

@@ -117,7 +117,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>rq_df_funciton_node</span>(<span class='no'>.</span>, <span class='no'>f</span>, <span class='no'>...</span>, <span class='no'>columns_produced</span>, <span class='no'>display_form</span>,
+    <pre class="usage"><span class='fu'>rq_df_funciton_node</span>(<span class='no'>.</span>, <span class='no'>f</span>, <span class='no'>...</span>, <span class='kw'>f_db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>columns_produced</span>, <span class='no'>display_form</span>,
   <span class='kw'>orig_columns</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -134,6 +134,10 @@
     <tr>
       <th>...</th>
       <td><p>force later arguments to bind by name.</p></td>
+    </tr>
+    <tr>
+      <th>f_db</th>
+      <td><p>implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)</p></td>
     </tr>
     <tr>
       <th>columns_produced</th>

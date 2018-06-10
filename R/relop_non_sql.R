@@ -1,10 +1,21 @@
 
 
+mk_f_db_default <- function(f, cols) {
+  function(db, incoming_table_name, outgoing_table_name) {
+    colstr <- paste(cols, collapse = ", ") # TODO: quote colnames and table name
+    q <- paste0("SELECT ", colstr, " FROM ", incoming_table_name)
+    d <- rquery::rq_get_query(db, q)
+    res <- f(d)
+    rquery::rq_copy_to(db, outgoing_table_name, res)
+  }
+}
+
 #' Helper to build data.table capable non-sql nodes.
 #'
 #' @param . or data.frame input.
 #' @param f function that takes a data.table to a data.frame (or data.table).
 #' @param ... force later arguments to bind by name.
+#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)
 #' @param columns_produced character columns produces by f.
 #' @param display_form display form for node.
 #' @param orig_columns orig_columns, if TRUE assume all input columns are present in derived table.
@@ -59,17 +70,21 @@
 #'
 rq_df_funciton_node <- function(., f,
                                 ...,
+                                f_db = NULL,
                                 columns_produced,
                                 display_form,
                                 orig_columns = FALSE) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::rq_df_funciton_node")
+  cols <- column_names(.)
   if(orig_columns) {
-    cols <- column_names(.)
     missing <- setdiff(columns_produced, cols)
     columns_produced <- c(columns_produced, missing)
   }
+  if(is.null(f_db)) {
+    f_db <- mk_f_db_default(f, cols)
+  }
   non_sql_node(.,
-               f_db = function(...) { stop("db function not implemented") },
+               f_db = f_db,
                f_df = f,
                incoming_table_name = "incoming_table_name",
                outgoing_table_name = "outgoing_table_name",
@@ -87,6 +102,7 @@ rq_df_funciton_node <- function(., f,
 #' @param . or data.frame input.
 #' @param f function that takes a data.table to a data.frame (or data.table).
 #' @param ... force later arguments to bind by name.
+#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)
 #' @param columns_produced character columns produces by f.
 #' @param group_col character, column to split by.
 #' @param display_form display form for node.
@@ -136,6 +152,7 @@ rq_df_funciton_node <- function(., f,
 #'
 rq_df_grouped_funciton_node <- function(., f,
                                         ...,
+                                        f_db = NULL,
                                         columns_produced,
                                         group_col,
                                         display_form) {
@@ -164,8 +181,11 @@ rq_df_grouped_funciton_node <- function(., f,
                     })
     data.table::rbindlist(clist)
   }
+  if(is.null(f_db)) {
+    f_db <- mk_f_db_default(fg, cols)
+  }
   non_sql_node(.,
-               f_db = function(...) { stop("db function not implemented") },
+               f_db = f_db,
                f_df = fg,
                incoming_table_name = "incoming_table_name",
                outgoing_table_name = "outgoing_table_name",
