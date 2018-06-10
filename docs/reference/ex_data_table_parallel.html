@@ -30,12 +30,10 @@
 
 <meta property="og:title" content="Execute an <code>rquery</code> pipeline with <code>data.table</code> in parallel. — ex_data_table_parallel" />
 
-<meta property="og:description" content="Execute an rquery pipeline with data.table in parallel partitioned by a given column.
+<meta property="og:description" content="Execute an rquery pipeline with data.table in parallel, partitioned by a given column.
 Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
-Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
-structured to ensure this.
 Also data.table itself already seems to exploit some thread-level parallelism (one often sees user time &gt; elapsed time).
-Requires the parallel package." />
+Requires the parallel package.  For a worked example with significant speedup please see https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -118,12 +116,10 @@ Requires the parallel package." />
 
     <div class="ref-description">
     
-    <p>Execute an <code>rquery</code> pipeline with <code>data.table</code> in parallel partitioned by a given column.
+    <p>Execute an <code>rquery</code> pipeline with <code>data.table</code> in parallel, partitioned by a given column.
 Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
-Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
-structured to ensure this.
 Also <code>data.table</code> itself already seems to exploit some thread-level parallelism (one often sees user time &gt; elapsed time).
-Requires the <code>parallel</code> package.</p>
+Requires the <code>parallel</code> package.  For a worked example with significant speedup please see <a href='https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md'>https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md</a>.</p>
     
     </div>
 
@@ -172,6 +168,12 @@ Requires the <code>parallel</code> package.</p>
 
     <p>resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).</p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Care must be taken that the calculation partitioning is course enough to ensure a correct calculation.  For example: anything
+one is joining on, aggergating over, or ranking over must be grouped so that all elements affecting a given result row are
+in the same level of the partition.</p>
+    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -180,6 +182,8 @@ Requires the <code>parallel</code> package.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
           </ul>
 
   </div>

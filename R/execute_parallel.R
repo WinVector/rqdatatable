@@ -15,12 +15,14 @@ parallel_f <- function(tables, ...) {
 
 #' Execute an \code{rquery} pipeline with \code{data.table} in parallel.
 #'
-#' Execute an \code{rquery} pipeline with \code{data.table} in parallel partitioned by a given column.
+#' Execute an \code{rquery} pipeline with \code{data.table} in parallel, partitioned by a given column.
 #' Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
-#' Also, not all optrees return the same result partitioned as when not partitioned: the user must ensure the partitioning column is
-#' structured to ensure this.
 #' Also \code{data.table} itself already seems to exploit some thread-level parallelism (one often sees user time > elapsed time).
-#' Requires the \code{parallel} package.
+#' Requires the \code{parallel} package.  For a worked example with significant speedup please see \url{https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md}.
+#'
+#' Care must be taken that the calculation partitioning is course enough to ensure a correct calculation.  For example: anything
+#' one is joining on, aggergating over, or ranking over must be grouped so that all elements affecting a given result row are
+#' in the same level of the partition.
 #'
 #'
 #' @param optree relop operations tree.
