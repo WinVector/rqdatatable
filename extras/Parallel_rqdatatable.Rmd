@@ -132,7 +132,13 @@ autoplot(timings)
 
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
-ScatterBoxPlotH(timings, xvar = "seconds", yvar = "expr", 
+
+ScatterBoxPlotH(timings, 
+                xvar = "seconds", yvar = "expr", 
+                title="task duration by method")
+
+ScatterBoxPlotH(timings[timings$expr != 'dplyr', , drop = FALSE],
+                xvar = "seconds", yvar = "expr", 
                 title="task duration by method")
 ```
 

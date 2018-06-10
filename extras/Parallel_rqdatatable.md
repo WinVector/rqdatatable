@@ -37,7 +37,7 @@ library("dplyr")
 base::date()
 ```
 
-    ## [1] "Sun Jun 10 09:56:17 2018"
+    ## [1] "Sun Jun 10 10:14:07 2018"
 
 ``` r
 R.version.string
@@ -237,14 +237,14 @@ print(timings)
 ```
 
     ## Unit: seconds
-    ##                  expr       min        lq     mean    median        uq
-    ##  rqdatatable_parallel  7.362631  7.850774  8.42504  7.934196  9.461763
-    ##           rqdatatable 12.364082 12.737838 13.48126 13.407365 14.049963
-    ##                 dplyr 19.379079 20.330585 20.74812 20.786257 21.247072
-    ##       max neval
-    ##  10.20410    10
-    ##  14.84257    10
-    ##  21.83926    10
+    ##                  expr      min        lq      mean    median        uq
+    ##  rqdatatable_parallel  6.85633  7.104419  7.317883  7.306091  7.458136
+    ##           rqdatatable 12.06348 12.119306 13.170637 12.495268 13.372936
+    ##                 dplyr 17.48531 18.001865 19.299877 18.429629 18.723737
+    ##        max neval
+    ##   7.918711    10
+    ##  17.570124    10
+    ##  27.154656    10
 
 ``` r
 autoplot(timings)
@@ -255,11 +255,21 @@ autoplot(timings)
 ``` r
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
-ScatterBoxPlotH(timings, xvar = "seconds", yvar = "expr", 
+
+ScatterBoxPlotH(timings, 
+                xvar = "seconds", yvar = "expr", 
                 title="task duration by method")
 ```
 
 ![](Parallel_rqdatatable_files/figure-markdown_github/present-2.png)
+
+``` r
+ScatterBoxPlotH(timings[timings$expr != 'dplyr', , drop = FALSE],
+                xvar = "seconds", yvar = "expr", 
+                title="task duration by method")
+```
+
+![](Parallel_rqdatatable_files/figure-markdown_github/present-3.png)
 
 [`multidplyr`](https://github.com/hadley/multidplyr) does not appear to work on this example, so we could not include it in the timings.
 
@@ -290,13 +300,13 @@ head(datap)
 ```
 
     ## # A tibble: 6 x 4
-    ## # Groups:   key_group [4]
+    ## # Groups:   key_group [3]
     ##   key       id  info key_group
     ##   <chr>  <int> <dbl> <chr>    
-    ## 1 key_5      5 0.402 4        
-    ## 2 key_14    14 0.246 19       
-    ## 3 key_21    21 0.940 13       
-    ## 4 key_29    29 0.184 4        
+    ## 1 key_2      2 0.165 12       
+    ## 2 key_9      9 0.446 3        
+    ## 3 key_22    22 0.696 3        
+    ## 4 key_26    26 0.449 3        
     ## 5 key_33    33 0.376 6        
     ## 6 key_34    34 0.250 6
 
@@ -323,15 +333,15 @@ head(annotationp)
 ```
 
     ## # A tibble: 6 x 3
-    ## # Groups:   key_group [4]
+    ## # Groups:   key_group [2]
     ##   key      data key_group
     ##   <chr>   <dbl> <chr>    
-    ## 1 key_2  0.920  12       
-    ## 2 key_4  0.631  8        
-    ## 3 key_6  0.594  8        
-    ## 4 key_13 0.117  1        
-    ## 5 key_15 0.0999 5        
-    ## 6 key_16 0.237  5
+    ## 1 key_7  0.547  16       
+    ## 2 key_8  0.0380 16       
+    ## 3 key_11 0.677  16       
+    ## 4 key_15 0.0999 5        
+    ## 5 key_16 0.237  5        
+    ## 6 key_18 0.693  5
 
 ``` r
 class(annotationp)
