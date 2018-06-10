@@ -1,13 +1,13 @@
 Parallel rqdatatable
 ================
 John Mount
-2018-06-09
+2018-06-10
 
-One can try to execute `relop` trees in parallel. However, in unless the pipeline is very expensive the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time &gt; elapsed time).
+One can try to execute [`rquery`](https://github.com/WinVector/rquery) `relop` trees in parallel using [`rqdatatable`](https://github.com/WinVector/rqdatatable). However, unless the pipeline is very expensive the overhead of partitioning and distributing the work will usually overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time &gt; elapsed time).
 
-``` r
-have_parallel <- requireNamespace("parallel", quietly = TRUE)
-```
+That being said, we can test an example where computation is expensive due to a blow-up in an intermediate join step.
+
+Set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB ram and hybrid disk drive).
 
 ``` r
 library("rqdatatable")
@@ -17,6 +17,7 @@ library("rqdatatable")
 
 ``` r
 library("microbenchmark")
+library("ggplot2")
 library("WVPlots")
 library("dplyr")
 ```
@@ -33,9 +34,52 @@ library("dplyr")
     ##     intersect, setdiff, setequal, union
 
 ``` r
+base::date()
+```
+
+    ## [1] "Sun Jun 10 09:42:24 2018"
+
+``` r
+R.version.string
+```
+
+    ## [1] "R version 3.5.0 (2018-04-23)"
+
+``` r
+parallel::detectCores()
+```
+
+    ## [1] 4
+
+``` r
+packageVersion("parallel")
+```
+
+    ## [1] '3.5.0'
+
+``` r
+packageVersion("rqdatatable")
+```
+
+    ## [1] '0.1.0'
+
+``` r
+packageVersion("rquery")
+```
+
+    ## [1] '0.5.0'
+
+``` r
+packageVersion("dplyr")
+```
+
+    ## [1] '0.7.5'
+
+``` r
 cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rquery"))
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
+
 
 set.seed(2362)
 mk_example <- function(nkey, nrep, ngroup = 20) {
@@ -62,8 +106,11 @@ mk_example <- function(nkey, nrep, ngroup = 20) {
 dlist <- mk_example(10, 5)
 data <- dlist$instance_table
 annotation <- dlist$key_table
+```
 
+[`rquery`](https://github.com/WinVector/rquery) and [`rqdatatable`](https://github.com/WinVector/rqdatatable) can operate a non-trivial operation tree as follows.
 
+``` r
 # possible data lookup: find rows that
 # have lookup data <= info
 optree <- local_td(data) %.>%
@@ -121,6 +168,8 @@ nrow(res1)
 
     ## [1] 38
 
+And we can execute the operations in parallel.
+
 ``` r
 res2 <- ex_data_table_parallel(optree, "key_group", cl)
 head(res2)
@@ -140,6 +189,8 @@ nrow(res2)
 
     ## [1] 38
 
+[`dplyr`](https://CRAN.R-project.org/package=dplyr) works similarly.
+
 ``` r
 dplyr_pipeline <- function(data, annotation) {
   data %>%
@@ -152,6 +203,7 @@ dplyr_pipeline <- function(data, annotation) {
     filter(rownum == 1) %>%
     arrange(id)
 }
+
 resd <- dplyr_pipeline(data, annotation)
 head(resd)
 ```
@@ -166,38 +218,133 @@ head(resd)
     ## 5 key_5     5 0.448 14          0.271 14               1
     ## 6 key_7     7 0.642 20          0.573 20               1
 
+We can time the various realizations.
+
 ``` r
 dlist <- mk_example(100, 500)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
 timings <- microbenchmark(
-  ex_data_table(optree),
-  ex_data_table_parallel(optree, "key_group", cl),
-  dplyr_pipeline(data, annotation),
+  rqdatatable_parallel = ex_data_table_parallel(optree, "key_group", cl),
+  rqdatatable = ex_data_table(optree),
+  dplyr = dplyr_pipeline(data, annotation),
   times = 10L)
+```
 
+``` r
 print(timings)
 ```
 
     ## Unit: seconds
-    ##                                             expr       min        lq
-    ##                            ex_data_table(optree) 11.455902 11.717105
-    ##  ex_data_table_parallel(optree, "key_group", cl)  6.863079  6.994193
-    ##                 dplyr_pipeline(data, annotation) 17.882035 17.949630
-    ##       mean    median        uq       max neval
-    ##  12.540151 12.698474 13.023719 13.480221    10
-    ##   7.183781  7.037916  7.485714  7.514723    10
-    ##  18.373438 18.155752 18.819746 19.360643    10
+    ##                  expr       min        lq      mean   median        uq
+    ##  rqdatatable_parallel  6.895417  7.047849  7.708338  7.26522  7.374688
+    ##           rqdatatable 12.132320 12.383989 12.868656 12.54442 13.325613
+    ##                 dplyr 18.197696 18.526309 20.531623 18.82655 20.353618
+    ##       max neval
+    ##  10.05320    10
+    ##  14.55186    10
+    ##  31.89347    10
+
+``` r
+autoplot(timings)
+```
+
+![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
 
 ``` r
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
 ScatterBoxPlotH(timings, xvar = "seconds", yvar = "expr", 
-                title="task time by method")
+                title="task duration by method")
 ```
 
-![](Parallel_rqdatatable_files/figure-markdown_github/ex-1.png)
+![](Parallel_rqdatatable_files/figure-markdown_github/present-2.png)
+
+[`multidplyr`](https://github.com/hadley/multidplyr) does not appear to work on this example, so we could not include it in the timings.
+
+``` r
+library("multidplyr") # https://github.com/hadley/multidplyr
+packageVersion("multidplyr")
+```
+
+    ## [1] '0.0.0.9000'
+
+``` r
+multidplyr::set_default_cluster(cl)
+
+# example similar to https://github.com/hadley/multidplyr/blob/master/vignettes/multidplyr.Rmd
+class(data)
+```
+
+    ## [1] "data.frame"
+
+``` r
+datap <- multidplyr::partition(data, key_group)
+```
+
+    ## Warning: group_indices_.grouped_df ignores extra arguments
+
+``` r
+head(datap)
+```
+
+    ## # A tibble: 6 x 4
+    ## # Groups:   key_group [4]
+    ##   key       id  info key_group
+    ##   <chr>  <int> <dbl> <chr>    
+    ## 1 key_5      5 0.402 4        
+    ## 2 key_14    14 0.246 19       
+    ## 3 key_21    21 0.940 13       
+    ## 4 key_29    29 0.184 4        
+    ## 5 key_33    33 0.376 6        
+    ## 6 key_34    34 0.250 6
+
+``` r
+class(datap)
+```
+
+    ## [1] "party_df"
+
+``` r
+class(annotation)
+```
+
+    ## [1] "data.frame"
+
+``` r
+annotationp <- multidplyr::partition(annotation, key_group)
+```
+
+    ## Warning: group_indices_.grouped_df ignores extra arguments
+
+``` r
+head(annotationp)
+```
+
+    ## # A tibble: 6 x 3
+    ## # Groups:   key_group [4]
+    ##   key      data key_group
+    ##   <chr>   <dbl> <chr>    
+    ## 1 key_2  0.920  12       
+    ## 2 key_4  0.631  8        
+    ## 3 key_6  0.594  8        
+    ## 4 key_13 0.117  1        
+    ## 5 key_15 0.0999 5        
+    ## 6 key_16 0.237  5
+
+``` r
+class(annotationp)
+```
+
+    ## [1] "party_df"
+
+``` r
+dplyr_pipeline(datap, annotationp) %>%
+  collect()
+```
+
+    ## Error in UseMethod("inner_join"): no applicable method for 'inner_join' applied to an object of class "party_df"
 
 ``` r
 parallel::stopCluster(cl)

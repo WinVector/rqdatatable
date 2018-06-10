@@ -5,23 +5,34 @@ date: "`r Sys.Date()`"
 output: github_document
 ---
 
-One can try to execute `relop` trees in parallel. However, in unless the pipeline is very expensive
-the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
+One can try to execute [`rquery`](https://github.com/WinVector/rquery) `relop` trees in parallel using [`rqdatatable`](https://github.com/WinVector/rqdatatable). However, unless the pipeline is very expensive
+the overhead of partitioning and distributing the work will usually overwhelm any parallel speedup.
 Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time > elapsed time).
 
-```{r setup}
-have_parallel <- requireNamespace("parallel", quietly = TRUE)
-```
+That being said, we can test an example where computation is expensive due to a blow-up in an intermediate join step.
 
-```{r ex, eval=have_parallel}
+Set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB ram and hybrid disk drive).
+
+```{r ex}
 library("rqdatatable")
 library("microbenchmark")
+library("ggplot2")
 library("WVPlots")
 library("dplyr")
+
+base::date()
+R.version.string
+parallel::detectCores()
+packageVersion("parallel")
+packageVersion("rqdatatable")
+packageVersion("rquery")
+packageVersion("dplyr")
+
 
 cl <- parallel::makeCluster(4)
 #parallel::clusterEvalQ(cl, library("rquery"))
 #parallel::clusterEvalQ(cl, library("rqdatatable"))
+
 
 set.seed(2362)
 mk_example <- function(nkey, nrep, ngroup = 20) {
@@ -48,8 +59,11 @@ mk_example <- function(nkey, nrep, ngroup = 20) {
 dlist <- mk_example(10, 5)
 data <- dlist$instance_table
 annotation <- dlist$key_table
+```
 
+[`rquery`](https://github.com/WinVector/rquery) and [`rqdatatable`](https://github.com/WinVector/rqdatatable) can operate a non-trivial operation tree as follows.
 
+```{r rquery1}
 # possible data lookup: find rows that
 # have lookup data <= info
 optree <- local_td(data) %.>%
@@ -68,11 +82,19 @@ cat(format(optree))
 res1 <- ex_data_table(optree)
 head(res1)
 nrow(res1)
+```
 
+And we can execute the operations in parallel.
+
+```{r rqdatatablep1}
 res2 <- ex_data_table_parallel(optree, "key_group", cl)
 head(res2)
 nrow(res2)
+```
 
+[`dplyr`](https://CRAN.R-project.org/package=dplyr) works similarly.
+
+```{r dplyr1}
 dplyr_pipeline <- function(data, annotation) {
   data %>%
     inner_join(annotation, by = "key") %>%
@@ -84,26 +106,63 @@ dplyr_pipeline <- function(data, annotation) {
     filter(rownum == 1) %>%
     arrange(id)
 }
+
 resd <- dplyr_pipeline(data, annotation)
 head(resd)
+```
 
+We can time the various realizations.
+
+```{r, timings}
 dlist <- mk_example(100, 500)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
 timings <- microbenchmark(
-  ex_data_table(optree),
-  ex_data_table_parallel(optree, "key_group", cl),
-  dplyr_pipeline(data, annotation),
+  rqdatatable_parallel = ex_data_table_parallel(optree, "key_group", cl),
+  rqdatatable = ex_data_table(optree),
+  dplyr = dplyr_pipeline(data, annotation),
   times = 10L)
+```
 
+```{r present}
 print(timings)
+
+autoplot(timings)
 
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
 ScatterBoxPlotH(timings, xvar = "seconds", yvar = "expr", 
-                title="task time by method")
+                title="task duration by method")
+```
 
+
+
+[`multidplyr`](https://github.com/hadley/multidplyr) does not appear to work on this example,
+so we could not include it in the timings.
+
+```{r multidplyr, error=TRUE}
+library("multidplyr") # https://github.com/hadley/multidplyr
+packageVersion("multidplyr")
+multidplyr::set_default_cluster(cl)
+
+# example similar to https://github.com/hadley/multidplyr/blob/master/vignettes/multidplyr.Rmd
+class(data)
+datap <- multidplyr::partition(data, key_group)
+head(datap)
+class(datap)
+
+class(annotation)
+annotationp <- multidplyr::partition(annotation, key_group)
+head(annotationp)
+class(annotationp)
+
+dplyr_pipeline(datap, annotationp) %>%
+  collect()
+```
+
+
+```{r cleanup}
 parallel::stopCluster(cl)
 rm(list = "cl")
 ```
