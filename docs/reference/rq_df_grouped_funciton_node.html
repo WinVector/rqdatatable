@@ -137,7 +137,7 @@
     </tr>
     <tr>
       <th>f_db</th>
-      <td><p>implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)</p></td>
+      <td><p>implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle). NULL defaults to using f.</p></td>
     </tr>
     <tr>
       <th>columns_produced</th>
@@ -174,10 +174,11 @@
     <span class='no'>ci</span> <span class='kw'>&lt;-</span> <span class='fu'>as.data.frame</span>(<span class='fu'>summary</span>(<span class='no'>mi</span>)$<span class='no'>coefficients</span>)
     <span class='no'>ci</span>$<span class='no'>Variable</span> <span class='kw'>&lt;-</span> <span class='fu'>rownames</span>(<span class='no'>ci</span>)
     <span class='fu'>rownames</span>(<span class='no'>ci</span>) <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
+    <span class='fu'>colnames</span>(<span class='no'>ci</span>) <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"Estimate"</span>, <span class='st'>"Std_Error"</span>, <span class='st'>"t_value"</span>, <span class='st'>"p_value"</span>, <span class='st'>"Variable"</span>)
     <span class='no'>ci</span>
   }
   <span class='no'>columns_produced</span> <span class='kw'>=</span>
-    <span class='fu'>c</span>(<span class='st'>"Variable"</span>, <span class='st'>"Estimate"</span>, <span class='st'>"Std. Error"</span>, <span class='st'>"t value"</span>, <span class='st'>"Pr(&gt;|t|)"</span>, <span class='no'>group_col</span>)
+    <span class='fu'>c</span>(<span class='st'>"Estimate"</span>, <span class='st'>"Std_Error"</span>, <span class='st'>"t_value"</span>, <span class='st'>"p_value"</span>, <span class='st'>"Variable"</span>, <span class='no'>group_col</span>)
   <span class='fu'>rq_df_grouped_funciton_node</span>(
     <span class='no'>.</span>, <span class='no'>f</span>,
     <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='no'>columns_produced</span>,
@@ -200,7 +201,7 @@
 #&gt;   y,
 #&gt;   group) %.&gt;%
 #&gt;  non_sql_node(., y~x grouped by group grouped by group)</div><div class='input'>
-<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)[]</div><div class='output co'>#&gt;         Estimate Std. Error    t value   Pr(&gt;|t|)    Variable group
+<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)[]</div><div class='output co'>#&gt;         Estimate  Std_Error    t_value    p_value    Variable group
 #&gt;  1:  0.090716766 0.07125705  1.2730918 0.20447817 (Intercept)     a
 #&gt;  2: -0.044853006 0.06701987 -0.6692494 0.50411599           x     a
 #&gt;  3:  0.063457904 0.06802746  0.9328278 0.35208658 (Intercept)     b
@@ -211,6 +212,47 @@
 #&gt;  8: -0.008130064 0.06308408 -0.1288766 0.89758099           x     d
 #&gt;  9: -0.012349987 0.06804600 -0.1814947 0.85615030 (Intercept)     e
 #&gt; 10: -0.008883978 0.07675926 -0.1157382 0.90796806           x     e</div><div class='input'>
+<span class='kw'>if</span> (<span class='fu'>requireNamespace</span>(<span class='st'>"DBI"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='kw'>&amp;&amp;</span>
+    <span class='fu'>requireNamespace</span>(<span class='st'>"RSQLite"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
+  <span class='co'># example database connection</span>
+  <span class='no'>my_db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbConnect'>dbConnect</a></span>(<span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/RSQLite/topics/SQLite'>SQLite</a></span>(),
+                          <span class='st'>":memory:"</span>)
+
+  <span class='kw pkg'>rquery</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/to_sql'>to_sql</a></span>(<span class='no'>rquery_pipeline</span>, <span class='no'>my_db</span>) <span class='kw'>%.&gt;%</span>
+    <span class='fu'>print</span>(<span class='no'>.</span>)
+
+  <span class='no'>dR</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>rquery</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/rq_copy_to'>rq_copy_to</a></span>(<span class='no'>my_db</span>,
+                           <span class='kw'>d</span> <span class='kw'>=</span> <span class='no'>d</span>,
+                           <span class='kw'>table_name</span> <span class='kw'>=</span> <span class='st'>"d"</span>,
+                           <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+                           <span class='kw'>temporary</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='no'>tbl</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>rquery</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/materialize'>materialize</a></span>(<span class='no'>my_db</span>, <span class='no'>rquery_pipeline</span>,
+                             <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+                             <span class='kw'>temporary</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+  <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbReadTable'>dbReadTable</a></span>(<span class='no'>my_db</span>, <span class='no'>tbl</span>$<span class='no'>table_name</span>) <span class='kw'>%.&gt;%</span>
+    <span class='fu'>print</span>(<span class='no'>.</span>)
+
+  <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbDisconnect'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
+}</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] "CREATE TEMPORARY  TABLE `incoming_table_name`  AS  SELECT\n  `d`.`x`,\n  `d`.`y`,\n  `d`.`group`\n FROM\n  `d`\n"
+#&gt; 
+#&gt; [[2]]
+#&gt; [1] "non SQL step:  y~x grouped by group grouped by group"
+#&gt; 
+#&gt; [[3]]
+#&gt; [1] " SELECT\n  `outgoing_table_name`.`Estimate`,\n  `outgoing_table_name`.`Std_Error`,\n  `outgoing_table_name`.`t_value`,\n  `outgoing_table_name`.`p_value`,\n  `outgoing_table_name`.`Variable`,\n  `outgoing_table_name`.`group`\n FROM\n  `outgoing_table_name`\n"
+#&gt; 
+#&gt;        Estimate  Std_Error    t_value    p_value    Variable group
+#&gt; 1   0.090716766 0.07125705  1.2730918 0.20447817 (Intercept)     a
+#&gt; 2  -0.044853006 0.06701987 -0.6692494 0.50411599           x     a
+#&gt; 3   0.063457904 0.06802746  0.9328278 0.35208658 (Intercept)     b
+#&gt; 4   0.058692951 0.06868752  0.8544922 0.39390284           x     b
+#&gt; 5   0.129306526 0.07003884  1.8462116 0.06650366 (Intercept)     c
+#&gt; 6   0.012482453 0.07217097  0.1729567 0.86287979           x     c
+#&gt; 7   0.031991890 0.06543806  0.4888881 0.62544100 (Intercept)     d
+#&gt; 8  -0.008130064 0.06308408 -0.1288766 0.89758099           x     d
+#&gt; 9  -0.012349987 0.06804600 -0.1814947 0.85615030 (Intercept)     e
+#&gt; 10 -0.008883978 0.07675926 -0.1157382 0.90796806           x     e</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

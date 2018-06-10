@@ -2,8 +2,12 @@
 
 mk_f_db_default <- function(f, cols) {
   function(db, incoming_table_name, outgoing_table_name) {
-    colstr <- paste(cols, collapse = ", ") # TODO: quote colnames and table name
-    q <- paste0("SELECT ", colstr, " FROM ", incoming_table_name)
+    colsq <- vapply(cols,
+                    function(ci) {
+                      rquery::quote_identifier(db, ci)
+                    }, character(1))
+    colstr <- paste(colsq, collapse = ", ")
+    q <- paste0("SELECT ", colstr, " FROM ", rquery::quote_identifier(db, incoming_table_name))
     d <- rquery::rq_get_query(db, q)
     res <- f(d)
     rquery::rq_copy_to(db, outgoing_table_name, res)
@@ -15,7 +19,7 @@ mk_f_db_default <- function(f, cols) {
 #' @param . or data.frame input.
 #' @param f function that takes a data.table to a data.frame (or data.table).
 #' @param ... force later arguments to bind by name.
-#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)
+#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle). NULL defaults to using f.
 #' @param columns_produced character columns produces by f.
 #' @param display_form display form for node.
 #' @param orig_columns orig_columns, if TRUE assume all input columns are present in derived table.
@@ -102,7 +106,7 @@ rq_df_funciton_node <- function(., f,
 #' @param . or data.frame input.
 #' @param f function that takes a data.table to a data.frame (or data.table).
 #' @param ... force later arguments to bind by name.
-#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)
+#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle). NULL defaults to using f.
 #' @param columns_produced character columns produces by f.
 #' @param group_col character, column to split by.
 #' @param display_form display form for node.
@@ -123,10 +127,11 @@ rq_df_funciton_node <- function(., f,
 #'     ci <- as.data.frame(summary(mi)$coefficients)
 #'     ci$Variable <- rownames(ci)
 #'     rownames(ci) <- NULL
+#'     colnames(ci) <- c("Estimate", "Std_Error", "t_value", "p_value", "Variable")
 #'     ci
 #'   }
 #'   columns_produced =
-#'     c("Variable", "Estimate", "Std. Error", "t value", "Pr(>|t|)", group_col)
+#'     c("Estimate", "Std_Error", "t_value", "p_value", "Variable", group_col)
 #'   rq_df_grouped_funciton_node(
 #'     ., f,
 #'     columns_produced = columns_produced,
@@ -147,6 +152,29 @@ rq_df_funciton_node <- function(., f,
 #' cat(format(rquery_pipeline))
 #'
 #' ex_data_table(rquery_pipeline)[]
+#'
+#' if (requireNamespace("DBI", quietly = TRUE) &&
+#'     requireNamespace("RSQLite", quietly = TRUE)) {
+#'   # example database connection
+#'   my_db <- DBI::dbConnect(RSQLite::SQLite(),
+#'                           ":memory:")
+#'
+#'   rquery::to_sql(rquery_pipeline, my_db) %.>%
+#'     print(.)
+#'
+#'   dR <- rquery::rq_copy_to(my_db,
+#'                            d = d,
+#'                            table_name = "d",
+#'                            overwrite = TRUE,
+#'                            temporary = TRUE)
+#'   tbl <- rquery::materialize(my_db, rquery_pipeline,
+#'                              overwrite = FALSE,
+#'                              temporary = TRUE)
+#'   DBI::dbReadTable(my_db, tbl$table_name) %.>%
+#'     print(.)
+#'
+#'   DBI::dbDisconnect(my_db)
+#' }
 #'
 #' @export
 #'

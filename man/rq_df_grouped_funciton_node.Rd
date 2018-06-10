@@ -14,7 +14,7 @@ rq_df_grouped_funciton_node(., f, ..., f_db = NULL, columns_produced,
 
 \item{...}{force later arguments to bind by name.}
 
-\item{f_db}{implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle)}
+\item{f_db}{implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle). NULL defaults to using f.}
 
 \item{columns_produced}{character columns produces by f.}
 
@@ -40,10 +40,11 @@ grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "
     ci <- as.data.frame(summary(mi)$coefficients)
     ci$Variable <- rownames(ci)
     rownames(ci) <- NULL
+    colnames(ci) <- c("Estimate", "Std_Error", "t_value", "p_value", "Variable")
     ci
   }
   columns_produced =
-    c("Variable", "Estimate", "Std. Error", "t value", "Pr(>|t|)", group_col)
+    c("Estimate", "Std_Error", "t_value", "p_value", "Variable", group_col)
   rq_df_grouped_funciton_node(
     ., f,
     columns_produced = columns_produced,
@@ -64,6 +65,29 @@ rquery_pipeline <- local_td(d) \%.>\%
 cat(format(rquery_pipeline))
 
 ex_data_table(rquery_pipeline)[]
+
+if (requireNamespace("DBI", quietly = TRUE) &&
+    requireNamespace("RSQLite", quietly = TRUE)) {
+  # example database connection
+  my_db <- DBI::dbConnect(RSQLite::SQLite(),
+                          ":memory:")
+
+  rquery::to_sql(rquery_pipeline, my_db) \%.>\%
+    print(.)
+
+  dR <- rquery::rq_copy_to(my_db,
+                           d = d,
+                           table_name = "d",
+                           overwrite = TRUE,
+                           temporary = TRUE)
+  tbl <- rquery::materialize(my_db, rquery_pipeline,
+                             overwrite = FALSE,
+                             temporary = TRUE)
+  DBI::dbReadTable(my_db, tbl$table_name) \%.>\%
+    print(.)
+
+  DBI::dbDisconnect(my_db)
+}
 
 }
 \seealso{
