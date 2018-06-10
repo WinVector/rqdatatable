@@ -30,6 +30,5 @@ Suggests: knitr,
     rmarkdown,
     DBI,
     RSQLite,
-    parallel
-    
-
+    parallel,
+    testthat
