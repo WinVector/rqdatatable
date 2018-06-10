@@ -161,6 +161,28 @@ dplyr_pipeline(datap, annotationp) %>%
   collect()
 ```
 
+[`dtplyr`](https://CRAN.R-project.org/package=dtplyr) does not appear to work on this example,
+so we could not include it in the timings.
+
+```{r dtplyr, error=TRUE}
+library("data.table")
+library("dtplyr") #  https://CRAN.R-project.org/package=dtplyr
+packageVersion("data.table")
+packageVersion("dtplyr")
+
+class(data)
+datadt <- data.table::as.data.table(data)
+head(datadt)
+class(datadt)
+
+class(annotation)
+annotationdt <- data.table::as.data.table(annotation)
+head(annotationdt)
+class(annotationdt)
+
+dplyr_pipeline(datadt, annotationdt)
+```
+
 
 ```{r cleanup}
 parallel::stopCluster(cl)

@@ -37,7 +37,7 @@ library("dplyr")
 base::date()
 ```
 
-    ## [1] "Sun Jun 10 09:42:24 2018"
+    ## [1] "Sun Jun 10 09:56:17 2018"
 
 ``` r
 R.version.string
@@ -237,14 +237,14 @@ print(timings)
 ```
 
     ## Unit: seconds
-    ##                  expr       min        lq      mean   median        uq
-    ##  rqdatatable_parallel  6.895417  7.047849  7.708338  7.26522  7.374688
-    ##           rqdatatable 12.132320 12.383989 12.868656 12.54442 13.325613
-    ##                 dplyr 18.197696 18.526309 20.531623 18.82655 20.353618
+    ##                  expr       min        lq     mean    median        uq
+    ##  rqdatatable_parallel  7.362631  7.850774  8.42504  7.934196  9.461763
+    ##           rqdatatable 12.364082 12.737838 13.48126 13.407365 14.049963
+    ##                 dplyr 19.379079 20.330585 20.74812 20.786257 21.247072
     ##       max neval
-    ##  10.05320    10
-    ##  14.55186    10
-    ##  31.89347    10
+    ##  10.20410    10
+    ##  14.84257    10
+    ##  21.83926    10
 
 ``` r
 autoplot(timings)
@@ -345,6 +345,88 @@ dplyr_pipeline(datap, annotationp) %>%
 ```
 
     ## Error in UseMethod("inner_join"): no applicable method for 'inner_join' applied to an object of class "party_df"
+
+[`dtplyr`](https://CRAN.R-project.org/package=dtplyr) does not appear to work on this example, so we could not include it in the timings.
+
+``` r
+library("data.table")
+```
+
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     between, first, last
+
+``` r
+library("dtplyr") #  https://CRAN.R-project.org/package=dtplyr
+packageVersion("data.table")
+```
+
+    ## [1] '1.11.4'
+
+``` r
+packageVersion("dtplyr")
+```
+
+    ## [1] '0.0.2'
+
+``` r
+class(data)
+```
+
+    ## [1] "data.frame"
+
+``` r
+datadt <- data.table::as.data.table(data)
+head(datadt)
+```
+
+    ##      key id       info key_group
+    ## 1: key_1  1 0.07279547        20
+    ## 2: key_2  2 0.16457592        12
+    ## 3: key_3  3 0.97850703         7
+    ## 4: key_4  4 0.30758642         8
+    ## 5: key_5  5 0.40178969         4
+    ## 6: key_6  6 0.24435737         8
+
+``` r
+class(datadt)
+```
+
+    ## [1] "data.table" "data.frame"
+
+``` r
+class(annotation)
+```
+
+    ## [1] "data.frame"
+
+``` r
+annotationdt <- data.table::as.data.table(annotation)
+head(annotationdt)
+```
+
+    ##      key      data key_group
+    ## 1: key_1 0.2772080        20
+    ## 2: key_2 0.9200673        12
+    ## 3: key_3 0.7272237         7
+    ## 4: key_4 0.6307832         8
+    ## 5: key_5 0.7028741         4
+    ## 6: key_6 0.5939254         8
+
+``` r
+class(annotationdt)
+```
+
+    ## [1] "data.table" "data.frame"
+
+``` r
+dplyr_pipeline(datadt, annotationdt)
+```
+
+    ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
 
 ``` r
 parallel::stopCluster(cl)
