@@ -56,7 +56,7 @@ mk_example <- function(nkey, nrep, ngroup = 20) {
        instance_table = instance_table)
 }
 
-dlist <- mk_example(10, 5)
+dlist <- mk_example(10, 10)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 ```
@@ -87,16 +87,64 @@ nrow(res1)
 And we can execute the operations in parallel.
 
 ```{r rqdatatablep1}
+parallel::clusterEvalQ(cl, library("rqdatatable"))
 res2 <- ex_data_table_parallel(optree, "key_group", cl)
 head(res2)
 nrow(res2)
 ```
 
-[`dplyr`](https://CRAN.R-project.org/package=dplyr) works similarly.
+[`data.table`](http://r-datatable.com) can implement the same function.
+
+```{r data_table_f}
+library("data.table")
+
+data_table_f <- function(data, annotation) {
+  data <- data.table::as.data.table(data)
+  annotation <- data.table::as.data.table(annotation)
+  joined <- merge(data, annotation, by = "key", all=FALSE, allow.cartesian=TRUE)
+  joined <- joined[joined$data <= joined$info, ]
+  data.table::setorderv(joined, cols = "data")
+  joined <- joined[, .SD[.N], id]
+  data.table::setorderv(joined, cols = "id")
+}
+resdt <- data_table_f(data, annotation)
+head(resdt)
+nrow(resdt)
+```
+
+We can also run `data.table` in parallel using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html).
+
+```{r data_table_p}
+parallel::clusterEvalQ(cl, library("data.table"))
+parallel::clusterExport(cl, "data_table_f")
+
+dt_f <- function(tables_list) {
+  data <- tables_list$data
+  annotation <- tables_list$annotation
+  data_table_f(data, annotation)
+}
+
+data_table_parallel_f <- function(data, annotation) {
+  respdt <- wrapr::execute_parallel(tables = list(data = data, annotation = annotation),
+                                  f = dt_f,
+                                  partition_column = "key_group",
+                                  cl = cl) %.>%
+  data.table::rbindlist(.)
+  data.table::setorderv(respdt, cols = "id")
+  respdt
+}
+respdt <- data_table_parallel_f(data, annotation)
+head(respdt)
+nrow(respdt)
+```
+
+
+
+[`dplyr`](https://CRAN.R-project.org/package=dplyr) can also implement the solution.
 
 ```{r dplyr1}
 dplyr_pipeline <- function(data, annotation) {
-  data %>%
+  res <- data %>%
     inner_join(annotation, by = "key") %>%
     filter(data <= info) %>%
     group_by(id) %>%
@@ -105,24 +153,58 @@ dplyr_pipeline <- function(data, annotation) {
     ungroup() %>%
     filter(rownum == 1) %>%
     arrange(id)
+  res
 }
 
 resd <- dplyr_pipeline(data, annotation)
 head(resd)
+nrow(resd)
 ```
+
+And we can use [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to
+also parallelize the `dplyr` solution.
+
+```{r dplyr_wp}
+parallel::clusterEvalQ(cl, library("dplyr"))
+parallel::clusterExport(cl, "dplyr_pipeline")
+
+dplyr_f <- function(tables_list) {
+  data <- tables_list$data
+  annotation <- tables_list$annotation
+  dplyr_pipeline(data, annotation)
+}
+
+dplyr_parallel_f <- function(data, annotation) {
+  respdt <- wrapr::execute_parallel(tables = list(data = data, annotation = annotation),
+                                  f = dplyr_f,
+                                  partition_column = "key_group",
+                                  cl = cl) %>%
+    dplyr::bind_rows() %>%
+    arrange(id)
+}
+respdplyr <- dplyr_parallel_f(data, annotation)
+head(respdplyr)
+nrow(respdplyr)
+```
+
 
 We can time the various realizations.
 
 ```{r, timings}
-dlist <- mk_example(100, 500)
+dlist <- mk_example(300, 300)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
 timings <- microbenchmark(
-  rqdatatable_parallel = ex_data_table_parallel(optree, "key_group", cl),
-  rqdatatable = ex_data_table(optree),
-  dplyr = dplyr_pipeline(data, annotation),
+  data_table_parallel = nrow(data_table_parallel_f(data, annotation)),
+  data_table = nrow(data_table_f(data, annotation)),
+  rqdatatable_parallel = nrow(ex_data_table_parallel(optree, "key_group", cl)),
+  rqdatatable = nrow(ex_data_table(optree)),
+  dplyr_parallel = nrow(dplyr_parallel_f(data, annotation)),
+  dplyr = nrow(dplyr_pipeline(data, annotation)),
   times = 10L)
+
+saveRDS(timings, "Parallel_rqdatatable_timings.RDS")
 ```
 
 ```{r present}
@@ -134,10 +216,6 @@ timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
 
 ScatterBoxPlotH(timings, 
-                xvar = "seconds", yvar = "expr", 
-                title="task duration by method")
-
-ScatterBoxPlotH(timings[timings$expr != 'dplyr', , drop = FALSE],
                 xvar = "seconds", yvar = "expr", 
                 title="task duration by method")
 ```
@@ -188,6 +266,12 @@ class(annotationdt)
 
 dplyr_pipeline(datadt, annotationdt)
 ```
+
+My theory is `dplyr` is seeing better scaling to processors because  `dplyr` appears to be purely one threaded and `data.table` appears to be multi-threaded.  `rqdatatable` is clearly introducing some overhead relative to `data.table` both in single processor and parallel modes.  There may also be speedup issue on working with smaller partitions of data.
+
+So as is typical: `data.table` is the best.  `dplyr` is next best in parallel performance (using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to organize the calculation).  
+And for this example `rqdatatable` is respectable (but the slowest when paralleized, though [sometimes `rqdatatable` is competitive
+with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
 
 
 ```{r cleanup}

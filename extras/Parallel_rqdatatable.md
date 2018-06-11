@@ -37,7 +37,7 @@ library("dplyr")
 base::date()
 ```
 
-    ## [1] "Sun Jun 10 10:14:07 2018"
+    ## [1] "Sun Jun 10 18:17:47 2018"
 
 ``` r
 R.version.string
@@ -103,7 +103,7 @@ mk_example <- function(nkey, nrep, ngroup = 20) {
        instance_table = instance_table)
 }
 
-dlist <- mk_example(10, 5)
+dlist <- mk_example(10, 10)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 ```
@@ -155,20 +155,40 @@ head(res1)
 ```
 
     ##         data id      info   key key_group
-    ## 1: 0.2252109  1 0.3300204 key_1        20
-    ## 2: 0.6090348  2 0.6152025 key_2         8
-    ## 3: 0.2804946  3 0.2931857 key_3        10
-    ## 4: 0.4188050  4 0.7806856 key_4         5
-    ## 5: 0.2710549  5 0.4483611 key_5        14
-    ## 6: 0.5734857  7 0.6422148 key_7        20
+    ## 1: 0.9152014  1 0.9860654 key_1        20
+    ## 2: 0.5599810  2 0.5857570 key_2         8
+    ## 3: 0.3011882  3 0.3334490 key_3        10
+    ## 4: 0.3650987  4 0.3960980 key_4         5
+    ## 5: 0.1469254  5 0.1753649 key_5        14
+    ## 6: 0.2567631  6 0.3510280 key_6         7
 
 ``` r
 nrow(res1)
 ```
 
-    ## [1] 38
+    ## [1] 94
 
 And we can execute the operations in parallel.
+
+``` r
+parallel::clusterEvalQ(cl, library("rqdatatable"))
+```
+
+    ## [[1]]
+    ## [1] "rqdatatable" "rquery"      "stats"       "graphics"    "grDevices"  
+    ## [6] "utils"       "datasets"    "methods"     "base"       
+    ## 
+    ## [[2]]
+    ## [1] "rqdatatable" "rquery"      "stats"       "graphics"    "grDevices"  
+    ## [6] "utils"       "datasets"    "methods"     "base"       
+    ## 
+    ## [[3]]
+    ## [1] "rqdatatable" "rquery"      "stats"       "graphics"    "grDevices"  
+    ## [6] "utils"       "datasets"    "methods"     "base"       
+    ## 
+    ## [[4]]
+    ## [1] "rqdatatable" "rquery"      "stats"       "graphics"    "grDevices"  
+    ## [6] "utils"       "datasets"    "methods"     "base"
 
 ``` r
 res2 <- ex_data_table_parallel(optree, "key_group", cl)
@@ -176,24 +196,123 @@ head(res2)
 ```
 
     ##         data id      info   key key_group
-    ## 1: 0.2252109  1 0.3300204 key_1        20
-    ## 2: 0.6090348  2 0.6152025 key_2         8
-    ## 3: 0.2804946  3 0.2931857 key_3        10
-    ## 4: 0.4188050  4 0.7806856 key_4         5
-    ## 5: 0.2710549  5 0.4483611 key_5        14
-    ## 6: 0.5734857  7 0.6422148 key_7        20
+    ## 1: 0.9152014  1 0.9860654 key_1        20
+    ## 2: 0.5599810  2 0.5857570 key_2         8
+    ## 3: 0.3011882  3 0.3334490 key_3        10
+    ## 4: 0.3650987  4 0.3960980 key_4         5
+    ## 5: 0.1469254  5 0.1753649 key_5        14
+    ## 6: 0.2567631  6 0.3510280 key_6         7
 
 ``` r
 nrow(res2)
 ```
 
-    ## [1] 38
+    ## [1] 94
 
-[`dplyr`](https://CRAN.R-project.org/package=dplyr) works similarly.
+[`data.table`](http://r-datatable.com) can implement the same function.
+
+``` r
+library("data.table")
+```
+
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     between, first, last
+
+``` r
+data_table_f <- function(data, annotation) {
+  data <- data.table::as.data.table(data)
+  annotation <- data.table::as.data.table(annotation)
+  joined <- merge(data, annotation, by = "key", all=FALSE, allow.cartesian=TRUE)
+  joined <- joined[joined$data <= joined$info, ]
+  data.table::setorderv(joined, cols = "data")
+  joined <- joined[, .SD[.N], id]
+  data.table::setorderv(joined, cols = "id")
+}
+resdt <- data_table_f(data, annotation)
+head(resdt)
+```
+
+    ##    id   key      info key_group.x      data key_group.y
+    ## 1:  1 key_1 0.9860654          20 0.9152014          20
+    ## 2:  2 key_2 0.5857570           8 0.5599810           8
+    ## 3:  3 key_3 0.3334490          10 0.3011882          10
+    ## 4:  4 key_4 0.3960980           5 0.3650987           5
+    ## 5:  5 key_5 0.1753649          14 0.1469254          14
+    ## 6:  6 key_6 0.3510280           7 0.2567631           7
+
+``` r
+nrow(resdt)
+```
+
+    ## [1] 94
+
+We can also run `data.table` in parallel using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html).
+
+``` r
+parallel::clusterEvalQ(cl, library("data.table"))
+```
+
+    ## [[1]]
+    ##  [1] "data.table"  "rqdatatable" "rquery"      "stats"       "graphics"   
+    ##  [6] "grDevices"   "utils"       "datasets"    "methods"     "base"       
+    ## 
+    ## [[2]]
+    ##  [1] "data.table"  "rqdatatable" "rquery"      "stats"       "graphics"   
+    ##  [6] "grDevices"   "utils"       "datasets"    "methods"     "base"       
+    ## 
+    ## [[3]]
+    ##  [1] "data.table"  "rqdatatable" "rquery"      "stats"       "graphics"   
+    ##  [6] "grDevices"   "utils"       "datasets"    "methods"     "base"       
+    ## 
+    ## [[4]]
+    ##  [1] "data.table"  "rqdatatable" "rquery"      "stats"       "graphics"   
+    ##  [6] "grDevices"   "utils"       "datasets"    "methods"     "base"
+
+``` r
+parallel::clusterExport(cl, "data_table_f")
+
+dt_f <- function(tables_list) {
+  data <- tables_list$data
+  annotation <- tables_list$annotation
+  data_table_f(data, annotation)
+}
+
+data_table_parallel_f <- function(data, annotation) {
+  respdt <- wrapr::execute_parallel(tables = list(data = data, annotation = annotation),
+                                  f = dt_f,
+                                  partition_column = "key_group",
+                                  cl = cl) %.>%
+  data.table::rbindlist(.)
+  data.table::setorderv(respdt, cols = "id")
+  respdt
+}
+respdt <- data_table_parallel_f(data, annotation)
+head(respdt)
+```
+
+    ##    id   key      info key_group.x      data key_group.y
+    ## 1:  1 key_1 0.9860654          20 0.9152014          20
+    ## 2:  2 key_2 0.5857570           8 0.5599810           8
+    ## 3:  3 key_3 0.3334490          10 0.3011882          10
+    ## 4:  4 key_4 0.3960980           5 0.3650987           5
+    ## 5:  5 key_5 0.1753649          14 0.1469254          14
+    ## 6:  6 key_6 0.3510280           7 0.2567631           7
+
+``` r
+nrow(respdt)
+```
+
+    ## [1] 94
+
+[`dplyr`](https://CRAN.R-project.org/package=dplyr) can also implement the solution.
 
 ``` r
 dplyr_pipeline <- function(data, annotation) {
-  data %>%
+  res <- data %>%
     inner_join(annotation, by = "key") %>%
     filter(data <= info) %>%
     group_by(id) %>%
@@ -202,6 +321,7 @@ dplyr_pipeline <- function(data, annotation) {
     ungroup() %>%
     filter(rownum == 1) %>%
     arrange(id)
+  res
 }
 
 resd <- dplyr_pipeline(data, annotation)
@@ -211,25 +331,99 @@ head(resd)
     ## # A tibble: 6 x 7
     ##   key      id  info key_group.x  data key_group.y rownum
     ##   <chr> <int> <dbl> <chr>       <dbl> <chr>        <int>
-    ## 1 key_1     1 0.330 20          0.225 20               1
-    ## 2 key_2     2 0.615 8           0.609 8                1
-    ## 3 key_3     3 0.293 10          0.280 10               1
-    ## 4 key_4     4 0.781 5           0.419 5                1
-    ## 5 key_5     5 0.448 14          0.271 14               1
-    ## 6 key_7     7 0.642 20          0.573 20               1
+    ## 1 key_1     1 0.986 20          0.915 20               1
+    ## 2 key_2     2 0.586 8           0.560 8                1
+    ## 3 key_3     3 0.333 10          0.301 10               1
+    ## 4 key_4     4 0.396 5           0.365 5                1
+    ## 5 key_5     5 0.175 14          0.147 14               1
+    ## 6 key_6     6 0.351 7           0.257 7                1
+
+``` r
+nrow(resd)
+```
+
+    ## [1] 94
+
+And we can use [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to also parallelize the `dplyr` solution.
+
+``` r
+parallel::clusterEvalQ(cl, library("dplyr"))
+```
+
+    ## [[1]]
+    ##  [1] "dplyr"       "data.table"  "rqdatatable" "rquery"      "stats"      
+    ##  [6] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+    ## [11] "base"       
+    ## 
+    ## [[2]]
+    ##  [1] "dplyr"       "data.table"  "rqdatatable" "rquery"      "stats"      
+    ##  [6] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+    ## [11] "base"       
+    ## 
+    ## [[3]]
+    ##  [1] "dplyr"       "data.table"  "rqdatatable" "rquery"      "stats"      
+    ##  [6] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+    ## [11] "base"       
+    ## 
+    ## [[4]]
+    ##  [1] "dplyr"       "data.table"  "rqdatatable" "rquery"      "stats"      
+    ##  [6] "graphics"    "grDevices"   "utils"       "datasets"    "methods"    
+    ## [11] "base"
+
+``` r
+parallel::clusterExport(cl, "dplyr_pipeline")
+
+dplyr_f <- function(tables_list) {
+  data <- tables_list$data
+  annotation <- tables_list$annotation
+  dplyr_pipeline(data, annotation)
+}
+
+dplyr_parallel_f <- function(data, annotation) {
+  respdt <- wrapr::execute_parallel(tables = list(data = data, annotation = annotation),
+                                  f = dplyr_f,
+                                  partition_column = "key_group",
+                                  cl = cl) %>%
+    dplyr::bind_rows() %>%
+    arrange(id)
+}
+respdplyr <- dplyr_parallel_f(data, annotation)
+head(respdplyr)
+```
+
+    ## # A tibble: 6 x 7
+    ##   key      id  info key_group.x  data key_group.y rownum
+    ##   <chr> <int> <dbl> <chr>       <dbl> <chr>        <int>
+    ## 1 key_1     1 0.986 20          0.915 20               1
+    ## 2 key_2     2 0.586 8           0.560 8                1
+    ## 3 key_3     3 0.333 10          0.301 10               1
+    ## 4 key_4     4 0.396 5           0.365 5                1
+    ## 5 key_5     5 0.175 14          0.147 14               1
+    ## 6 key_6     6 0.351 7           0.257 7                1
+
+``` r
+nrow(respdplyr)
+```
+
+    ## [1] 94
 
 We can time the various realizations.
 
 ``` r
-dlist <- mk_example(100, 500)
+dlist <- mk_example(300, 300)
 data <- dlist$instance_table
 annotation <- dlist$key_table
 
 timings <- microbenchmark(
-  rqdatatable_parallel = ex_data_table_parallel(optree, "key_group", cl),
-  rqdatatable = ex_data_table(optree),
-  dplyr = dplyr_pipeline(data, annotation),
+  data_table_parallel = nrow(data_table_parallel_f(data, annotation)),
+  data_table = nrow(data_table_f(data, annotation)),
+  rqdatatable_parallel = nrow(ex_data_table_parallel(optree, "key_group", cl)),
+  rqdatatable = nrow(ex_data_table(optree)),
+  dplyr_parallel = nrow(dplyr_parallel_f(data, annotation)),
+  dplyr = nrow(dplyr_pipeline(data, annotation)),
   times = 10L)
+
+saveRDS(timings, "Parallel_rqdatatable_timings.RDS")
 ```
 
 ``` r
@@ -237,14 +431,20 @@ print(timings)
 ```
 
     ## Unit: seconds
-    ##                  expr      min        lq      mean    median        uq
-    ##  rqdatatable_parallel  6.85633  7.104419  7.317883  7.306091  7.458136
-    ##           rqdatatable 12.06348 12.119306 13.170637 12.495268 13.372936
-    ##                 dplyr 17.48531 18.001865 19.299877 18.429629 18.723737
+    ##                  expr       min        lq      mean    median        uq
+    ##   data_table_parallel  5.283302  5.438508  5.653817  5.622392  5.734896
+    ##            data_table  9.150601  9.349121  9.597489  9.624784  9.794663
+    ##  rqdatatable_parallel  7.175074  7.427069  7.534787  7.515065  7.718797
+    ##           rqdatatable 12.905482 13.301564 14.139213 14.037763 14.603497
+    ##        dplyr_parallel  6.425745  6.595050  6.643087  6.628859  6.697244
+    ##                 dplyr 20.388733 20.751030 21.026985 20.831905 21.093458
     ##        max neval
-    ##   7.918711    10
-    ##  17.570124    10
-    ##  27.154656    10
+    ##   6.456139    10
+    ##  10.014399    10
+    ##   7.777838    10
+    ##  16.761533    10
+    ##   6.962189    10
+    ##  22.868647    10
 
 ``` r
 autoplot(timings)
@@ -262,14 +462,6 @@ ScatterBoxPlotH(timings,
 ```
 
 ![](Parallel_rqdatatable_files/figure-markdown_github/present-2.png)
-
-``` r
-ScatterBoxPlotH(timings[timings$expr != 'dplyr', , drop = FALSE],
-                xvar = "seconds", yvar = "expr", 
-                title="task duration by method")
-```
-
-![](Parallel_rqdatatable_files/figure-markdown_github/present-3.png)
 
 [`multidplyr`](https://github.com/hadley/multidplyr) does not appear to work on this example, so we could not include it in the timings.
 
@@ -301,14 +493,14 @@ head(datap)
 
     ## # A tibble: 6 x 4
     ## # Groups:   key_group [3]
-    ##   key       id  info key_group
-    ##   <chr>  <int> <dbl> <chr>    
-    ## 1 key_2      2 0.165 12       
-    ## 2 key_9      9 0.446 3        
-    ## 3 key_22    22 0.696 3        
-    ## 4 key_26    26 0.449 3        
-    ## 5 key_33    33 0.376 6        
-    ## 6 key_34    34 0.250 6
+    ##   key       id   info key_group
+    ##   <chr>  <int>  <dbl> <chr>    
+    ## 1 key_3      3 0.0284 15       
+    ## 2 key_5      5 0.838  15       
+    ## 3 key_9      9 0.888  2        
+    ## 4 key_10    10 0.983  7        
+    ## 5 key_15    15 0.988  2        
+    ## 6 key_19    19 0.691  2
 
 ``` r
 class(datap)
@@ -333,15 +525,15 @@ head(annotationp)
 ```
 
     ## # A tibble: 6 x 3
-    ## # Groups:   key_group [2]
-    ##   key      data key_group
-    ##   <chr>   <dbl> <chr>    
-    ## 1 key_7  0.547  16       
-    ## 2 key_8  0.0380 16       
-    ## 3 key_11 0.677  16       
-    ## 4 key_15 0.0999 5        
-    ## 5 key_16 0.237  5        
-    ## 6 key_18 0.693  5
+    ## # Groups:   key_group [3]
+    ##   key     data key_group
+    ##   <chr>  <dbl> <chr>    
+    ## 1 key_1  0.481 6        
+    ## 2 key_9  0.490 2        
+    ## 3 key_11 0.348 14       
+    ## 4 key_15 0.325 2        
+    ## 5 key_18 0.476 14       
+    ## 6 key_19 0.934 2
 
 ``` r
 class(annotationp)
@@ -360,16 +552,6 @@ dplyr_pipeline(datap, annotationp) %>%
 
 ``` r
 library("data.table")
-```
-
-    ## 
-    ## Attaching package: 'data.table'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     between, first, last
-
-``` r
 library("dtplyr") #  https://CRAN.R-project.org/package=dtplyr
 packageVersion("data.table")
 ```
@@ -394,12 +576,12 @@ head(datadt)
 ```
 
     ##      key id       info key_group
-    ## 1: key_1  1 0.07279547        20
-    ## 2: key_2  2 0.16457592        12
-    ## 3: key_3  3 0.97850703         7
-    ## 4: key_4  4 0.30758642         8
-    ## 5: key_5  5 0.40178969         4
-    ## 6: key_6  6 0.24435737         8
+    ## 1: key_1  1 0.19866525         6
+    ## 2: key_2  2 0.84333232        19
+    ## 3: key_3  3 0.02837453        15
+    ## 4: key_4  4 0.87365445        13
+    ## 5: key_5  5 0.83771302        15
+    ## 6: key_6  6 0.02838293        12
 
 ``` r
 class(datadt)
@@ -419,12 +601,12 @@ head(annotationdt)
 ```
 
     ##      key      data key_group
-    ## 1: key_1 0.2772080        20
-    ## 2: key_2 0.9200673        12
-    ## 3: key_3 0.7272237         7
-    ## 4: key_4 0.6307832         8
-    ## 5: key_5 0.7028741         4
-    ## 6: key_6 0.5939254         8
+    ## 1: key_1 0.4810728         6
+    ## 2: key_2 0.4595057        19
+    ## 3: key_3 0.1476172        15
+    ## 4: key_4 0.5624729        13
+    ## 5: key_5 0.1921203        15
+    ## 6: key_6 0.8842115        12
 
 ``` r
 class(annotationdt)
@@ -437,6 +619,11 @@ dplyr_pipeline(datadt, annotationdt)
 ```
 
     ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
+
+My theory is `dplyr` is seeing better scaling to processors because `dplyr` appears to be purely one threaded and `data.table` appears to be multi-threaded. `rqdatatable` is clearly introducing some overhead relative to `data.table` both in single processor and parallel modes. There may also be speedup issue on working with smaller partitions of data.
+
+So as is typical: `data.table` is the best. `dplyr` is next best in parallel performance (using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to organize the calculation).
+And for this example `rqdatatable` is respectable (but the slowest when paralleized, though [sometimes `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
 
 ``` r
 parallel::stopCluster(cl)

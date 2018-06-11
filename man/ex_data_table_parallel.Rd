@@ -23,7 +23,7 @@ ex_data_table_parallel(optree, partition_column, cl = NULL, ...,
 
 \item{debug}{logical if TRUE use lapply instead of parallel::clusterApplyLB.}
 
-\item{env}{environment to work in.}
+\item{env}{environment to look for values in.}
 }
 \value{
 resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).

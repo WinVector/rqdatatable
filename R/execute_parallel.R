@@ -33,7 +33,7 @@ parallel_f <- function(tables, ...) {
 #' @param tables named list map from table names used in nodes to data.tables and data.frames.
 #' @param source_limit if not null limit all table sources to no more than this many rows (used for debugging).
 #' @param debug logical if TRUE use lapply instead of parallel::clusterApplyLB.
-#' @param env environment to work in.
+#' @param env environment to look for values in.
 #' @return resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).
 #'
 #'
@@ -68,8 +68,7 @@ ex_data_table_parallel <- function(optree,
   tablesets <- NULL
   res <- data.table::rbindlist(res)
   if("relop_orderby" %in% class(optree)) {
-    reord <- orderby(local_td(res), cols = optree$orderby, reverse = optree$reverse)
-    res <- ex_data_table(optree = reord)
+    order_table(res, orderby = optree$orderby, reverse = optree$reverse)
   }
   res
 }
