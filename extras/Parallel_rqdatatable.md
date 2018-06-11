@@ -620,10 +620,9 @@ dplyr_pipeline(datadt, annotationdt)
 
     ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
 
-My theory is `dplyr` is seeing better scaling to processors because `dplyr` appears to be purely single threaded and `data.table` is multi-threaded (see for example `help("setDTthreads")`). `rqdatatable`'s performance regression relative `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later).
+My theory is `dplyr` is seeing better scaling to processors because `dplyr` appears to be purely single threaded and `data.table` is multi-threaded (see for example `help("setDTthreads")`). `rqdatatable`'s performance regression relative to `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later, already [sometimes `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
 
-So as is typical: `data.table` is the best. `dplyr` is next best in parallel performance (using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to organize the calculation).
-And for this example `rqdatatable` is respectable (but the slowest when paralleized, though [sometimes `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
+
 
 ``` r
 parallel::stopCluster(cl)
