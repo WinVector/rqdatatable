@@ -1,7 +1,7 @@
 Parallel rqdatatable
 ================
 John Mount
-2018-06-10
+2018-06-11
 
 One can try to execute [`rquery`](https://github.com/WinVector/rquery) `relop` trees in parallel using [`rqdatatable`](https://github.com/WinVector/rqdatatable). However, unless the pipeline is very expensive the overhead of partitioning and distributing the work will usually overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time &gt; elapsed time).
 
@@ -37,7 +37,7 @@ library("dplyr")
 base::date()
 ```
 
-    ## [1] "Sun Jun 10 18:17:47 2018"
+    ## [1] "Mon Jun 11 09:22:10 2018"
 
 ``` r
 R.version.string
@@ -432,19 +432,19 @@ print(timings)
 
     ## Unit: seconds
     ##                  expr       min        lq      mean    median        uq
-    ##   data_table_parallel  5.283302  5.438508  5.653817  5.622392  5.734896
-    ##            data_table  9.150601  9.349121  9.597489  9.624784  9.794663
-    ##  rqdatatable_parallel  7.175074  7.427069  7.534787  7.515065  7.718797
-    ##           rqdatatable 12.905482 13.301564 14.139213 14.037763 14.603497
-    ##        dplyr_parallel  6.425745  6.595050  6.643087  6.628859  6.697244
-    ##                 dplyr 20.388733 20.751030 21.026985 20.831905 21.093458
+    ##   data_table_parallel  5.349467  5.429295  6.185279  6.287543  6.656685
+    ##            data_table 10.113425 10.775918 10.974409 10.889765 11.023422
+    ##  rqdatatable_parallel  7.547536  7.622098  8.038160  7.944890  8.381770
+    ##           rqdatatable 13.043852 14.565800 15.133214 15.071887 16.255095
+    ##        dplyr_parallel  6.322625  7.195685  7.950209  7.814357  8.338782
+    ##                 dplyr 20.551616 21.055260 22.575246 21.759043 24.314034
     ##        max neval
-    ##   6.456139    10
-    ##  10.014399    10
-    ##   7.777838    10
-    ##  16.761533    10
-    ##   6.962189    10
-    ##  22.868647    10
+    ##   7.393918    10
+    ##  12.947765    10
+    ##   8.787670    10
+    ##  16.666136    10
+    ##  10.018203    10
+    ##  27.188850    10
 
 ``` r
 autoplot(timings)
@@ -620,7 +620,7 @@ dplyr_pipeline(datadt, annotationdt)
 
     ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
 
-My theory is `dplyr` is seeing better scaling to processors because `dplyr` appears to be purely one threaded and `data.table` appears to be multi-threaded. `rqdatatable` is clearly introducing some overhead relative to `data.table` both in single processor and parallel modes. There may also be speedup issue on working with smaller partitions of data.
+My theory is `dplyr` is seeing better scaling to processors because `dplyr` appears to be purely single threaded and `data.table` is multi-threaded (see for example `help("setDTthreads")`). `rqdatatable`'s performance regression relative `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later).
 
 So as is typical: `data.table` is the best. `dplyr` is next best in parallel performance (using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to organize the calculation).
 And for this example `rqdatatable` is respectable (but the slowest when paralleized, though [sometimes `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).

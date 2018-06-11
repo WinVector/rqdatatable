@@ -267,7 +267,7 @@ class(annotationdt)
 dplyr_pipeline(datadt, annotationdt)
 ```
 
-My theory is `dplyr` is seeing better scaling to processors because  `dplyr` appears to be purely one threaded and `data.table` appears to be multi-threaded.  `rqdatatable` is clearly introducing some overhead relative to `data.table` both in single processor and parallel modes.  There may also be speedup issue on working with smaller partitions of data.
+My theory is `dplyr` is seeing better scaling to processors because  `dplyr` appears to be purely single threaded and `data.table` is multi-threaded (see for example `help("setDTthreads")`).  `rqdatatable`'s performance regression relative `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later).
 
 So as is typical: `data.table` is the best.  `dplyr` is next best in parallel performance (using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to organize the calculation).  
 And for this example `rqdatatable` is respectable (but the slowest when paralleized, though [sometimes `rqdatatable` is competitive
