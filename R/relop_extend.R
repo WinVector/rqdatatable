@@ -42,7 +42,7 @@ ex_data_table.relop_extend <- function(optree,
                                        source_usage = NULL,
                                        source_limit = NULL,
                                        env = parent.frame()) {
-  use_group_min_method <- FALSE
+  use_group_min_rank_method <- isTRUE(getOption("rqdatatable.user_group_min_method", FALSE))
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_extend")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
@@ -89,7 +89,7 @@ ex_data_table.relop_extend <- function(optree,
   qdatatable_temp_rank_col <- NULL # don't look like an unbound reference
   have_rank_calcs <- length(rank_exprs_indices)>0
   if(have_rank_calcs) {
-    if(use_group_min_method) {
+    if(use_group_min_rank_method) {
       x[ , qdatatable_temp_rank_col := seq_len(nrow(x))]
       rank_names <- enames_raw[rank_exprs_indices]
       enames <- enames[-rank_exprs_indices]
@@ -113,7 +113,7 @@ ex_data_table.relop_extend <- function(optree,
   # fast ranking (seems more compatible with this workflow than data.table::frank())
   # could also try a grouped cumsum()
   if(have_rank_calcs) {
-    if(use_group_min_method) {
+    if(use_group_min_rank_method) {
       qdatatable_temp_rank_col_g <- NULL # don't look like an unbound reference
       COL <- NULL # don't look like an unbound reference
       if(length(optree$partitionby)>0) {
