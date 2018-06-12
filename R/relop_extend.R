@@ -9,7 +9,7 @@ strip_up_through_first_assignment <- function(s) {
 #'
 #' \code{data.table} based implementation.
 #'
-#' Will re-order columns if are ordering terms.
+#' Will re-order columns if there are ordering terms.
 #'
 #' @inheritParams ex_data_table
 #'

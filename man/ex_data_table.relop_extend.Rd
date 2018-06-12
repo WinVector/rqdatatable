@@ -24,7 +24,7 @@
 \code{data.table} based implementation.
 }
 \details{
-Will re-order columns if are ordering terms.
+Will re-order columns if there are ordering terms.
 }
 \examples{
 
