@@ -71,7 +71,7 @@ samp <- execute(db, sample_ops, allow_executor = FALSE)
 DBI::dbDisconnect(db)
 ```
 
-The main issue is the different notation used in each pipleline to land the random column.
+The main issue is the different notation used in each pipeline to land the random column.
 
 We can unify this by supplying translations from some common database notations (such as no-argument `random()`)
 to the `data.table` implementation.

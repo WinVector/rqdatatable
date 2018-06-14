@@ -147,7 +147,7 @@ sample_ops &lt;- local_td(d) %.&gt;%
 samp &lt;- execute(db, sample_ops, allow_executor = FALSE)
 
 DBI::dbDisconnect(db)</code></pre>
-<p>The main issue is the different notation used in each pipleline to land the random column.</p>
+<p>The main issue is the different notation used in each pipeline to land the random column.</p>
 <p>We can unify this by supplying translations from some common database notations (such as no-argument <code>random()</code>) to the <code>data.table</code> implementation.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sample_ops &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(d) <span class="op">%.&gt;%</span>
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend_nse">extend_nse</a></span>(., ord <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">random</span>()) <span class="op">%.&gt;%</span>
