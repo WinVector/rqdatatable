@@ -176,10 +176,13 @@ as.data.frame.relop <- function(x, row.names = NULL, optional = FALSE,
 
 #' @importFrom data.table as.data.table is.data.table
 #' @export
-as.data.table.relop <- function (x, keep.rownames = FALSE,
-                                 ...,
-                                 stringsAsFactors = FALSE,
-                                 env = parent.frame()) {
+data.table::as.data.table
+
+#' @export
+as.data.table.relop <- function(x, keep.rownames = FALSE,
+                                ...,
+                                stringsAsFactors = FALSE,
+                                env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.table.relop")
   if(!isFALSE(keep.rownames)) {
     stop("rqdatatable::as.data.table.relop keep.rownames should not be set")
