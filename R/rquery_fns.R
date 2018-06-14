@@ -104,7 +104,24 @@ wrapr::apply_right
 #'      select_columns(., c("x", "y")) %.>%
 #'      select_rows_nse(., x<2 & y<30)
 #'   cat(format(optree))
-#'   print(ex_data_table(optree))
+#'   print(ex_data_table(optree)[])
+#'
+#'   # other ways to execute the pipeline include
+#'   as.data.frame(optree)
+#'   as.data.table(optree)
+#'   data.frame(x = 0, y = 4, z = 400) %.>% optree
+#'
+#'   # and immediate execution is also possible
+#'
+#'   # double apply into standard pipeline (parenthesized)
+#'   data.frame(x = 1, y = 2) %>>% (
+#'       extend_nse(., z = x/y) %.>%
+#'       select_columns(., "z") )
+#'
+#'   # double apply pipeline
+#'   data.frame(x = 1, y = 2) %>>%
+#'       extend_nse(., z = x/y) %>>%
+#'       select_columns(., "z")
 #'
 #' @export
 #'
@@ -135,5 +152,48 @@ ex_data_table.default <- function(optree,
 }
 
 
+#' @export
+as.data.frame.relop <- function(x, row.names = NULL, optional = FALSE,
+                                ...,
+                                stringsAsFactors = FALSE,
+                                env = parent.frame()) {
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.frame.relop")
+  if(!is.null(row.names)) {
+    stop("rqdatatable::as.data.frame.relop row.names should not be set")
+  }
+  if(!isFALSE(optional)) {
+    stop("rqdatatable::as.data.frame.relop optional should not be set")
+  }
+  if(!isFALSE(stringsAsFactors)) {
+    stop("rqdatatable::as.data.frame.relop stringsAsFactors should not be set")
+  }
+  res <- ex_data_table(x, env = env)
+  if(!is.data.frame(res)) {
+    stop("qdatatable::as.data.frame.relop result was not a data.frame")
+  }
+  as.data.frame(res)
+}
 
+#' @importFrom data.table as.data.table is.data.table
+#' @export
+as.data.table.relop <- function (x, keep.rownames = FALSE,
+                                 ...,
+                                 stringsAsFactors = FALSE,
+                                 env = parent.frame()) {
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.table.relop")
+  if(!isFALSE(keep.rownames)) {
+    stop("rqdatatable::as.data.table.relop keep.rownames should not be set")
+  }
+  if(!isFALSE(stringsAsFactors)) {
+    stop("rqdatatable::as.data.table.relop stringsAsFactors should not be set")
+  }
+  res <- ex_data_table(x, env = env)
+  if(!is.data.frame(res)) {
+    stop("qdatatable::as.data.table.relop result was not a data.frame")
+  }
+  if(!data.table::is.data.table(res)) {
+    res <- data.table::as.data.table(res)
+  }
+  res
+}
 

@@ -51,6 +51,23 @@ resulting data.table (intermediate tables can somtimes be mutated as is practice
      select_columns(., c("x", "y")) \%.>\%
      select_rows_nse(., x<2 & y<30)
   cat(format(optree))
-  print(ex_data_table(optree))
+  print(ex_data_table(optree)[])
+
+  # other ways to execute the pipeline include
+  as.data.frame(optree)
+  as.data.table(optree)
+  data.frame(x = 0, y = 4, z = 400) \%.>\% optree
+
+  # and immediate execution is also possible
+
+  # double apply into standard pipeline (parenthesized)
+  data.frame(x = 1, y = 2) \%>>\% (
+      extend_nse(., z = x/y) \%.>\%
+      select_columns(., "z") )
+
+  # double apply pipeline
+  data.frame(x = 1, y = 2) \%>>\%
+      extend_nse(., z = x/y) \%>>\%
+      select_columns(., "z")
 
 }
