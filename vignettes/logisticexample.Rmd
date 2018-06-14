@@ -60,6 +60,7 @@ Show expanded form of query tree.
 cat(format(rquery_pipeline))
 ```
 
+Execute the calculation.
 
 ```{r}
 ex_data_table(rquery_pipeline)[]

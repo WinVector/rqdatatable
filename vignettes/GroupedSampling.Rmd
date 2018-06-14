@@ -23,6 +23,7 @@ d <- data.frame(
   x = sample(letters, n, replace = TRUE),
   y = sample(letters, n, replace = TRUE),
   z = sample(letters, n, replace = TRUE),
+  id = seq_len(n),
   stringsAsFactors = FALSE)
 
 grouping_vars <- qc(x, y, z)
@@ -36,6 +37,7 @@ sample_ops <- local_td(d) %.>%
              orderby = "ord")
 
 samp <- ex_data_table(sample_ops)
+head(samp)
 ```
 
 
@@ -70,4 +72,27 @@ DBI::dbDisconnect(db)
 ```
 
 The main issue is the different notation used in each pipleline to land the random column.
+
+We can unify this by supplying translations from some common database notations (such as no-argument `random()`)
+to the `data.table` implementation.
+
+```{r}
+sample_ops <- local_td(d) %.>%
+  extend_nse(., ord := random()) %.>%
+  pick_top_k(., 
+             k = 5,
+             partitionby = grouping_vars,
+             orderby = "ord")
+
+samp <- ex_data_table(sample_ops)
+head(samp)
+```
+
+The translations available are listed in the package variable `rqdatatable:::data_table_extend_fns`.
+
+```{r}
+str(rqdatatable:::data_table_extend_fns)
+```
+
+
 

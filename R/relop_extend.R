@@ -5,6 +5,12 @@ strip_up_through_first_assignment <- function(s) {
          which = "both")
 }
 
+data_table_extend_fns <- list(
+  rank = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
+  row_number = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
+  random = list(data.table_version = "runif(.N)", need_one_col = FALSE)
+)
+
 #' Implement extend/assign operator.
 #'
 #' \code{data.table} based implementation.
@@ -42,7 +48,6 @@ ex_data_table.relop_extend <- function(optree,
                                        source_usage = NULL,
                                        source_limit = NULL,
                                        env = parent.frame()) {
-  use_group_min_rank_method <- isTRUE(getOption("rqdatatable.user_group_min_method", FALSE))
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_extend")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
@@ -68,36 +73,37 @@ ex_data_table.relop_extend <- function(optree,
   }
   # work on node
   tmpnam <- ".rquery_ex_extend_tmp"
-  tmpenv <- new.env(parent = env)
-  assign(tmpnam, x, envir = tmpenv)
   enames_raw <-
     vapply(seq_len(n),
            function(i) {
              optree$parsed[[i]]$symbols_produced
            }, character(1))
   enames <- paste0("\"", enames_raw, "\"")
+  # map some functions to data.table equivilents
   eexprs <-
     vapply(seq_len(n),
            function(i) {
              strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
            }, character(1))
-  rank_exprs_indices <- sort(unique(c(
-    grep("^rank[[:space:]]*\\([[:space:]]*\\)$", eexprs),
-    grep("^row_number[[:space:]]*\\([[:space:]]*\\)$", eexprs)
-  )))
-  rank_names <- NULL
-  qdatatable_temp_rank_col <- NULL # don't look like an unbound reference
-  have_rank_calcs <- length(rank_exprs_indices)>0
-  if(have_rank_calcs) {
-    if(use_group_min_rank_method) {
-      x[ , qdatatable_temp_rank_col := seq_len(nrow(x))]
-      rank_names <- enames_raw[rank_exprs_indices]
-      enames <- enames[-rank_exprs_indices]
-      eexprs <- eexprs[-rank_exprs_indices]
-    } else {
-      x[ , qdatatable_temp_rank_col := 1.0]
-      eexprs[rank_exprs_indices] = "cumsum(qdatatable_temp_rank_col)"
+  pure_function_indices <- grep("^[a-zA-Z][a-zA-Z0-9_.]*[[:space:]]*\\([[:space:]]*\\)$",
+                                eexprs)
+  need_one_col <- FALSE
+  if(length(pure_function_indices)>0) {
+    fn_names <- rep(NA_character_, length(eexprs))
+    fn_names[pure_function_indices] <- gsub("[[:space:]]*\\(.*$", "", eexprs[pure_function_indices])
+    fn_names[!(fn_names %in% names(data_table_extend_fns))] <- NA_character_
+    translations <- data_table_extend_fns[fn_names]
+    for(i in seq_len(length(translations))) {
+      transi <- translations[[i]]
+      if(!is.null(transi)) {
+        eexprs[[i]] <- transi$data.table_version
+        need_one_col <- need_one_col || transi$need_one_col
+      }
     }
+  }
+  rqdatatable_temp_one_col <- NULL # don't look like an unbound reference
+  if(need_one_col) {
+    x[ , rqdatatable_temp_one_col := 1.0]
   }
   if(length(enames)>0) {
     enames <- paste0("c(", paste(enames, collapse = ", "), ")")
@@ -108,29 +114,14 @@ ex_data_table.relop_extend <- function(optree,
                   byi,
                   " ]")
     expr <- parse(text = src)
+    tmpenv <- new.env(parent = env)
+    assign(tmpnam, x, envir = tmpenv)
     x <- eval(expr, envir = tmpenv, enclos = env)
   }
   # fast ranking (seems more compatible with this workflow than data.table::frank())
   # could also try a grouped cumsum()
-  if(have_rank_calcs) {
-    if(use_group_min_rank_method) {
-      qdatatable_temp_rank_col_g <- NULL # don't look like an unbound reference
-      COL <- NULL # don't look like an unbound reference
-      if(length(optree$partitionby)>0) {
-        x[, qdatatable_temp_rank_col_g := 1 + qdatatable_temp_rank_col - min(qdatatable_temp_rank_col),
-          by = c(optree$partitionby)]
-      } else {
-        x[, qdatatable_temp_rank_col_g := qdatatable_temp_rank_col]
-      }
-      for(ci in rank_names) {
-        wrapr::let(
-          c(COL = ci),
-          x[ , COL := qdatatable_temp_rank_col_g]
-        )
-      }
-      x[, qdatatable_temp_rank_col_g := NULL]
-    }
-    x[ , qdatatable_temp_rank_col := NULL]
+  if(need_one_col) {
+    x[ , rqdatatable_temp_one_col := NULL]
   }
   x
 }

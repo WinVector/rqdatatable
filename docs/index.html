@@ -52,6 +52,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="articles/GroupedSampling.html">Grouped Sampling</a>
+    </li>
+    <li>
       <a href="articles/logisticexample.html">Logistic Example</a>
     </li>
   </ul>
@@ -123,11 +126,11 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
   probability := probability / sum(probability),
   p= subjectID) %.&gt;%
  extend(.,
-  row_rank := rank(),
+  row_number := row_number(),
   p= subjectID,
   o= "probability" DESC, "surveyCategory" DESC) %.&gt;%
  select_rows(.,
-   row_rank &lt;= 1) %.&gt;%
+   row_number &lt;= 1) %.&gt;%
  rename(.,
   c('diagnosis' = 'surveyCategory')) %.&gt;%
  select_columns(.,
