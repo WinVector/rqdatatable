@@ -59,11 +59,11 @@ cat(format(rquery_pipeline))
       probability := probability / sum(probability),
       p= subjectID) %.>%
      extend(.,
-      row_rank := rank(),
+      row_number := row_number(),
       p= subjectID,
       o= "probability" DESC, "surveyCategory" DESC) %.>%
      select_rows(.,
-       row_rank <= 1) %.>%
+       row_number <= 1) %.>%
      rename(.,
       c('diagnosis' = 'surveyCategory')) %.>%
      select_columns(.,

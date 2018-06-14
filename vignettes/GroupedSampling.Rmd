@@ -1,0 +1,73 @@
+---
+title: "Grouped Sampling"
+author: "John Mount"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Grouped Sampling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This is an example of the current idiomatic way to sample per-group using
+[`rqdatatable`](https://github.com/WinVector/rqdatatable) or [`rquery`](https://github.com/WinVector/rquery).
+
+The idea is to use a random order and per-group row numbering.  This works well in-memory.
+
+```{r}
+library("rqdatatable")
+
+n <- 100000
+set.seed(325235)
+d <- data.frame(
+  x = sample(letters, n, replace = TRUE),
+  y = sample(letters, n, replace = TRUE),
+  z = sample(letters, n, replace = TRUE),
+  stringsAsFactors = FALSE)
+
+grouping_vars <- qc(x, y, z)
+
+sample_ops <- local_td(d) %.>%
+  extend_nse(., one := 1) %.>%
+  extend_nse(., ord := runif(sum(one))) %.>%
+  pick_top_k(., 
+             k = 5,
+             partitionby = grouping_vars,
+             orderby = "ord")
+
+samp <- ex_data_table(sample_ops)
+```
+
+
+And the database version is very similar (on databases with window functions).
+
+The main issue is landing the random order without having to translate the `R` `runif(sum(one))` code into
+database operations.
+
+```
+library("rquery")
+
+db <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
+                     host = 'localhost',
+                     port = 5432,
+                     user = 'johnmount',
+                     password = '')
+
+rq_copy_to(db, "d", d,
+           overwrite = TRUE,
+           temporary = TRUE)
+
+sample_ops <- local_td(d) %.>%
+  extend_nse(., ord := random()) %.>%
+  pick_top_k(., 
+             k = 5,
+             partitionby = grouping_vars,
+             orderby = "ord")
+
+samp <- execute(db, sample_ops, allow_executor = FALSE)
+
+DBI::dbDisconnect(db)
+```
+
+The main issue is the different notation used in each pipleline to land the random column.
+
