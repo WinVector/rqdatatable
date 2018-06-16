@@ -8,7 +8,8 @@ strip_up_through_first_assignment <- function(s) {
 data_table_extend_fns <- list(
   rank = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
   row_number = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
-  random = list(data.table_version = "runif(.N)", need_one_col = FALSE)
+  random = list(data.table_version = "runif(.N)", need_one_col = FALSE),
+  rand = list(data.table_version = "runif(.N)", need_one_col = FALSE)
 )
 
 #' Implement extend/assign operator.
