@@ -9,7 +9,8 @@ First CRAN release.
    
     * Windows ( win-builder.r-project.org uses --as-cran )
     * devtools::build_win()
-
+    * using platform: x86_64-w64-mingw32 (64-bit)
+    * using session charset: ISO8859-1
 
 ## R CMD check results
 
