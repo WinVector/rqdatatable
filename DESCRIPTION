@@ -8,7 +8,8 @@ Authors@R: c(
     person(family = "Win-Vector LLC", role = c("cph"))
     )
 Maintainer: John Mount <jmount@win-vector.com>
-Description: Implement the 'rquery' piped query algebra using 'data.table'.
+Description: Implement the 'rquery' piped query algebra using 'data.table'.  This allows
+   for a high-speed in memory implementation of Codd-style data manipulation tools.
 URL: https://github.com/WinVector/rqdatatable/, https://winvector.github.io/rqdatatable/
 BugReports: https://github.com/WinVector/rqdatatable/issues
 License: GPL-3
@@ -29,5 +30,4 @@ Suggests: knitr,
     RSQLite,
     parallel,
     testthat
-Remotes:
-  github::WinVector/rquery
+
