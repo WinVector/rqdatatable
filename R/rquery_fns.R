@@ -161,10 +161,10 @@ as.data.frame.relop <- function(x, row.names = NULL, optional = FALSE,
   if(!is.null(row.names)) {
     stop("rqdatatable::as.data.frame.relop row.names should not be set")
   }
-  if(!isFALSE(optional)) {
+  if(!isTRUE(optional==FALSE)) {
     stop("rqdatatable::as.data.frame.relop optional should not be set")
   }
-  if(!isFALSE(stringsAsFactors)) {
+  if(!isTRUE(stringsAsFactors==FALSE)) {
     stop("rqdatatable::as.data.frame.relop stringsAsFactors should not be set")
   }
   res <- ex_data_table(x, env = env)
@@ -184,10 +184,10 @@ as.data.table.relop <- function(x, keep.rownames = FALSE,
                                 stringsAsFactors = FALSE,
                                 env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.table.relop")
-  if(!isFALSE(keep.rownames)) {
+  if(!isTRUE(keep.rownames==FALSE)) {
     stop("rqdatatable::as.data.table.relop keep.rownames should not be set")
   }
-  if(!isFALSE(stringsAsFactors)) {
+  if(!isTRUE(stringsAsFactors==FALSE)) {
     stop("rqdatatable::as.data.table.relop stringsAsFactors should not be set")
   }
   res <- ex_data_table(x, env = env)
