@@ -5,6 +5,7 @@
 ^extras$
 ^.DS_Store$
 ^cran-comments.md$
+^revdep$
 
 
 
