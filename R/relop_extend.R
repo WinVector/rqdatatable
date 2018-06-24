@@ -86,7 +86,7 @@ ex_data_table.relop_extend <- function(optree,
            function(i) {
              strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
            }, character(1))
-  pure_function_indices <- grep("^[a-zA-Z][a-zA-Z0-9_.]*[[:space:]]*\\([[:space:]]*\\)$",
+  pure_function_indices <- grep("^[[:alpha:]][[:alnum:]_.]+[[:space:]]*\\([[:space:]]*\\)$",
                                 eexprs)
   need_one_col <- FALSE
   if(length(pure_function_indices)>0) {
