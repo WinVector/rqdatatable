@@ -1,9 +1,9 @@
 
-# rqdatatable 0.1.1 2018/06/24
+# rqdatatable 0.1.1 2018/06/26
 
   * Don't use isFALSE() (new to R 3.5.0).
   * Update install instructions.
-  * Try to install regexps.
+  * Improve regexps.
 
 # rqdatatable 0.1.0 2018/06/18
 
