@@ -21,8 +21,7 @@ Maintenance release: remove use of inappropriate use isFALSE() with  versions of
     * package encoding: UTF-8
     * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
     Maintainer: ‘John Mount <jmount@win-vector.com>’
- 
-
+    Status: OK
  
 
 ## Reverse dependencies
