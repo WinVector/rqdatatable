@@ -13,6 +13,15 @@ Maintenance release: remove use of inappropriate use isFALSE() with  versions of
 ## R CMD check results
 
     R CMD check --as-cran rqdatatable_0.1.1.tar.gz 
+    
+    * using option ‘--as-cran’
+    * checking for file ‘rqdatatable/DESCRIPTION’ ... OK
+    * checking extension type ... Package
+    * this is package ‘rqdatatable’ version ‘0.1.1’
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: ‘John Mount <jmount@win-vector.com>’
+ 
 
  
 
