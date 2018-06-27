@@ -7,8 +7,9 @@ Maintenance release: remove use of inappropriate use isFALSE() with  versions of
     * using R version 3.5.0 (2018-04-23)
     * using platform: x86_64-apple-darwin15.6.0 (64-bit)
 
- 
     * Windows ( win-builder.r-project.org uses --as-cran )
+    * using R Under development (unstable) (2018-06-26 r74934)
+    * using platform: x86_64-w64-mingw32 (64-bit)
 
 ## R CMD check results
 
