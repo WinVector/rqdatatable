@@ -4,6 +4,8 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+![](https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png)
+
 [`rqdatatable`](https://github.com/WinVector/rqdatatable) is an implementation of
 the [`rquery`](https://github.com/WinVector/rquery) piped Codd-style relational algebra 
 hosted on [`data.table`](http://r-datatable.com).  `rquery` allow the expression
