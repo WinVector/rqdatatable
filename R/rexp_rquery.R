@@ -2,9 +2,6 @@
 # rquery reexports
 
 
-#' @importFrom rquery %>>%
-#' @export
-rquery::`%>>%`
 
 #' @importFrom rquery assign_slice
 #' @export

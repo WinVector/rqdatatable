@@ -68,6 +68,6 @@ ex_data_table.relop_project <- function(optree,
                 byi,
                 " ]")
   expr <- parse(text = src)
-  eval(expr, envir = tmpenv, enclos = env)
+  eval(expr, envir = tmpenv, enclos = tmpenv)
 }
 

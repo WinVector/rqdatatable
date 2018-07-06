@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.1</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.2</span>
       </span>
     </div>
 
@@ -202,18 +202,9 @@
 #&gt; 1 1 20</div><div class='input'>  <span class='fu'><a href='http://www.rdocumentation.org/packages/data.table/topics/as.data.table'>as.data.table</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
 #&gt; 1: 1 20</div><div class='input'>  <span class='fu'>data.frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='fl'>400</span>) <span class='kw'>%.&gt;%</span> <span class='no'>optree</span></div><div class='output co'>#&gt;    x y
 #&gt; 1: 0 4</div><div class='input'>
-  <span class='co'># and immediate execution is also possible</span>
+  # and immediate execution is also possible
 
-  <span class='co'># double apply into standard pipeline (parenthesized)</span>
-  <span class='fu'>data.frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>) <span class='kw'>%&gt;&gt;%</span> (
-      <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/extend_nse'>extend_nse</a></span>(<span class='no'>.</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='no'>x</span>/<span class='no'>y</span>) <span class='kw'>%.&gt;%</span>
-      <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/select_columns'>select_columns</a></span>(<span class='no'>.</span>, <span class='st'>"z"</span>) )</div><div class='output co'>#&gt;      z
-#&gt; 1: 0.5</div><div class='input'>
-  <span class='co'># double apply pipeline</span>
-  <span class='fu'>data.frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>) <span class='kw'>%&gt;&gt;%</span>
-      <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/extend_nse'>extend_nse</a></span>(<span class='no'>.</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='no'>x</span>/<span class='no'>y</span>) <span class='kw'>%&gt;&gt;%</span>
-      <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/select_columns'>select_columns</a></span>(<span class='no'>.</span>, <span class='st'>"z"</span>)</div><div class='output co'>#&gt;      z
-#&gt; 1: 0.5</div><div class='input'>
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

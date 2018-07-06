@@ -41,6 +41,6 @@ ex_data_table.relop_select_rows <- function(optree,
   expr <- parse(text = src)
   tmpenv <- new.env(parent = globalenv())
   assign(tmpnam, x, envir = tmpenv)
-  eval(expr, envir = tmpenv, enclos = env)
+  eval(expr, envir = tmpenv, enclos = tmpenv)
 }
 

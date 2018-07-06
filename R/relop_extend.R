@@ -117,7 +117,7 @@ ex_data_table.relop_extend <- function(optree,
     expr <- parse(text = src)
     tmpenv <- new.env(parent = globalenv())
     assign(tmpnam, x, envir = tmpenv)
-    x <- eval(expr, envir = tmpenv, enclos = env)
+    x <- eval(expr, envir = tmpenv, enclos = tmpenv)
   }
   # fast ranking (seems more compatible with this workflow than data.table::frank())
   # could also try a grouped cumsum()

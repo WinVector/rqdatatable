@@ -60,14 +60,5 @@ resulting data.table (intermediate tables can somtimes be mutated as is practice
 
   # and immediate execution is also possible
 
-  # double apply into standard pipeline (parenthesized)
-  data.frame(x = 1, y = 2) \%>>\% (
-      extend_nse(., z = x/y) \%.>\%
-      select_columns(., "z") )
-
-  # double apply pipeline
-  data.frame(x = 1, y = 2) \%>>\%
-      extend_nse(., z = x/y) \%>>\%
-      select_columns(., "z")
 
 }
