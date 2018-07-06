@@ -9,3 +9,4 @@
 #' @name rqdatatable
 NULL
 
+.datatable.aware <- TRUE

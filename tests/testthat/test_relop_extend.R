@@ -17,12 +17,12 @@ test_that("relop_extend works as expected", {
                 exp(assessmentTotal * scale)/
                 sum(exp(assessmentTotal * scale)),
               count %:=% sum(one),
+              rank %:=% cumsum(one),
               orderby = c("assessmentTotal", "surveyCategory"),
               reverse = c("assessmentTotal"),
               partitionby = 'subjectID')  %.>%
    orderby(., c("subjectID", "probability"))
- # TODO: find out why this works with testthat, but not check.
- # res <- ex_data_table(rquery_pipeline, tables = list(dL = dL))
- # expect_true(data.table::is.data.table(res))
+ res <- ex_data_table(rquery_pipeline, tables = list(dL = dL))
+ expect_true(data.table::is.data.table(res))
 
 })
