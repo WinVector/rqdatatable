@@ -50,7 +50,7 @@ ex_data_table.relop_project <- function(optree,
     stop("rqdatatable::ex_data_table.relop_project() must have at least one grouping term")
   }
   tmpnam <- ".rquery_ex_extend_tmp"
-  tmpenv <- new.env(parent = env)
+  tmpenv <- new.env(parent = globalenv())
   assign(tmpnam, x, envir = tmpenv)
   enames <-
     vapply(seq_len(n),

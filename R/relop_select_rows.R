@@ -39,7 +39,7 @@ ex_data_table.relop_select_rows <- function(optree,
                 }, character(1))
   src <- paste0(tmpnam, "[ ", paste(src, collapse = " & "), " ]")
   expr <- parse(text = src)
-  tmpenv <- new.env(parent = env)
+  tmpenv <- new.env(parent = globalenv())
   assign(tmpnam, x, envir = tmpenv)
   eval(expr, envir = tmpenv, enclos = env)
 }
