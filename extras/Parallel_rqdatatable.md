@@ -1,7 +1,7 @@
 Parallel rqdatatable
 ================
 John Mount
-2018-06-18
+2018-07-06
 
 One can try to execute [`rquery`](https://github.com/WinVector/rquery) `relop` trees in parallel using [`rqdatatable`](https://github.com/WinVector/rqdatatable). However, unless the pipeline is very expensive the overhead of partitioning and distributing the work will usually overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time &gt; elapsed time).
 
@@ -22,6 +22,8 @@ library("WVPlots")
 library("dplyr")
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.5.1
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -37,7 +39,7 @@ library("dplyr")
 base::date()
 ```
 
-    ## [1] "Mon Jun 18 10:31:39 2018"
+    ## [1] "Fri Jul  6 10:44:00 2018"
 
 ``` r
 R.version.string
@@ -61,19 +63,19 @@ packageVersion("parallel")
 packageVersion("rqdatatable")
 ```
 
-    ## [1] '0.1.0'
+    ## [1] '0.1.2'
 
 ``` r
 packageVersion("rquery")
 ```
 
-    ## [1] '0.5.0'
+    ## [1] '0.5.1'
 
 ``` r
 packageVersion("dplyr")
 ```
 
-    ## [1] '0.7.5'
+    ## [1] '0.7.6'
 
 ``` r
 cl <- parallel::makeCluster(4)
@@ -432,23 +434,25 @@ print(timings)
 
     ## Unit: seconds
     ##                  expr       min        lq      mean    median        uq
-    ##   data_table_parallel  5.621030  5.631779  6.181647  5.794234  5.986368
-    ##            data_table  9.611018  9.675160 10.120786 10.135154 10.485123
-    ##  rqdatatable_parallel  7.330401  7.523348  7.968305  7.802969  7.921276
-    ##           rqdatatable 12.742627 13.002965 14.604160 13.967311 15.049265
-    ##        dplyr_parallel  6.707111  6.865325  6.968853  6.958092  7.039907
-    ##                 dplyr 21.091276 21.329137 22.829816 21.813852 22.428147
+    ##   data_table_parallel  5.313884  5.363753  5.927535  5.464602  5.695661
+    ##            data_table  9.535262  9.973951 10.246781 10.251915 10.669650
+    ##  rqdatatable_parallel  7.214227  7.665574  7.794417  7.824531  7.887980
+    ##           rqdatatable 12.860814 13.101827 14.389850 14.260190 14.477257
+    ##        dplyr_parallel  6.509094  6.719851  6.889578  6.825195  7.157897
+    ##                 dplyr 20.759630 20.826493 21.403284 21.028922 21.351096
     ##        max neval
-    ##   9.681078    10
-    ##  10.709166    10
-    ##  10.299280    10
-    ##  19.615581    10
-    ##   7.388646    10
-    ##  32.681440    10
+    ##   9.823738    10
+    ##  10.872768    10
+    ##   8.263357    10
+    ##  18.017306    10
+    ##   7.222479    10
+    ##  23.715786    10
 
 ``` r
 autoplot(timings)
 ```
+
+    ## Coordinate system already present. Adding new coordinate system, which will replace the existing one.
 
 ![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
 
@@ -495,12 +499,12 @@ head(datap)
     ## # Groups:   key_group [3]
     ##   key       id   info key_group
     ##   <chr>  <int>  <dbl> <chr>    
-    ## 1 key_3      3 0.0284 15       
-    ## 2 key_5      5 0.838  15       
-    ## 3 key_9      9 0.888  2        
-    ## 4 key_10    10 0.983  7        
-    ## 5 key_15    15 0.988  2        
-    ## 6 key_19    19 0.691  2
+    ## 1 key_4      4 0.874  13       
+    ## 2 key_8      8 0.469  1        
+    ## 3 key_11    11 0.260  14       
+    ## 4 key_18    18 0.443  14       
+    ## 5 key_22    22 0.332  13       
+    ## 6 key_23    23 0.0974 1
 
 ``` r
 class(datap)
@@ -525,15 +529,15 @@ head(annotationp)
 ```
 
     ## # A tibble: 6 x 3
-    ## # Groups:   key_group [3]
+    ## # Groups:   key_group [4]
     ##   key     data key_group
     ##   <chr>  <dbl> <chr>    
     ## 1 key_1  0.481 6        
-    ## 2 key_9  0.490 2        
-    ## 3 key_11 0.348 14       
-    ## 4 key_15 0.325 2        
-    ## 5 key_18 0.476 14       
-    ## 6 key_19 0.934 2
+    ## 2 key_13 0.105 3        
+    ## 3 key_27 0.978 8        
+    ## 4 key_28 0.119 10       
+    ## 5 key_29 0.488 10       
+    ## 6 key_32 0.286 8
 
 ``` r
 class(annotationp)
