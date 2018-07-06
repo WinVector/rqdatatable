@@ -1,6 +1,7 @@
 
-# rqdatatable 0.1.2 2018/07/05
+# rqdatatable 0.1.2 2018/07/06
 
+  * Adapt to intant execution path.
   * Documentation improvements.
 
 # rqdatatable 0.1.1 2018/06/26

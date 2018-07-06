@@ -128,7 +128,7 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
   surveyCategory,
   assessmentTotal) %.&gt;%
  extend(.,
-  probability := exp(assessmentTotal * scale)) %.&gt;%
+  probability := exp(assessmentTotal * 0.237)) %.&gt;%
  extend(.,
   probability := probability / sum(probability),
   p= subjectID) %.&gt;%

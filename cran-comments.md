@@ -1,6 +1,4 @@
 
-Maintenance release: remove use of inappropriate use isFALSE() with  versions of R prior to R 3.5.0 (causing errors on r-oldrel-windows-ix86+x86_64 test environment).
-
 ## Test environments
 
     * OSX (local machine using --as-cran from the command line)
@@ -8,22 +6,20 @@ Maintenance release: remove use of inappropriate use isFALSE() with  versions of
     * using platform: x86_64-apple-darwin15.6.0 (64-bit)
 
     * Windows ( win-builder.r-project.org uses --as-cran )
-    * using R Under development (unstable) (2018-06-26 r74934)
-    * using platform: x86_64-w64-mingw32 (64-bit)
-
+ 
 ## R CMD check results
 
-    R CMD check --as-cran rqdatatable_0.1.1.tar.gz 
+    R CMD check --as-cran rqdatatable_0.1.2.tar.gz 
     
     * using option ‘--as-cran’
     * checking for file ‘rqdatatable/DESCRIPTION’ ... OK
     * checking extension type ... Package
-    * this is package ‘rqdatatable’ version ‘0.1.1’
+    * this is package ‘rqdatatable’ version ‘0.1.2’
     * package encoding: UTF-8
-    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    * checking CRAN incoming feasibility ...
     Maintainer: ‘John Mount <jmount@win-vector.com>’
     Status: OK
- 
+
 
 ## Reverse dependencies
 

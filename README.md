@@ -56,7 +56,7 @@ cat(format(rquery_pipeline))
       surveyCategory,
       assessmentTotal) %.>%
      extend(.,
-      probability := exp(assessmentTotal * scale)) %.>%
+      probability := exp(assessmentTotal * 0.237)) %.>%
      extend(.,
       probability := probability / sum(probability),
       p= subjectID) %.>%
