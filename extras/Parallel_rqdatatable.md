@@ -1,13 +1,21 @@
-Parallel rqdatatable
+Speeding Up R Calculations with Parallelization
 ================
 John Mount
-2018-07-06
+2018-07-08
 
-One can try to execute [`rquery`](https://github.com/WinVector/rquery) `relop` trees in parallel using [`rqdatatable`](https://github.com/WinVector/rqdatatable). However, unless the pipeline is very expensive the overhead of partitioning and distributing the work will usually overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time &gt; elapsed time).
+Introduction
+============
 
-That being said, we can test an example where computation is expensive due to a blow-up in an intermediate join step.
+In this note we will demonstrate speeding up calculations by partitioning data and process-level parallelization.
 
-Set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB ram and hybrid disk drive).
+We will show how to speed up calculations with parallelization using [`rqdatatable`](https://github.com/WinVector/rqdatatable), [`data.table`](https://CRAN.R-project.org/package=data.table), or [`dplyr`](https://CRAN.R-project.org/package=dplyr). For each of these packages the parallelization becomes possible when we use [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to partition un-related `data.frame` rows to be distributed to different processors.
+
+However, unless the pipeline steps have non-trivial cost, the overhead of partitioning and distributing the work may overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time is greater than elapsed time). That being said, we can test an synthetic example where computation is expensive due to a blow-up in an intermediate join step.
+
+Our example
+===========
+
+First we set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB ram and hybrid disk drive).
 
 ``` r
 library("rqdatatable")
@@ -19,27 +27,16 @@ library("rqdatatable")
 library("microbenchmark")
 library("ggplot2")
 library("WVPlots")
-library("dplyr")
+suppressPackageStartupMessages(library("dplyr"))
 ```
 
     ## Warning: package 'dplyr' was built under R version 3.5.1
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
 
 ``` r
 base::date()
 ```
 
-    ## [1] "Fri Jul  6 10:44:00 2018"
+    ## [1] "Sun Jul  8 07:52:58 2018"
 
 ``` r
 R.version.string
@@ -78,11 +75,20 @@ packageVersion("dplyr")
     ## [1] '0.7.6'
 
 ``` r
-cl <- parallel::makeCluster(4)
-#parallel::clusterEvalQ(cl, library("rquery"))
-#parallel::clusterEvalQ(cl, library("rqdatatable"))
+ncore <- parallel::detectCores()
+print(ncore)
+```
 
+    ## [1] 4
 
+``` r
+cl <- parallel::makeCluster(ncore)
+print(cl)
+```
+
+    ## socket cluster with 4 nodes on host 'localhost'
+
+``` r
 set.seed(2362)
 mk_example <- function(nkey, nrep, ngroup = 20) {
   keys <- paste0("key_", seq_len(nkey))
@@ -110,13 +116,19 @@ data <- dlist$instance_table
 annotation <- dlist$key_table
 ```
 
-[`rquery`](https://github.com/WinVector/rquery) and [`rqdatatable`](https://github.com/WinVector/rqdatatable) can operate a non-trivial operation tree as follows.
+rquery / rqdatatable
+====================
+
+[`rquery`](https://github.com/WinVector/rquery) and [`rqdatatable`](https://github.com/WinVector/rqdatatable) can implement a non-trivial calculation as follows.
 
 ``` r
 # possible data lookup: find rows that
 # have lookup data <= info
 optree <- local_td(data) %.>%
-  natural_join(., local_td(annotation), jointype = "INNER", by = "key") %.>%
+  natural_join(., 
+               local_td(annotation), 
+               jointype = "INNER", 
+               by = "key") %.>%
   select_rows_nse(., data <= info) %.>%
   pick_top_k(., 
              k = 1,
@@ -173,7 +185,8 @@ nrow(res1)
 And we can execute the operations in parallel.
 
 ``` r
-parallel::clusterEvalQ(cl, library("rqdatatable"))
+parallel::clusterEvalQ(cl, 
+                       library("rqdatatable"))
 ```
 
     ## [[1]]
@@ -193,7 +206,9 @@ parallel::clusterEvalQ(cl, library("rqdatatable"))
     ## [6] "utils"       "datasets"    "methods"     "base"
 
 ``` r
-res2 <- ex_data_table_parallel(optree, "key_group", cl)
+res2 <- ex_data_table_parallel(optree, 
+                               "key_group", 
+                               cl)
 head(res2)
 ```
 
@@ -211,6 +226,9 @@ nrow(res2)
 
     ## [1] 94
 
+data.table
+==========
+
 [`data.table`](http://r-datatable.com) can implement the same function.
 
 ``` r
@@ -225,10 +243,19 @@ library("data.table")
     ##     between, first, last
 
 ``` r
+packageVersion("data.table")
+```
+
+    ## [1] '1.11.4'
+
+``` r
 data_table_f <- function(data, annotation) {
   data <- data.table::as.data.table(data)
   annotation <- data.table::as.data.table(annotation)
-  joined <- merge(data, annotation, by = "key", all=FALSE, allow.cartesian=TRUE)
+  joined <- merge(data, annotation, 
+                  by = "key", 
+                  all=FALSE, 
+                  allow.cartesian=TRUE)
   joined <- joined[joined$data <= joined$info, ]
   data.table::setorderv(joined, cols = "data")
   joined <- joined[, .SD[.N], id]
@@ -284,11 +311,13 @@ dt_f <- function(tables_list) {
 }
 
 data_table_parallel_f <- function(data, annotation) {
-  respdt <- wrapr::execute_parallel(tables = list(data = data, annotation = annotation),
-                                  f = dt_f,
-                                  partition_column = "key_group",
-                                  cl = cl) %.>%
-  data.table::rbindlist(.)
+  respdt <- wrapr::execute_parallel(
+    tables = list(data = data, 
+                  annotation = annotation),
+    f = dt_f,
+    partition_column = "key_group",
+    cl = cl) %.>%
+    data.table::rbindlist(.)
   data.table::setorderv(respdt, cols = "id")
   respdt
 }
@@ -310,7 +339,10 @@ nrow(respdt)
 
     ## [1] 94
 
-[`dplyr`](https://CRAN.R-project.org/package=dplyr) can also implement the solution.
+dplyr
+=====
+
+[`dplyr`](https://CRAN.R-project.org/package=dplyr) can also implement the example.
 
 ``` r
 dplyr_pipeline <- function(data, annotation) {
@@ -382,10 +414,12 @@ dplyr_f <- function(tables_list) {
 }
 
 dplyr_parallel_f <- function(data, annotation) {
-  respdt <- wrapr::execute_parallel(tables = list(data = data, annotation = annotation),
-                                  f = dplyr_f,
-                                  partition_column = "key_group",
-                                  cl = cl) %>%
+  respdt <- wrapr::execute_parallel(
+    tables = list(data = data, 
+                  annotation = annotation),
+    f = dplyr_f,
+    partition_column = "key_group",
+    cl = cl) %>%
     dplyr::bind_rows() %>%
     arrange(id)
 }
@@ -409,7 +443,10 @@ nrow(respdplyr)
 
     ## [1] 94
 
-We can time the various realizations.
+Benchmark
+=========
+
+We can benchmark the various realizations.
 
 ``` r
 dlist <- mk_example(300, 300)
@@ -417,16 +454,22 @@ data <- dlist$instance_table
 annotation <- dlist$key_table
 
 timings <- microbenchmark(
-  data_table_parallel = nrow(data_table_parallel_f(data, annotation)),
+  data_table_parallel = 
+    nrow(data_table_parallel_f(data, annotation)),
   data_table = nrow(data_table_f(data, annotation)),
-  rqdatatable_parallel = nrow(ex_data_table_parallel(optree, "key_group", cl)),
+  rqdatatable_parallel = 
+    nrow(ex_data_table_parallel(optree, "key_group", cl)),
   rqdatatable = nrow(ex_data_table(optree)),
-  dplyr_parallel = nrow(dplyr_parallel_f(data, annotation)),
+  dplyr_parallel = 
+    nrow(dplyr_parallel_f(data, annotation)),
   dplyr = nrow(dplyr_pipeline(data, annotation)),
   times = 10L)
 
 saveRDS(timings, "Parallel_rqdatatable_timings.RDS")
 ```
+
+Conclusion
+==========
 
 ``` r
 print(timings)
@@ -434,29 +477,23 @@ print(timings)
 
     ## Unit: seconds
     ##                  expr       min        lq      mean    median        uq
-    ##   data_table_parallel  5.313884  5.363753  5.927535  5.464602  5.695661
-    ##            data_table  9.535262  9.973951 10.246781 10.251915 10.669650
-    ##  rqdatatable_parallel  7.214227  7.665574  7.794417  7.824531  7.887980
-    ##           rqdatatable 12.860814 13.101827 14.389850 14.260190 14.477257
-    ##        dplyr_parallel  6.509094  6.719851  6.889578  6.825195  7.157897
-    ##                 dplyr 20.759630 20.826493 21.403284 21.028922 21.351096
+    ##   data_table_parallel  5.515423  5.634853  6.371040  5.841237  6.335951
+    ##            data_table  9.585073  9.646407 11.560736 10.293269 10.942273
+    ##  rqdatatable_parallel  7.418973  7.470167  8.397419  8.110988  8.778457
+    ##           rqdatatable 12.828250 13.656825 14.705748 14.185518 15.347285
+    ##        dplyr_parallel  6.475563  6.694923  7.279872  7.036339  7.146306
+    ##                 dplyr 20.097889 20.735335 21.644570 21.018004 22.644733
     ##        max neval
-    ##   9.823738    10
-    ##  10.872768    10
-    ##   8.263357    10
-    ##  18.017306    10
-    ##   7.222479    10
-    ##  23.715786    10
+    ##   8.655145    10
+    ##  22.964469    10
+    ##  10.485317    10
+    ##  18.251560    10
+    ##   9.811681    10
+    ##  24.293064    10
 
 ``` r
-autoplot(timings)
-```
+# autoplot(timings)
 
-    ## Coordinate system already present. Adding new coordinate system, which will replace the existing one.
-
-![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
-
-``` r
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
 
@@ -465,7 +502,25 @@ ScatterBoxPlotH(timings,
                 title="task duration by method")
 ```
 
-![](Parallel_rqdatatable_files/figure-markdown_github/present-2.png)
+![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
+
+Parallelized `data.table` is the fastest, followed by parallelized `dplyr` and parallelized `rqdatatable`.
+The non-paraellized run times are in a similar order. A reason `dplyr` sees greater speedup relative to its own non-parallel implementation is that `data.table` starts already multi-threaded, so it is exploring some parallelism even before we added the fork-style parallelism. We did not include variations such as `multidplyr` or `dtplyr` in the timings, as they did not appear to work.
+
+################### 
+
+Materials
+=========
+
+The original rendering of this article can be found [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md), source code [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.Rmd), and raw timings [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable_timings.RDS).
+
+Speculation
+===========
+
+`rqdatatable`'s minor performance regression relative to `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later, already [usually `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
+
+multidplyr
+==========
 
 [`multidplyr`](https://github.com/hadley/multidplyr) does not appear to work on this example, so we could not include it in the timings.
 
@@ -552,17 +607,14 @@ dplyr_pipeline(datap, annotationp) %>%
 
     ## Error in UseMethod("inner_join"): no applicable method for 'inner_join' applied to an object of class "party_df"
 
+dtplyr
+======
+
 [`dtplyr`](https://CRAN.R-project.org/package=dtplyr) does not appear to work on this example, so we could not include it in the timings.
 
 ``` r
 library("data.table")
 library("dtplyr") #  https://CRAN.R-project.org/package=dtplyr
-packageVersion("data.table")
-```
-
-    ## [1] '1.11.4'
-
-``` r
 packageVersion("dtplyr")
 ```
 
@@ -624,7 +676,8 @@ dplyr_pipeline(datadt, annotationdt)
 
     ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
 
-My theory is `dplyr` is seeing better scaling to processors because `dplyr` appears to be purely single threaded and `data.table` is multi-threaded (see for example `help("setDTthreads")`). `rqdatatable`'s performance regression relative to `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later, already [sometimes `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
+clean up
+========
 
 ``` r
 parallel::stopCluster(cl)
