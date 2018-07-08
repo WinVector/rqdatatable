@@ -28,7 +28,6 @@ Will re-order columns if there are ordering terms.
 }
 \examples{
 
-scale <- 0.237
 dL <- build_frame(
     "subjectID", "surveyCategory"     , "assessmentTotal", "one" |
     1          , "withdrawal behavior", 5                , 1     |
@@ -38,8 +37,8 @@ dL <- build_frame(
 rquery_pipeline <- local_td(dL) \%.>\%
   extend_nse(.,
              probability \%:=\%
-               exp(assessmentTotal * scale)/
-               sum(exp(assessmentTotal * scale)),
+               exp(assessmentTotal * 0.237)/
+               sum(exp(assessmentTotal * 0.237)),
              count \%:=\% sum(one),
              rank \%:=\% rank(),
              orderby = c("assessmentTotal", "surveyCategory"),
