@@ -6,7 +6,9 @@
     * using platform: x86_64-apple-darwin15.6.0 (64-bit)
 
     * Windows ( win-builder.r-project.org uses --as-cran )
- 
+    * using R Under development (unstable) (2018-07-01 r74950)
+    * using platform: x86_64-w64-mingw32 (64-bit)
+
 ## R CMD check results
 
     R CMD check --as-cran rqdatatable_0.1.2.tar.gz 
