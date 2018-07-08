@@ -1,4 +1,4 @@
-Speeding Up R Calculations with Parallelization
+Speed Up Your R Work
 ================
 John Mount
 2018-07-08
@@ -6,16 +6,18 @@ John Mount
 Introduction
 ============
 
-In this note we will demonstrate speeding up calculations by partitioning data and process-level parallelization.
+In this note we will show how to speed up work in [`R`](https://www.r-project.org) by partitioning data and process-level parallelization. We will show the technique with three different `R` packages: [`rqdatatable`](https://github.com/WinVector/rqdatatable), [`data.table`](https://CRAN.R-project.org/package=data.table), and [`dplyr`](https://CRAN.R-project.org/package=dplyr). The methods shown will also work with base-`R` and other packages.
 
-We will show how to speed up calculations with parallelization using [`rqdatatable`](https://github.com/WinVector/rqdatatable), [`data.table`](https://CRAN.R-project.org/package=data.table), or [`dplyr`](https://CRAN.R-project.org/package=dplyr). For each of these packages the parallelization becomes possible when we use [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to partition un-related `data.frame` rows to be distributed to different processors.
+For each of the above packages we speed up work by using [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) which in turn uses [`wrapr::partition_tables`](https://winvector.github.io/wrapr/reference/partition_tables.html) to partition un-related `data.frame` rows and then distributes them to different processors to be executed. [`rqdatatable::ex_data_table_parallel`](https://winvector.github.io/rqdatatable/reference/ex_data_table_parallel.html) conveniently bundles all of these steps together when working with [`rquery`](https://CRAN.R-project.org/package=rquery) pipelines.
 
-However, unless the pipeline steps have non-trivial cost, the overhead of partitioning and distributing the work may overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time is greater than elapsed time). That being said, we can test an synthetic example where computation is expensive due to a blow-up in an intermediate join step.
+The partitioning is specified by the user preparing a grouping column that tells the system which sets of rows must be kept together in a correct calculation. We are going to try to demonstrate everything with simple code examples, and minimal discussion.
+
+Keep in mind: unless the pipeline steps have non-trivial cost, the overhead of partitioning and distributing the work may overwhelm any parallel speedup. Also `data.table` itself already seems to exploit some thread-level parallelism (notice user time is greater than elapsed time). That being said, in this note we will demonstrate a synthetic example where computation is expensive due to a blow-up in an intermediate join step.
 
 Our example
 ===========
 
-First we set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB ram and hybrid disk drive).
+First we set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB RAM and hybrid disk drive).
 
 ``` r
 library("rqdatatable")
@@ -36,7 +38,7 @@ suppressPackageStartupMessages(library("dplyr"))
 base::date()
 ```
 
-    ## [1] "Sun Jul  8 07:52:58 2018"
+    ## [1] "Sun Jul  8 09:05:25 2018"
 
 ``` r
 R.version.string
@@ -378,7 +380,7 @@ nrow(resd)
 
     ## [1] 94
 
-And we can use [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to also parallelize the `dplyr` solution.
+And we can use [`wrapr::execute_parallel`](https://winvector.github.io/wrapr/reference/execute_parallel.html) to parallelize the `dplyr` solution.
 
 ``` r
 parallel::clusterEvalQ(cl, library("dplyr"))
@@ -477,19 +479,19 @@ print(timings)
 
     ## Unit: seconds
     ##                  expr       min        lq      mean    median        uq
-    ##   data_table_parallel  5.515423  5.634853  6.371040  5.841237  6.335951
-    ##            data_table  9.585073  9.646407 11.560736 10.293269 10.942273
-    ##  rqdatatable_parallel  7.418973  7.470167  8.397419  8.110988  8.778457
-    ##           rqdatatable 12.828250 13.656825 14.705748 14.185518 15.347285
-    ##        dplyr_parallel  6.475563  6.694923  7.279872  7.036339  7.146306
-    ##                 dplyr 20.097889 20.735335 21.644570 21.018004 22.644733
+    ##   data_table_parallel  5.274560  5.457105  5.609827  5.546554  5.686829
+    ##            data_table  9.401677  9.496280  9.701807  9.541218  9.748159
+    ##  rqdatatable_parallel  7.165216  7.497561  7.587663  7.563883  7.761987
+    ##           rqdatatable 12.490469 12.700474 13.320480 12.898154 14.229233
+    ##        dplyr_parallel  6.492262  6.572062  6.784865  6.787277  6.875076
+    ##                 dplyr 20.056555 20.450064 20.647073 20.564529 20.800350
     ##        max neval
-    ##   8.655145    10
-    ##  22.964469    10
-    ##  10.485317    10
-    ##  18.251560    10
-    ##   9.811681    10
-    ##  24.293064    10
+    ##   6.265888    10
+    ##  10.419316    10
+    ##   7.949404    10
+    ##  14.282269    10
+    ##   7.328223    10
+    ##  21.332103    10
 
 ``` r
 # autoplot(timings)
@@ -504,8 +506,15 @@ ScatterBoxPlotH(timings,
 
 ![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
 
-Parallelized `data.table` is the fastest, followed by parallelized `dplyr` and parallelized `rqdatatable`.
-The non-paraellized run times are in a similar order. A reason `dplyr` sees greater speedup relative to its own non-parallel implementation is that `data.table` starts already multi-threaded, so it is exploring some parallelism even before we added the fork-style parallelism. We did not include variations such as `multidplyr` or `dtplyr` in the timings, as they did not appear to work.
+The benchmark timings show parallelized `data.table` is the fastest, followed by parallelized `dplyr`, and parallelized `rqdatatable`. In the non-paraellized case `data.table` is the fastest, followed by `rqdatatable`, and then `dplyr`.
+
+A reason `dplyr` sees greater speedup relative to its own non-parallel implementation (yet does not beat `data.table`) is that `data.table` starts already multi-threaded, so `data.table` is exploiting some parallelism even before we added the process level parallelism (and hence sees less of a speed up, though it is fastest).
+
+`rquery` pipelines [exhibit superior performance on big data systems](https://github.com/WinVector/rquery/blob/master/extras/PerfTest.md) (Spark, PostgreSQL, Amazon Redshift, and hopefully soon Google bigquery), and `rqdatatable` supplies [a very good in-memory implementation of the `rquery` system](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/) based on `data.table`. `rquery` also speeds up solution development by supplying higher order operators and early debugging features.
+
+In this note we have demonstrated simple procedures to reliably parallelize any of `rqdatatable`, `data.table`, or `dplyr`.
+
+Note: we did not include alternatives such as `multidplyr` or `dtplyr` in the timings, as they did not appear to work on this example.
 
 ################### 
 
@@ -525,6 +534,7 @@ multidplyr
 [`multidplyr`](https://github.com/hadley/multidplyr) does not appear to work on this example, so we could not include it in the timings.
 
 ``` r
+# devtools::install_github("hadley/multidplyr")
 library("multidplyr") # https://github.com/hadley/multidplyr
 packageVersion("multidplyr")
 ```
