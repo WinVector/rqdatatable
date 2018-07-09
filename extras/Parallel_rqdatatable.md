@@ -1,7 +1,7 @@
 Speed Up Your R Work
 ================
 John Mount
-2018-07-08
+2018-07-09
 
 Introduction
 ============
@@ -38,7 +38,7 @@ suppressPackageStartupMessages(library("dplyr"))
 base::date()
 ```
 
-    ## [1] "Sun Jul  8 09:05:25 2018"
+    ## [1] "Mon Jul  9 08:19:44 2018"
 
 ``` r
 R.version.string
@@ -251,17 +251,27 @@ packageVersion("data.table")
     ## [1] '1.11.4'
 
 ``` r
+# revised function from:
+# http://www.win-vector.com/blog/2018/07/speed-up-your-r-work/#comment-66925
 data_table_f <- function(data, annotation) {
+  #setDT(data, key = c("key","info"))
+  #setDT(annotation, key = c("key","data"))
   data <- data.table::as.data.table(data)
   annotation <- data.table::as.data.table(annotation)
-  joined <- merge(data, annotation, 
-                  by = "key", 
-                  all=FALSE, 
-                  allow.cartesian=TRUE)
-  joined <- joined[joined$data <= joined$info, ]
-  data.table::setorderv(joined, cols = "data")
-  joined <- joined[, .SD[.N], id]
-  data.table::setorderv(joined, cols = "id")
+  
+  joined2 <- data[annotation,
+                  on=.(key, info >= data),
+                  .(id,
+                    key,
+                    info = x.info,
+                    key_group.x = x.key_group,
+                    data = i.data,
+                    key_group.y = i.key_group),
+                  allow.cartesian=TRUE,
+                  nomatch = 0]
+  
+  setorder(joined2,data)
+  joined2[joined2[,.I[.N], keyby = .(id)]$V1]
 }
 resdt <- data_table_f(data, annotation)
 head(resdt)
@@ -479,19 +489,19 @@ print(timings)
 
     ## Unit: seconds
     ##                  expr       min        lq      mean    median        uq
-    ##   data_table_parallel  5.274560  5.457105  5.609827  5.546554  5.686829
-    ##            data_table  9.401677  9.496280  9.701807  9.541218  9.748159
-    ##  rqdatatable_parallel  7.165216  7.497561  7.587663  7.563883  7.761987
-    ##           rqdatatable 12.490469 12.700474 13.320480 12.898154 14.229233
-    ##        dplyr_parallel  6.492262  6.572062  6.784865  6.787277  6.875076
-    ##                 dplyr 20.056555 20.450064 20.647073 20.564529 20.800350
+    ##   data_table_parallel  1.989580  2.051434  2.142745  2.134477  2.193945
+    ##            data_table  3.869135  4.171722  4.250459  4.237998  4.281611
+    ##  rqdatatable_parallel  7.282341  7.502254  7.612384  7.557135  7.762405
+    ##           rqdatatable 12.529240 12.930110 13.616540 13.576316 14.344924
+    ##        dplyr_parallel  6.442109  6.518160  6.630826  6.590514  6.654042
+    ##                 dplyr 20.359402 20.602746 20.726175 20.659127 20.839135
     ##        max neval
-    ##   6.265888    10
-    ##  10.419316    10
-    ##   7.949404    10
-    ##  14.282269    10
-    ##   7.328223    10
-    ##  21.332103    10
+    ##   2.461094    10
+    ##   4.697535    10
+    ##   8.077394    10
+    ##  14.732983    10
+    ##   6.964291    10
+    ##  21.435225    10
 
 ``` r
 # autoplot(timings)
@@ -506,7 +516,7 @@ ScatterBoxPlotH(timings,
 
 ![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
 
-The benchmark timings show parallelized `data.table` is the fastest, followed by parallelized `dplyr`, and parallelized `rqdatatable`. In the non-paraellized case `data.table` is the fastest, followed by `rqdatatable`, and then `dplyr`.
+In these timings `data.table` is by far the fastest. Part of it is the faster nature of `data.table`, and another contribution is `data.table`'s non-equi join avoids a lot of expense (which is why theta-style joins are in fact interesting).
 
 A reason `dplyr` sees greater speedup relative to its own non-parallel implementation (yet does not beat `data.table`) is that `data.table` starts already multi-threaded, so `data.table` is exploiting some parallelism even before we added the process level parallelism (and hence sees less of a speed up, though it is fastest).
 
@@ -522,11 +532,6 @@ Materials
 =========
 
 The original rendering of this article can be found [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md), source code [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.Rmd), and raw timings [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable_timings.RDS).
-
-Speculation
-===========
-
-`rqdatatable`'s minor performance regression relative to `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later, already [usually `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
 
 multidplyr
 ==========

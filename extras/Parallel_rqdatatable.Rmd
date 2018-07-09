@@ -113,17 +113,27 @@ nrow(res2)
 library("data.table")
 packageVersion("data.table")
 
+# revised function from:
+# http://www.win-vector.com/blog/2018/07/speed-up-your-r-work/#comment-66925
 data_table_f <- function(data, annotation) {
+  #setDT(data, key = c("key","info"))
+  #setDT(annotation, key = c("key","data"))
   data <- data.table::as.data.table(data)
   annotation <- data.table::as.data.table(annotation)
-  joined <- merge(data, annotation, 
-                  by = "key", 
-                  all=FALSE, 
-                  allow.cartesian=TRUE)
-  joined <- joined[joined$data <= joined$info, ]
-  data.table::setorderv(joined, cols = "data")
-  joined <- joined[, .SD[.N], id]
-  data.table::setorderv(joined, cols = "id")
+  
+  joined2 <- data[annotation,
+                  on=.(key, info >= data),
+                  .(id,
+                    key,
+                    info = x.info,
+                    key_group.x = x.key_group,
+                    data = i.data,
+                    key_group.y = i.key_group),
+                  allow.cartesian=TRUE,
+                  nomatch = 0]
+  
+  setorder(joined2,data)
+  joined2[joined2[,.I[.N], keyby = .(id)]$V1]
 }
 resdt <- data_table_f(data, annotation)
 head(resdt)
@@ -248,7 +258,7 @@ ScatterBoxPlotH(timings,
                 title="task duration by method")
 ```
 
-The benchmark timings show parallelized `data.table` is the fastest, followed by parallelized `dplyr`, and parallelized `rqdatatable`.  In the non-paraellized case `data.table` is the fastest, followed by `rqdatatable`, and then `dplyr`.
+In these timings `data.table` is by far the fastest.  Part of it is the faster nature of `data.table`, and another contribution is `data.table`'s non-equi join avoids a lot of expense (which is why theta-style joins are in fact interesting).
 
 A reason `dplyr` sees greater speedup relative to its own non-parallel implementation (yet does not beat `data.table`) is that `data.table` starts already multi-threaded, so `data.table` is exploiting some parallelism even before we added the process level parallelism (and hence sees less of a speed up, though it is fastest).
 
@@ -265,9 +275,6 @@ Note: we did not include alternatives such as `multidplyr` or `dtplyr` in the ti
 
 The original rendering of this article can be found [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md), source code [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.Rmd), and raw timings [here](https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable_timings.RDS).
 
-# Speculation
-
-`rqdatatable`'s minor performance regression relative to `datatable` I believe is from `rqdatatable`'s ranking strategy (something we will likely tune later, already [usually `rqdatatable` is competitive with `data.table` and actually quite fast](https://github.com/WinVector/rquery/blob/master/extras/data_table_replot.md)).
 
 # multidplyr
 
