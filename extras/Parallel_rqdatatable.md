@@ -1,7 +1,7 @@
 Speed Up Your R Work
 ================
 John Mount
-2018-07-09
+2018-07-10
 
 Introduction
 ============
@@ -38,7 +38,7 @@ suppressPackageStartupMessages(library("dplyr"))
 base::date()
 ```
 
-    ## [1] "Mon Jul  9 08:19:44 2018"
+    ## [1] "Tue Jul 10 11:47:46 2018"
 
 ``` r
 R.version.string
@@ -62,7 +62,7 @@ packageVersion("parallel")
 packageVersion("rqdatatable")
 ```
 
-    ## [1] '0.1.2'
+    ## [1] '0.1.3'
 
 ``` r
 packageVersion("rquery")
@@ -180,6 +180,69 @@ head(res1)
 
 ``` r
 nrow(res1)
+```
+
+    ## [1] 94
+
+Or we could try a theta-join, which reduces production of intermediate rows.
+
+``` r
+# possible data lookup: find rows that
+# have lookup data <= info
+optree_theta <- local_td(data) %.>%
+  theta_join_se(., 
+                local_td(annotation), 
+                jointype = "INNER", 
+                expr = "key == key && info >= data") %.>%
+  select_rows_nse(., data <= info) %.>%
+  pick_top_k(., 
+             k = 1,
+             partitionby = "id",
+             orderby = "data",
+             reverse = "data",
+             keep_order_column = FALSE) %.>%
+  orderby(., "id")
+cat(format(optree_theta))
+```
+
+    ## table('data'; 
+    ##   key,
+    ##   id,
+    ##   info,
+    ##   key_group) %.>%
+    ##  theta_join(.,
+    ##   table('annotation'; 
+    ##     key,
+    ##     data,
+    ##     key_group),
+    ##   j= INNER; on= rquery_thetajoin_condition_1 := key == key && info >= data) %.>%
+    ##  select_rows(.,
+    ##    data <= info) %.>%
+    ##  extend(.,
+    ##   row_number := row_number(),
+    ##   p= id,
+    ##   o= "data" DESC) %.>%
+    ##  select_rows(.,
+    ##    row_number <= 1) %.>%
+    ##  drop_columns(.,
+    ##    row_number) %.>%
+    ##  orderby(., id)
+
+``` r
+res_theta <- ex_data_table(optree_theta)
+head(res_theta)
+```
+
+    ##         data id      info key_a key_b key_group_a key_group_b
+    ## 1: 0.9152014  1 0.9860654 key_1 key_1          20          20
+    ## 2: 0.5599810  2 0.5857570 key_2 key_2           8           8
+    ## 3: 0.3011882  3 0.3334490 key_3 key_3          10          10
+    ## 4: 0.3650987  4 0.3960980 key_4 key_4           5           5
+    ## 5: 0.1469254  5 0.1753649 key_5 key_5          14          14
+    ## 6: 0.2567631  6 0.3510280 key_6 key_6           7           7
+
+``` r
+nrow(res_theta)
 ```
 
     ## [1] 94
@@ -469,12 +532,19 @@ timings <- microbenchmark(
   data_table_parallel = 
     nrow(data_table_parallel_f(data, annotation)),
   data_table = nrow(data_table_f(data, annotation)),
+  
   rqdatatable_parallel = 
     nrow(ex_data_table_parallel(optree, "key_group", cl)),
   rqdatatable = nrow(ex_data_table(optree)),
+
+  rqdatatable_theta_parallel = 
+    nrow(ex_data_table_parallel(optree_theta, "key_group", cl)),
+  rqdatatable_theta = nrow(ex_data_table(optree_theta)),
+  
   dplyr_parallel = 
     nrow(dplyr_parallel_f(data, annotation)),
   dplyr = nrow(dplyr_pipeline(data, annotation)),
+  
   times = 10L)
 
 saveRDS(timings, "Parallel_rqdatatable_timings.RDS")
@@ -488,20 +558,24 @@ print(timings)
 ```
 
     ## Unit: seconds
-    ##                  expr       min        lq      mean    median        uq
-    ##   data_table_parallel  1.989580  2.051434  2.142745  2.134477  2.193945
-    ##            data_table  3.869135  4.171722  4.250459  4.237998  4.281611
-    ##  rqdatatable_parallel  7.282341  7.502254  7.612384  7.557135  7.762405
-    ##           rqdatatable 12.529240 12.930110 13.616540 13.576316 14.344924
-    ##        dplyr_parallel  6.442109  6.518160  6.630826  6.590514  6.654042
-    ##                 dplyr 20.359402 20.602746 20.726175 20.659127 20.839135
-    ##        max neval
-    ##   2.461094    10
-    ##   4.697535    10
-    ##   8.077394    10
-    ##  14.732983    10
-    ##   6.964291    10
-    ##  21.435225    10
+    ##                        expr       min        lq      mean    median
+    ##         data_table_parallel  1.998617  2.111363  2.204216  2.141646
+    ##                  data_table  3.744724  3.981380  4.226294  4.219886
+    ##        rqdatatable_parallel  7.371383  7.542802  7.727419  7.648998
+    ##                 rqdatatable 12.943379 13.591053 14.819430 14.353591
+    ##  rqdatatable_theta_parallel  3.533409  3.712262  3.827234  3.798958
+    ##           rqdatatable_theta  6.845110  7.164678  7.275345  7.280198
+    ##              dplyr_parallel  6.244847  6.523309  6.594579  6.605038
+    ##                       dplyr 20.460717 20.840726 22.214263 21.148209
+    ##         uq       max neval
+    ##   2.309011  2.516997    10
+    ##   4.468745  4.732491    10
+    ##   7.928969  8.241554    10
+    ##  15.199191 19.587184    10
+    ##   3.847672  4.424327    10
+    ##   7.391187  7.722410    10
+    ##   6.751497  6.766249    10
+    ##  21.735832 31.028793    10
 
 ``` r
 # autoplot(timings)
@@ -566,15 +640,15 @@ head(datap)
 ```
 
     ## # A tibble: 6 x 4
-    ## # Groups:   key_group [3]
+    ## # Groups:   key_group [4]
     ##   key       id   info key_group
     ##   <chr>  <int>  <dbl> <chr>    
-    ## 1 key_4      4 0.874  13       
-    ## 2 key_8      8 0.469  1        
-    ## 3 key_11    11 0.260  14       
-    ## 4 key_18    18 0.443  14       
-    ## 5 key_22    22 0.332  13       
-    ## 6 key_23    23 0.0974 1
+    ## 1 key_1      1 0.199  6        
+    ## 2 key_6      6 0.0284 12       
+    ## 3 key_13    13 0.559  3        
+    ## 4 key_16    16 0.297  5        
+    ## 5 key_17    17 0.429  5        
+    ## 6 key_34    34 0.189  3
 
 ``` r
 class(datap)
@@ -600,14 +674,14 @@ head(annotationp)
 
     ## # A tibble: 6 x 3
     ## # Groups:   key_group [4]
-    ##   key     data key_group
-    ##   <chr>  <dbl> <chr>    
-    ## 1 key_1  0.481 6        
-    ## 2 key_13 0.105 3        
-    ## 3 key_27 0.978 8        
-    ## 4 key_28 0.119 10       
-    ## 5 key_29 0.488 10       
-    ## 6 key_32 0.286 8
+    ##   key      data key_group
+    ##   <chr>   <dbl> <chr>    
+    ## 1 key_3  0.148  15       
+    ## 2 key_4  0.562  13       
+    ## 3 key_5  0.192  15       
+    ## 4 key_7  0.151  11       
+    ## 5 key_10 0.0576 7        
+    ## 6 key_20 0.865  11
 
 ``` r
 class(annotationp)

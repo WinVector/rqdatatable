@@ -82,7 +82,6 @@ ex_data_table.relop_natural_join <- function(optree,
   } else if(optree$jointype=="RIGHT") {
     merge(A, B, by = by, all.y=TRUE, allow.cartesian=TRUE)
   } else if(optree$jointype=="FULL") {
-    print("full join")
     merge(A, B, by = by, all=TRUE, allow.cartesian=TRUE)
   } else {
     stop(paste("jointype was", optree$jointype, " but should be one of INNER, LEFT, RIGHT, or FULL"))

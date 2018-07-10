@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rqdatatable</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.1.3</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
   surveyCategory,
   assessmentTotal) %.&gt;%
  extend(.,
-  probability := exp(assessmentTotal * scale)) %.&gt;%
+  probability := exp(assessmentTotal * 0.237)) %.&gt;%
  extend(.,
   probability := probability / sum(probability),
   p= subjectID) %.&gt;%

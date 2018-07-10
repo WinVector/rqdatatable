@@ -93,6 +93,31 @@ head(res1)
 nrow(res1)
 ```
 
+Or we could try a theta-join, which reduces production of intermediate rows.
+
+```{r rquery_theta}
+# possible data lookup: find rows that
+# have lookup data <= info
+optree_theta <- local_td(data) %.>%
+  theta_join_se(., 
+                local_td(annotation), 
+                jointype = "INNER", 
+                expr = "key == key && info >= data") %.>%
+  select_rows_nse(., data <= info) %.>%
+  pick_top_k(., 
+             k = 1,
+             partitionby = "id",
+             orderby = "data",
+             reverse = "data",
+             keep_order_column = FALSE) %.>%
+  orderby(., "id")
+cat(format(optree_theta))
+
+res_theta <- ex_data_table(optree_theta)
+head(res_theta)
+nrow(res_theta)
+```
+
 And we can execute the operations in parallel.
 
 ```{r rqdatatablep1}
@@ -231,12 +256,19 @@ timings <- microbenchmark(
   data_table_parallel = 
     nrow(data_table_parallel_f(data, annotation)),
   data_table = nrow(data_table_f(data, annotation)),
+  
   rqdatatable_parallel = 
     nrow(ex_data_table_parallel(optree, "key_group", cl)),
   rqdatatable = nrow(ex_data_table(optree)),
+
+  rqdatatable_theta_parallel = 
+    nrow(ex_data_table_parallel(optree_theta, "key_group", cl)),
+  rqdatatable_theta = nrow(ex_data_table(optree_theta)),
+  
   dplyr_parallel = 
     nrow(dplyr_parallel_f(data, annotation)),
   dplyr = nrow(dplyr_pipeline(data, annotation)),
+  
   times = 10L)
 
 saveRDS(timings, "Parallel_rqdatatable_timings.RDS")

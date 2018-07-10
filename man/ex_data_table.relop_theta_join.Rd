@@ -21,31 +21,16 @@
 \item{env}{environment to work in.}
 }
 \description{
-Execute one step using the rquery.rquery_db_executor SQL supplier.  Note: it is not
-a good practice to use database nodes in data.table intended pipelines (loss of class information and
-cost of data transfer).  This node impelemtation is only here for completeness.
+Limitied implementation.  All terms must be of the form: "(table1.col CMP table2.col) (, (table1.col CMP table2.col) )".
 }
 \examples{
 
-# WARNING: example tries to change rquery.rquery_db_executor option to RSQLite and back.
-if (requireNamespace("DBI", quietly = TRUE) &&
-    requireNamespace("RSQLite", quietly = TRUE)) {
-  # example database connection
-  my_db <- DBI::dbConnect(RSQLite::SQLite(),
-                          ":memory:")
-  old_o <- options(list("rquery.rquery_db_executor" = list(db = my_db)))
+ d1 <- data.frame(AUC = 0.6, R2 = 0.2)
+ d2 <- data.frame(AUC2 = 0.4, R2 = 0.3)
 
-  d1 <- data.frame(AUC = 0.6, R2 = 0.2)
-  d2 <- data.frame(AUC2 = 0.4, R2 = 0.3)
+ optree <- theta_join_se(local_td(d1), local_td(d2), "AUC >= AUC2")
 
-  optree <- theta_join_se(local_td(d1), local_td(d2), "AUC >= AUC2")
-
-  ex_data_table(optree, tables = list(d1 = d1, d2 = d2)) \%.>\%
-    print(.)
-  # d \%.>\% optree
-
-  options(old_o)
-  DBI::dbDisconnect(my_db)
-}
+ ex_data_table(optree, tables = list(d1 = d1, d2 = d2)) \%.>\%
+   print(.)
 
 }
