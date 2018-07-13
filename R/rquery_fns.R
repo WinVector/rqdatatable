@@ -111,8 +111,6 @@ wrapr::apply_right
 #'   as.data.table(optree)
 #'   data.frame(x = 0, y = 4, z = 400) %.>% optree
 #'
-#'   # and immediate execution is also possible
-#'
 #'
 #' @export
 #'
