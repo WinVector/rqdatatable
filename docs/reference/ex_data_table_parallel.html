@@ -175,12 +175,12 @@ Requires the <code>parallel</code> package.  For a worked example with significa
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).</p>
+    <p>resulting data.table (intermediate tables can sometimes be mutated as is practice with data.table).</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Care must be taken that the calculation partitioning is course enough to ensure a correct calculation.  For example: anything
-one is joining on, aggergating over, or ranking over must be grouped so that all elements affecting a given result row are
+one is joining on, aggregating over, or ranking over must be grouped so that all elements affecting a given result row are
 in the same level of the partition.</p>
     
 

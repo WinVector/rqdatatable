@@ -2,7 +2,7 @@
 % Please edit documentation in R/relop_theta_join.R
 \name{ex_data_table.relop_theta_join}
 \alias{ex_data_table.relop_theta_join}
-\title{Theta join (database impelementation).}
+\title{Theta join (database implementation).}
 \usage{
 \method{ex_data_table}{relop_theta_join}(optree, ..., tables = list(),
   source_usage = NULL, source_limit = NULL, env = parent.frame())
@@ -21,7 +21,7 @@
 \item{env}{environment to work in.}
 }
 \description{
-Limitied implementation.  All terms must be of the form: "(table1.col CMP table2.col) (, (table1.col CMP table2.col) )".
+Limited implementation.  All terms must be of the form: "(table1.col CMP table2.col) (, (table1.col CMP table2.col) )".
 }
 \examples{
 

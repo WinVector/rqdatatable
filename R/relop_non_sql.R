@@ -223,9 +223,9 @@ rq_df_grouped_funciton_node <- function(., f,
 }
 
 
-#' Direct non-sql (function) node, not implented for \code{data.table} case.
+#' Direct non-sql (function) node, not implemented for \code{data.table} case.
 #'
-#' Passes a single table to a function that takes a single data.frame as its arguement, and returns a single data.frame.
+#' Passes a single table to a function that takes a single data.frame as its argument, and returns a single data.frame.
 #'
 #'
 #'

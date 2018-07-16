@@ -1,9 +1,9 @@
 
 
 
-#' Theta join (database impelementation).
+#' Theta join (database implementation).
 #'
-#' Limitied implementation.  All terms must be of the form: "(table1.col CMP table2.col) (, (table1.col CMP table2.col) )".
+#' Limited implementation.  All terms must be of the form: "(table1.col CMP table2.col) (, (table1.col CMP table2.col) )".
 #'
 #' @examples
 #'

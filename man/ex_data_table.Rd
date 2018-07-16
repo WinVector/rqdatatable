@@ -58,7 +58,5 @@ resulting data.table (intermediate tables can somtimes be mutated as is practice
   as.data.table(optree)
   data.frame(x = 0, y = 4, z = 400) \%.>\% optree
 
-  # and immediate execution is also possible
-
 
 }

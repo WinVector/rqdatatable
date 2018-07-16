@@ -2,7 +2,7 @@
 % Please edit documentation in R/relop_non_sql.R
 \name{ex_data_table.relop_non_sql}
 \alias{ex_data_table.relop_non_sql}
-\title{Direct non-sql (function) node, not implented for \code{data.table} case.}
+\title{Direct non-sql (function) node, not implemented for \code{data.table} case.}
 \usage{
 \method{ex_data_table}{relop_non_sql}(optree, ..., tables = list(),
   source_usage = NULL, source_limit = NULL, env = parent.frame())
@@ -21,7 +21,7 @@
 \item{env}{environment to work in.}
 }
 \description{
-Passes a single table to a function that takes a single data.frame as its arguement, and returns a single data.frame.
+Passes a single table to a function that takes a single data.frame as its argument, and returns a single data.frame.
 }
 \examples{
 

@@ -22,7 +22,7 @@ parallel_f <- function(tables, ...) {
 #' Requires the \code{parallel} package.  For a worked example with significant speedup please see \url{https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md}.
 #'
 #' Care must be taken that the calculation partitioning is course enough to ensure a correct calculation.  For example: anything
-#' one is joining on, aggergating over, or ranking over must be grouped so that all elements affecting a given result row are
+#' one is joining on, aggregating over, or ranking over must be grouped so that all elements affecting a given result row are
 #' in the same level of the partition.
 #'
 #'
@@ -34,7 +34,7 @@ parallel_f <- function(tables, ...) {
 #' @param source_limit if not null limit all table sources to no more than this many rows (used for debugging).
 #' @param debug logical if TRUE use lapply instead of parallel::clusterApplyLB.
 #' @param env environment to look for values in.
-#' @return resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).
+#' @return resulting data.table (intermediate tables can sometimes be mutated as is practice with data.table).
 #'
 #'
 #'

@@ -26,7 +26,7 @@ ex_data_table_parallel(optree, partition_column, cl = NULL, ...,
 \item{env}{environment to look for values in.}
 }
 \value{
-resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).
+resulting data.table (intermediate tables can sometimes be mutated as is practice with data.table).
 }
 \description{
 Execute an \code{rquery} pipeline with \code{data.table} in parallel, partitioned by a given column.
@@ -36,6 +36,6 @@ Requires the \code{parallel} package.  For a worked example with significant spe
 }
 \details{
 Care must be taken that the calculation partitioning is course enough to ensure a correct calculation.  For example: anything
-one is joining on, aggergating over, or ranking over must be grouped so that all elements affecting a given result row are
+one is joining on, aggregating over, or ranking over must be grouped so that all elements affecting a given result row are
 in the same level of the partition.
 }
