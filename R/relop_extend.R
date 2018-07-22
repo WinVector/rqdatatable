@@ -108,7 +108,7 @@ ex_data_table.relop_extend <- function(optree,
   if(length(enames)>0) {
     enames <- paste0("c(", paste(enames, collapse = ", "), ")")
     eexprs <- paste0("list(", paste(eexprs, collapse = ", "), ")")
-    # := notation means add columns to current data.table, j notation would move to summize type calc.
+    # := notation means add columns to current data.table, j notation would move to summarize type calc.
     src <- paste0(tmpnam, "[ ",
                   " , ", paste(enames, ":=", eexprs),
                   byi,
