@@ -85,7 +85,7 @@
       <h1>Logistic Example</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2018-07-15</h4>
+            <h4 class="date">2018-07-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable//blob/master/vignettes/logisticexample.Rmd"><code>vignettes/logisticexample.Rmd</code></a></small>
       <div class="hidden name"><code>logisticexample.Rmd</code></div>
@@ -135,7 +135,7 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
  extend(.,
   one := 1) %.&gt;%
  extend(.,
-  probability := exp(assessmentTotal * 0.237) / sum(exp(assessmentTotal * 0.237)),
+  probability := exp(assessmentTotal * scale) / sum(exp(assessmentTotal * scale)),
   count := sum(one),
   p= subjectID) %.&gt;%
  extend(.,

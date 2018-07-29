@@ -1,5 +1,5 @@
 
-# rqdatatable 0.1.3 2018/07/15
+# rqdatatable 0.1.3 2018/07/28
 
   * Fix full join print glitch.
   * data.table implementation of theta-join.

@@ -243,13 +243,13 @@
 
   <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbDisconnect'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
 }</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] "CREATE TEMPORARY  TABLE `incoming_table_name`  AS  SELECT\n  `x`,\n  `y`,\n  `group`\n FROM\n  `d`\n"
+#&gt; [1] "CREATE TEMPORARY  TABLE `incoming_table_name`  AS  SELECT\n  `d`.`x`,\n  `d`.`y`,\n  `d`.`group`\n FROM\n  `d`\n"
 #&gt; 
 #&gt; [[2]]
 #&gt; [1] "non SQL step:  y~x grouped by group grouped by group"
 #&gt; 
 #&gt; [[3]]
-#&gt; [1] " SELECT\n  `Estimate`,\n  `Std_Error`,\n  `t_value`,\n  `p_value`,\n  `Variable`,\n  `group`\n FROM\n  `outgoing_table_name`\n"
+#&gt; [1] " SELECT\n  `outgoing_table_name`.`Estimate`,\n  `outgoing_table_name`.`Std_Error`,\n  `outgoing_table_name`.`t_value`,\n  `outgoing_table_name`.`p_value`,\n  `outgoing_table_name`.`Variable`,\n  `outgoing_table_name`.`group`\n FROM\n  `outgoing_table_name`\n"
 #&gt; 
 #&gt;        Estimate  Std_Error    t_value    p_value    Variable group
 #&gt; 1   0.090716766 0.07125705  1.2730918 0.20447817 (Intercept)     a
