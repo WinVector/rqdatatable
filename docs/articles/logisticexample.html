@@ -85,7 +85,7 @@
       <h1>Logistic Example</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2018-07-28</h4>
+            <h4 class="date">2018-07-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable//blob/master/vignettes/logisticexample.Rmd"><code>vignettes/logisticexample.Rmd</code></a></small>
       <div class="hidden name"><code>logisticexample.Rmd</code></div>
@@ -128,14 +128,14 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/orderby">orderby</a></span>(., <span class="st">'subjectID'</span>)</code></pre></div>
 <p>Show expanded form of query tree.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cat</span>(<span class="kw">format</span>(rquery_pipeline))</code></pre></div>
-<pre><code>table('dL'; 
+<pre><code>table(dL; 
   subjectID,
   surveyCategory,
   assessmentTotal) %.&gt;%
  extend(.,
   one := 1) %.&gt;%
  extend(.,
-  probability := exp(assessmentTotal * scale) / sum(exp(assessmentTotal * scale)),
+  probability := exp(assessmentTotal * 0.237) / sum(exp(assessmentTotal * 0.237)),
   count := sum(one),
   p= subjectID) %.&gt;%
  extend(.,

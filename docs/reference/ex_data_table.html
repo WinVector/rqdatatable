@@ -188,7 +188,7 @@
   <span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>a</span>) <span class='kw'>%.&gt;%</span>
      <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/select_columns'>select_columns</a></span>(<span class='no'>.</span>, <span class='fu'>c</span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)) <span class='kw'>%.&gt;%</span>
      <span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/select_rows_nse'>select_rows_nse</a></span>(<span class='no'>.</span>, <span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>2</span> <span class='kw'>&amp;</span> <span class='no'>y</span><span class='kw'>&lt;</span><span class='fl'>30</span>)
-  <span class='fu'>cat</span>(<span class='fu'>format</span>(<span class='no'>optree</span>))</div><div class='output co'>#&gt; table('a'; 
+  <span class='fu'>cat</span>(<span class='fu'>format</span>(<span class='no'>optree</span>))</div><div class='output co'>#&gt; table(a; 
 #&gt;   x,
 #&gt;   y,
 #&gt;   z) %.&gt;%

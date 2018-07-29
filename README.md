@@ -51,12 +51,12 @@ We can show the expanded form of query tree.
 cat(format(rquery_pipeline))
 ```
 
-    table('dL'; 
+    table(dL; 
       subjectID,
       surveyCategory,
       assessmentTotal) %.>%
      extend(.,
-      probability := exp(assessmentTotal * scale)) %.>%
+      probability := exp(assessmentTotal * 0.237)) %.>%
      extend(.,
       probability := probability / sum(probability),
       p= subjectID) %.>%
