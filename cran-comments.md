@@ -5,20 +5,25 @@
     * using R version 3.5.0 (2018-04-23)
     * using platform: x86_64-apple-darwin15.6.0 (64-bit)
 
+
     * Windows ( win-builder.r-project.org uses --as-cran )
-    * using R Under development (unstable) (2018-07-01 r74950)
+    * using R Under development (unstable) (2018-07-23 r75001)
     * using platform: x86_64-w64-mingw32 (64-bit)
+
+    * rhub::check_for_cran()
 
 ## R CMD check results
 
-    R CMD check --as-cran rqdatatable_0.1.2.tar.gz 
+    R CMD check --as-cran rqdatatable_0.1.3.tar.gz 
     
+    * using option ‘--as-cran’
     * checking for file ‘rqdatatable/DESCRIPTION’ ... OK
     * checking extension type ... Package
-    * this is package ‘rqdatatable’ version ‘0.1.2’
+    * this is package ‘rqdatatable’ version ‘0.1.3’
     * package encoding: UTF-8
     * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
     Maintainer: ‘John Mount <jmount@win-vector.com>’
+    
     Status: OK
 
 
