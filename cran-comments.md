@@ -10,7 +10,6 @@
     * using R Under development (unstable) (2018-07-23 r75001)
     * using platform: x86_64-w64-mingw32 (64-bit)
 
-    * rhub::check_for_cran()
 
 ## R CMD check results
 
