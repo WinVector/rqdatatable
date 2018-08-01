@@ -1,4 +1,6 @@
 
+# rqdatatable 0.1.4 2018/08/01
+
 # rqdatatable 0.1.3 2018/07/28
 
   * Fix full join print glitch.

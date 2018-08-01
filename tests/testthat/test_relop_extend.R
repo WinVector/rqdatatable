@@ -11,20 +11,19 @@ test_that("relop_extend works as expected", {
       2          , "withdrawal behavior", 3                , 1     |
       2          , "positive re-framing", 4                , 1     )
 
- # # TODO: switch test back to this version after rquery version gets
- # # to 0.5.1 or newer.
- # scale <- 0.237
- # rquery_pipeline <- local_td(dL) %.>%
- #   extend_nse(.,
- #              probability %:=%
- #                exp(assessmentTotal * scale)/
- #                sum(exp(assessmentTotal * scale)),
- #              count %:=% sum(one),
- #              rank %:=% cumsum(one),
- #              orderby = c("assessmentTotal", "surveyCategory"),
- #              reverse = c("assessmentTotal"),
- #              partitionby = 'subjectID')  %.>%
- #   orderby(., c("subjectID", "probability"))
+ # to 0.5.1 or newer.
+ scale <- 0.237
+ rquery_pipeline <- local_td(dL) %.>%
+   extend_nse(.,
+              probability %:=%
+                exp(assessmentTotal * scale)/
+                sum(exp(assessmentTotal * scale)),
+              count %:=% sum(one),
+              rank %:=% cumsum(one),
+              orderby = c("assessmentTotal", "surveyCategory"),
+              reverse = c("assessmentTotal"),
+              partitionby = 'subjectID')  %.>%
+   orderby(., c("subjectID", "probability"))
  rquery_pipeline <- local_td(dL) %.>%
    extend_nse(.,
               probability %:=%
