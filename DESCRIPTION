@@ -23,11 +23,10 @@ Depends:
 Imports:
   wrapr (>= 1.5.0),
   data.table (>= 1.11.4)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 Suggests: knitr,
     rmarkdown,
     DBI,
     RSQLite,
     parallel,
     testthat
-

@@ -85,7 +85,7 @@
       <h1>Grouped Sampling</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2018-07-29</h4>
+            <h4 class="date">2018-08-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable//blob/master/vignettes/GroupedSampling.Rmd"><code>vignettes/GroupedSampling.Rmd</code></a></small>
       <div class="hidden name"><code>GroupedSampling.Rmd</code></div>
@@ -107,7 +107,7 @@ d &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
   <span class="dt">id =</span> <span class="kw">seq_len</span>(n),
   <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
 
-grouping_vars &lt;-<span class="st"> </span><span class="kw">qc</span>(x, y, z)
+grouping_vars &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/wrapr/topics/qc">qc</a></span>(x, y, z)
 
 sample_ops &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(d) <span class="op">%.&gt;%</span>
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend_nse">extend_nse</a></span>(., one <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%.&gt;%</span>
