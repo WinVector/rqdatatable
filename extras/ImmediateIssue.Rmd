@@ -3,22 +3,54 @@ title: "Immediate Issue"
 output: github_document
 ---
 
-In this note we will explain `rqdatatable` immediate mode.  We will also explain why one should still consider building explicit operator trees as a best practice in `rqdatatable`/`rquery`.
+In this note we will explain [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable) immediate mode.  We will also explain why one should still consider building explicit operator trees as a best practice in [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable)/[`rquery`](https://CRAN.R-project.org/package=rquery).
 
-```{r data}
+```{r setup}
+library("dplyr")
+library("dbplyr")
+library("data.table")
+library("dtplyr")
+library("microbenchmark")
+library("WVPlots")
+library("rqdatatable")
+
 flights <- nycflights13::flights
-# flights <- do.call(rbind, rep(list(flights), 10))
 str(flights)
 
-library("data.table")
 flights_dt <- data.table::as.data.table(flights)
+
+con <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
+                      host = 'localhost',
+                      port = 5432,
+                      user = 'johnmount',
+                      password = '')
+
+dbopts <- rq_connection_tests(con)
+db_info <- rquery_db_info(connection = con, 
+                          is_dbi = TRUE,
+                          connection_options = dbopts)
+  
+copy_to(con, flights, "flights",
+  temporary = TRUE, 
+  overwrite = TRUE,
+  indexes = list(
+    c("year", "month", "day"), 
+    "carrier", 
+    "tailnum",
+    "dest"
+  )
+)
+
+flights_db <- tbl(con, "flights")
 ```
+
+# In-memory examples
 
 Example adapted from [https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html](https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html).
 
-```{r dplyr}
-library("dplyr")
+[`dplyr`](https://CRAN.R-project.org/package=dplyr) example.
 
+```{r dplyr}
 tailnum_delay_dplyr <- flights %>% 
   filter(!is.na(arr_delay)) %>%
   group_by(tailnum) %>%
@@ -32,9 +64,9 @@ tailnum_delay_dplyr <- flights %>%
 head(tailnum_delay_dplyr)
 ```
 
-```{r dtplyr}
-library("dtplyr")
+[`dtplyr`](https://CRAN.R-project.org/package=dtplyr) example.
 
+```{r dtplyr}
 class(flights_dt)
 
 tailnum_delay_dtplyr <- flights_dt %>% 
@@ -51,11 +83,9 @@ class(tailnum_delay_dtplyr)
 head(tailnum_delay_dtplyr)
 ```
 
-
+[`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable) example.
 
 ```{r rqdatatable}
-library("rqdatatable")
-
 ops <- flights %.>%
   local_td %.>%
   select_rows_nse(., !is.na(arr_delay)) %.>%
@@ -83,7 +113,6 @@ We will compare four ways of processing the flights data.
   * `rqdatatable_immediate` a convenience method for using `rquery` operators directly on in-memory data, without taking the time to pre-define the operator pipeline.  We will call this mode "immediate mode".  The point is it is a user convenience- but it has some overhead.
 
 ```{r timing, fig.retina=2, fig.width=12, fig.height=8}
-library("microbenchmark")
 
 timings <- microbenchmark(
   dplyr = nrow(
@@ -158,8 +187,52 @@ Our advice is: use `rqdatatable` immediate only for convenience.  Please get in 
 
 We emphasize the "smart enough" is likely meaning "tracking more state" (such as tracking object visibility to avoid copying) and probably not a pejorative.
 
+# Database examples
+
+```{r dbplyr}
+tailnum_delay_dbplyr <- flights_db %>% 
+  filter(!is.na(arr_delay)) %>%
+  group_by(tailnum) %>%
+  summarise(
+    delay = mean(arr_delay, na.rm = TRUE),
+    n = n()
+  ) %>% 
+  arrange(desc(delay)) %>%
+  filter(n > 100) 
+
+head(tailnum_delay_dbplyr)
+```
+
+```{r rquerydb}
+db_info %.>% 
+  ops %.>%
+  head(.)
+```
 
 
+```{r timingdb, fig.retina=2, fig.width=12, fig.height=8}
+timingsdb <- microbenchmark(
+  dbplyr = flights_db %>%
+    filter(!is.na(arr_delay)) %>%
+    group_by(tailnum) %>%
+    summarise(
+      delay = mean(arr_delay, na.rm = TRUE),
+      n = n()
+    ) %>%
+    arrange(desc(delay)) %>%
+    filter(n > 100) %>%
+    collect(),
+  rquery = db_info %.>% 
+    ops 
+)
 
+timingsdb <- as.data.frame(timingsdb)
+timingsdb$seconds <- timingsdb$time/10^9 
+timingsdb$method <- factor(timingsdb$expr)
+timingsdb$method <- reorder(timingsdb$method, timingsdb$seconds)
+WVPlots::ScatterBoxPlotH(timingsdb,  "seconds", "method", "database task time by method")
+```
 
-
+```{r cleanup}
+DBI::dbDisconnect(con)
+```
