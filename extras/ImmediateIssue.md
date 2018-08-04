@@ -30,7 +30,12 @@ str(flights)
     ##  $ minute        : num  15 29 40 45 0 58 0 0 0 0 ...
     ##  $ time_hour     : POSIXct, format: "2013-01-01 05:00:00" "2013-01-01 05:00:00" ...
 
-Adapter from <https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html>.
+``` r
+library("data.table")
+flights_dt <- data.table::as.data.table(flights)
+```
+
+Example adapted from <https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html>.
 
 ``` r
 library("dplyr")
@@ -41,6 +46,10 @@ library("dplyr")
     ## 
     ## Attaching package: 'dplyr'
 
+    ## The following objects are masked from 'package:data.table':
+    ## 
+    ##     between, first, last
+
     ## The following objects are masked from 'package:stats':
     ## 
     ##     filter, lag
@@ -50,7 +59,7 @@ library("dplyr")
     ##     intersect, setdiff, setequal, union
 
 ``` r
-tailnum_delay_dbplyr <- flights %>% 
+tailnum_delay_dplyr <- flights %>% 
   filter(!is.na(arr_delay)) %>%
   group_by(tailnum) %>%
   summarise(
@@ -60,9 +69,49 @@ tailnum_delay_dbplyr <- flights %>%
   arrange(desc(delay)) %>%
   filter(n > 100) 
 
-head(tailnum_delay_dbplyr)
+head(tailnum_delay_dplyr)
 ```
 
+    ## # A tibble: 6 x 3
+    ##   tailnum delay     n
+    ##   <chr>   <dbl> <int>
+    ## 1 N11119   30.3   137
+    ## 2 N16919   29.9   231
+    ## 3 N14998   27.9   218
+    ## 4 N15910   27.6   265
+    ## 5 N13123   26.0   113
+    ## 6 N11192   25.9   149
+
+``` r
+library("dtplyr")
+
+class(flights_dt)
+```
+
+    ## [1] "data.table" "data.frame"
+
+``` r
+tailnum_delay_dtplyr <- flights_dt %>% 
+  filter(!is.na(arr_delay)) %>%
+  group_by(tailnum) %>%
+  summarise(
+    delay = mean(arr_delay),
+    n = n()
+  ) %>% 
+  arrange(desc(delay)) %>%
+  filter(n > 100) 
+
+class(tailnum_delay_dtplyr)
+```
+
+    ## [1] "tbl_dt"     "tbl"        "data.table" "data.frame"
+
+``` r
+head(tailnum_delay_dtplyr)
+```
+
+    ## Source: local data table [6 x 3]
+    ## 
     ## # A tibble: 6 x 3
     ##   tailnum delay     n
     ##   <chr>   <dbl> <int>
@@ -161,6 +210,17 @@ timings <- microbenchmark(
       arrange(desc(delay)) %>%
       filter(n > 100) 
   ),
+  dtplyr = nrow(
+    flights_dt %>% 
+      filter(!is.na(arr_delay)) %>%
+      group_by(tailnum) %>%
+      summarise(
+        delay = mean(arr_delay),
+        n = n()
+      ) %>% 
+      arrange(desc(delay)) %>%
+      filter(n > 100) 
+  ),
   rqdatatable_precompiled = nrow(flights %.>% ops),
   rqdatatable_ops = nrow(
     {
@@ -199,10 +259,16 @@ timings$method <- reorder(timings$method, timings$seconds)
 WVPlots::ScatterBoxPlotH(timings,  "seconds", "method", "task time by method")
 ```
 
-![](ImmediateIssue_files/figure-markdown_github/timing-1.png)
+<img src="ImmediateIssue_files/figure-markdown_github/timing-1.png" width="1152" />
 
-The issue with `rqdatatable_immediate` is that we are paying a extra overhead copying (possibly wide) intermediate tables to naively convert `data.table` reference semantics to more `R`-like value semantics. This copying is repeated at each state and is without the traditional `rquery` column liveness optimizations. This is because standard user/package defined operators (such as `%.>%`) are left to right associative- so pipelines are executed left to right, so `rquery`/`rqdatatable` is operating in a fairly blind or degraded mode in this situation.
+The issue with `rqdatatable_immediate` is that we are paying a extra overhead copying (possibly wide) intermediate tables to naively convert `data.table` reference semantics to more `R`-like value semantics. This copying is repeated at each state and is without the traditional `rquery` column liveness optimizations. This is because standard user/package defined operators (such as `%.>%`) are left to right associative- so pipelines are executed left to right, so `rquery`/`rqdatatable` is operating in a fairly blind or degraded mode in this situation. Roughly: `rqdatatable` in immediate mode is myopic (only can see one stage at a time) and fighting to bridge the difference between `data.table` and expected `R` semantics, so there are costs.
 
 Our advice is: use `rqdatatable` immediate only for convenience. Please get in the habit of building operator trees or pipelines with working with `rqdatatable`/`rquery`. `rquery` is designed assuming the operator tree or pipeline is an finished object *before* it is given any data. This is a good choice given `rquery`'s "database first" design principles. In normal `rquery` all operation sequences start with a "data description" and *not* with data (`local_td` builds a data description from local data). This is core to how `rquery` optimizes queries and minimizes copying and translation overhead. Immediate-mode is for ad-hoc work and is solely to save the user the small trouble of saving a pipeline definition (as in demonstrated in `rqdatatable_ops`).
 
 `dplyr`, on the other hand, is an in-memory first design. We see it is optimized for in-memory operation. As is often discussed `dplyr` gets "query as whole" effects by lazy evaluation, however we feel `rquery`'s more explicit user facing management of operator trees is in fact the better choice for database work.
+
+`dtplyr` currently has the same problem as immediate-mode `rqdatatable` (to a lesser extent, though in `dtplyr`'s case thre is no way to pre-build the operator tree to avoid the overhead). This is seen both in the runtime above and in the following note quoted from <https://github.com/hadley/dtplyr/blob/master/README.md>:
+
+> `dtplyr` will always be a bit slower than `data.table`, because it creates copies of objects rather than mutating in place (that's the `dplyr` philosophy). Currently, `dtplyr` is quite a lot slower than bare data.table because the methods aren't quite smart enough.
+
+We emphasize the "smart enough" is likely meaning "tracking more state" (such as tracking object visibility to avoid copying) and probably not a pejorative.
