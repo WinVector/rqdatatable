@@ -30,6 +30,6 @@ ex_data_table.relop_select_columns <- function(optree,
                      source_usage = source_usage,
                      source_limit = source_limit,
                      env = env)
-  x[, cols, with=FALSE]
+  x[, cols, with=FALSE] # data.table semantics (drop=FALSE implicit)
 }
 

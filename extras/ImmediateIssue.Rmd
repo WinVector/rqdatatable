@@ -1,0 +1,122 @@
+---
+title: "Immediate Issue"
+output: github_document
+---
+
+In this note we will explain `rqdatatable` immediate mode.  We will also explain why one should still consider building explicit operator trees as a best practice in `rqdatatable`/`rquery`.
+
+```{r data}
+flights <- nycflights13::flights
+# flights <- do.call(rbind, rep(list(flights), 10))
+str(flights)
+```
+
+Adapter from [https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html](https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html).
+
+```{r dplyr}
+library("dplyr")
+
+tailnum_delay_dbplyr <- flights %>% 
+  filter(!is.na(arr_delay)) %>%
+  group_by(tailnum) %>%
+  summarise(
+    delay = mean(arr_delay),
+    n = n()
+  ) %>% 
+  arrange(desc(delay)) %>%
+  filter(n > 100) 
+
+head(tailnum_delay_dbplyr)
+```
+
+
+```{r rqdatatable}
+library("rqdatatable")
+
+ops <- flights %.>%
+  local_td %.>%
+  select_rows_nse(., !is.na(arr_delay)) %.>%
+  extend_nse(.,
+             one = 1) %.>%
+  project_nse(., 
+              groupby = "tailnum",
+              delay = mean(arr_delay),
+              n = sum(one)) %.>%
+  orderby(., cols = "delay", reverse = "delay") %.>%
+  select_rows_nse(., n > 100)
+
+tailnum_delay_rqdatatable <- flights %.>% ops
+
+head(tailnum_delay_rqdatatable)
+
+cat(format(ops))
+```
+
+We will compare four ways of processing the flights data.
+
+  * `dplyr` in-memory pipeline.
+  * `rqdatatable_precompiled` using new data with an existing pipeline definition (the recommended way to use `rquery`/`rqdatatable`).
+  * `rqdatatable_ops` building and then using an `rqdatatable` pipeline (also recommended).
+  * `rqdatatable_immediate` a convenience method for using `rquery` operators directly on in-memory data, without taking the time to pre-define the operator pipeline.  We will call this mode "immediate mode".  The point is it is a user convenience- but it has some overhead.
+
+```{r timing}
+library("microbenchmark")
+
+timings <- microbenchmark(
+  dplyr = nrow(
+    flights %>% 
+      filter(!is.na(arr_delay)) %>%
+      group_by(tailnum) %>%
+      summarise(
+        delay = mean(arr_delay),
+        n = n()
+      ) %>% 
+      arrange(desc(delay)) %>%
+      filter(n > 100) 
+  ),
+  rqdatatable_precompiled = nrow(flights %.>% ops),
+  rqdatatable_ops = nrow(
+    {
+      ops1 <- flights %.>%
+        local_td %.>%
+        select_rows_nse(., !is.na(arr_delay)) %.>%
+        extend_nse(.,
+                   one = 1) %.>%
+        project_nse(., 
+                    groupby = "tailnum",
+                    delay = mean(arr_delay),
+                    n = sum(one)) %.>%
+        orderby(., cols = "delay", reverse = "delay") %.>%
+        select_rows_nse(., n > 100)
+      nrow(flights %.>% ops1)
+    }
+  ),
+  rqdatatable_immediate = nrow(
+    flights %.>%
+      select_rows_nse(., !is.na(arr_delay)) %.>%
+      extend_nse(.,
+                 one = 1) %.>%
+      project_nse(., 
+                  groupby = "tailnum",
+                  delay = mean(arr_delay),
+                  n = sum(one)) %.>%
+      orderby(., cols = "delay", reverse = "delay") %.>%
+      select_rows_nse(., n > 100)
+  )
+)
+
+timings <- as.data.frame(timings)
+timings$seconds <- timings$time/10^9 
+timings$method <- factor(timings$expr)
+timings$method <- reorder(timings$method, timings$seconds)
+WVPlots::ScatterBoxPlotH(timings,  "seconds", "method", "task time by method")
+```
+
+The issue with `rqdatatable_immediate` is that we are paying a extra overhead copying (possibly wide) intermediate tables to naively convert `data.table` reference semantics to more `R`-like value semantics.  This copying is repeated at each state and is without the traditional `rquery` column liveness optimizations.  This is because standard user/package defined operators (such as `%.>%`) are left to right associative- so pipelines are executed left to right, so `rquery`/`rqdatatable` is operating in a fairly blind or degraded mode in this situation. 
+
+Our advice is: use `rqdatatable` immediate only for convenience.  Please get in the habit of building operator trees or pipelines with working with `rqdatatable`/`rquery`.  `rquery` is designed assuming the operator tree or pipeline is an finished object *before* it is given any data.  This is a good choice given `rquery`'s "database first" design principles. In normal `rquery` all operation sequences start with a "data description" and *not* with data (`local_td` builds a data description from local data). This is core to how `rquery` optimizes queries and minimizes copying and translation overhead.  Immediate-mode is for ad-hoc work and is solely to save the user the small trouble of saving a pipeline definition (as in demonstrated in `rqdatatable_ops`).
+
+`dplyr`, on the other hand, is an in-memory first design. We see it is optimized for in-memory operation. As is often discussed `dplyr` gets "query as whole" effects by lazy evaluation, however we feel `rquery`'s more explicit user facing management of operator trees is in fact the better choice for database work.
+
+
+
