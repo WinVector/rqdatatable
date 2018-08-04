@@ -5,6 +5,8 @@ output: github_document
 
 In this note we will explain [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable) immediate mode.  We will also explain why one should still consider building explicit operator trees as a best practice in [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable)/[`rquery`](https://CRAN.R-project.org/package=rquery).
 
+We are going to show some timings on small data. It has often been pointed out to not tune things on sub-second timings (as there is little point optimizing what is already fast and small examples may not show the same bottle necks as large examples).  However, we have confirmed the `rqdatatabl` in-memory issue scales with data (so is an actual problem) and the remaining timings are consistent with what we have already shared on larger (more expensive) examples.
+
 ```{r setup}
 library("dplyr")
 library("dbplyr")
@@ -181,7 +183,7 @@ Our advice is: use `rqdatatable` immediate only for convenience.  Please get in 
 
 `dplyr`, on the other hand, is an in-memory first design. We see it is optimized for in-memory operation. As is often discussed `dplyr` gets "query as whole" effects by lazy evaluation, however we feel `rquery`'s more explicit user facing management of operator trees is in fact the better choice for database work.
 
-`dtplyr` currently has the same problem as immediate-mode `rqdatatable` (to a lesser extent, though in `dtplyr`'s case thre is no way to pre-build the operator tree to avoid the overhead).  This is seen both in the runtime above and in the following note quoted from [https://github.com/hadley/dtplyr/blob/master/README.md](https://github.com/hadley/dtplyr/blob/master/README.md):
+`dtplyr` currently has the same problem as immediate-mode `rqdatatable` (to a lesser extent, though in `dtplyr`'s case there is no way to pre-build the operator tree to avoid the overhead).  This is seen both in the runtime above and in the following note quoted from [https://github.com/hadley/dtplyr/blob/master/README.md](https://github.com/hadley/dtplyr/blob/master/README.md):
   
 > `dtplyr` will always be a bit slower than `data.table`, because it creates copies of objects rather than mutating in place (that's the `dplyr` philosophy). Currently, `dtplyr` is quite a lot slower than bare data.table because the methods aren't quite smart enough. 
 
