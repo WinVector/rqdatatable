@@ -295,6 +295,11 @@ timings$method <- factor(timings$expr,
 ScatterBoxPlotH(timings, 
                 xvar = "seconds", yvar = "method", 
                 title="task duration by method")
+# timings$is_parallel <- grepl("parallel", timings$expr)
+# ScatterBoxPlotH(timings, 
+#                 xvar = "seconds", yvar = "method", 
+#                 title="task duration by method") + 
+#   facet_wrap(~is_parallel, ncol = 1, labeller = "label_both", scales = "free_y")
 ```
 
 In these timings `data.table` is by far the fastest.  Part of it is the faster nature of `data.table`, and another contribution is `data.table`'s non-equi join avoids a lot of expense (which is why theta-style joins are in fact interesting).
