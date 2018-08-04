@@ -20,6 +20,7 @@ Keep in mind: unless the pipeline steps have non-trivial cost, the overhead of p
 First we set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB RAM and hybrid disk drive).
 
 ```{r ex}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.retina = 2)
 library("rqdatatable")
 library("microbenchmark")
 library("ggplot2")
@@ -284,9 +285,15 @@ print(timings)
 
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
+timings$method <- factor(timings$expr, 
+                         levels = rev(c("dplyr", "dplyr_parallel",
+                                        "rqdatatable", "rqdatatable_parallel",
+                                        "rqdatatable_theta", "rqdatatable_theta_parallel",
+                                        "data_table", "data_table_parallel")))
+
 
 ScatterBoxPlotH(timings, 
-                xvar = "seconds", yvar = "expr", 
+                xvar = "seconds", yvar = "method", 
                 title="task duration by method")
 ```
 
@@ -319,6 +326,8 @@ library("multidplyr") # https://github.com/hadley/multidplyr
 packageVersion("multidplyr")
 multidplyr::set_default_cluster(cl)
 
+head(dplyr_pipeline(data, annotation)) 
+
 # example similar to https://github.com/hadley/multidplyr/blob/master/vignettes/multidplyr.Rmd
 class(data)
 datap <- multidplyr::partition(data, key_group)
@@ -330,8 +339,7 @@ annotationp <- multidplyr::partition(annotation, key_group)
 head(annotationp)
 class(annotationp)
 
-dplyr_pipeline(datap, annotationp) %>%
-  collect()
+dplyr_pipeline(datap, annotationp) 
 ```
 
 # dtplyr
@@ -342,6 +350,8 @@ dplyr_pipeline(datap, annotationp) %>%
 library("data.table")
 library("dtplyr") #  https://CRAN.R-project.org/package=dtplyr
 packageVersion("dtplyr")
+
+head(dplyr_pipeline(data, annotation))
 
 class(data)
 datadt <- data.table::as.data.table(data)

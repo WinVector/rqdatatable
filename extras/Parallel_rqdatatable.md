@@ -1,7 +1,7 @@
 Speed Up Your R Work
 ================
 John Mount
-2018-07-11
+2018-08-03
 
 Introduction
 ============
@@ -20,6 +20,7 @@ Our example
 First we set up our execution environment and example (some details: OSX 10.13.4 on a 2.8 GHz Intel Core i5 Mac Mini (Late 2015 model) with 8GB RAM and hybrid disk drive).
 
 ``` r
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.retina = 2)
 library("rqdatatable")
 ```
 
@@ -38,7 +39,7 @@ suppressPackageStartupMessages(library("dplyr"))
 base::date()
 ```
 
-    ## [1] "Wed Jul 11 14:32:22 2018"
+    ## [1] "Fri Aug  3 19:11:29 2018"
 
 ``` r
 R.version.string
@@ -62,13 +63,13 @@ packageVersion("parallel")
 packageVersion("rqdatatable")
 ```
 
-    ## [1] '0.1.3'
+    ## [1] '0.1.4'
 
 ``` r
 packageVersion("rquery")
 ```
 
-    ## [1] '0.5.1'
+    ## [1] '0.6.1'
 
 ``` r
 packageVersion("dplyr")
@@ -142,13 +143,13 @@ optree <- local_td(data) %.>%
 cat(format(optree))
 ```
 
-    ## table('data'; 
+    ## table(data; 
     ##   key,
     ##   id,
     ##   info,
     ##   key_group) %.>%
     ##  natural_join(.,
-    ##   table('annotation'; 
+    ##   table(annotation; 
     ##     key,
     ##     data,
     ##     key_group),
@@ -205,13 +206,13 @@ optree_theta <- local_td(data) %.>%
 cat(format(optree_theta))
 ```
 
-    ## table('data'; 
+    ## table(data; 
     ##   key,
     ##   id,
     ##   info,
     ##   key_group) %.>%
     ##  theta_join(.,
-    ##   table('annotation'; 
+    ##   table(annotation; 
     ##     key,
     ##     data,
     ##     key_group),
@@ -559,36 +560,42 @@ print(timings)
 
     ## Unit: seconds
     ##                        expr       min        lq      mean    median
-    ##         data_table_parallel  2.050690  2.088879  2.345011  2.301687
-    ##                  data_table  4.095241  4.193131  4.348590  4.256543
-    ##        rqdatatable_parallel  7.415936  7.586615  7.853554  7.728641
-    ##                 rqdatatable 13.708216 14.402981 15.008427 15.014924
-    ##  rqdatatable_theta_parallel  3.438867  3.525542  3.864201  3.616251
-    ##           rqdatatable_theta  6.747656  7.092732  7.410439  7.259282
-    ##              dplyr_parallel  6.415581  6.573127  6.979949  6.821339
-    ##                       dplyr 20.648179 21.106234 22.420298 22.416773
+    ##         data_table_parallel  1.931321  1.976145  2.068665  2.036252
+    ##                  data_table  3.670744  3.780252  4.115639  4.001617
+    ##        rqdatatable_parallel  7.172751  7.273048  7.439730  7.370025
+    ##                 rqdatatable 12.471586 13.007691 13.696995 13.706044
+    ##  rqdatatable_theta_parallel  3.400369  3.488265  3.642968  3.647752
+    ##           rqdatatable_theta  6.523967  6.900249  7.062610  7.005148
+    ##              dplyr_parallel  6.327204  6.449245  6.555116  6.502173
+    ##                       dplyr 20.361691 20.497067 20.889104 20.612671
     ##         uq       max neval
-    ##   2.515832  2.881043    10
-    ##   4.433822  4.898443    10
-    ##   8.214252  8.568934    10
-    ##  15.393929 16.935803    10
-    ##   3.758056  6.181757    10
-    ##   7.746946  8.439166    10
-    ##   7.278689  8.269554    10
-    ##  23.031554 25.204687    10
+    ##   2.125659  2.262209    10
+    ##   4.290467  4.999508    10
+    ##   7.429816  8.343379    10
+    ##  14.343854 15.547799    10
+    ##   3.717305  4.119146    10
+    ##   7.350310  7.495058    10
+    ##   6.702857  6.876319    10
+    ##  21.266332 22.163036    10
 
 ``` r
 # autoplot(timings)
 
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/1e+9
+timings$method <- factor(timings$expr, 
+                         levels = rev(c("dplyr", "dplyr_parallel",
+                                        "rqdatatable", "rqdatatable_parallel",
+                                        "rqdatatable_theta", "rqdatatable_theta_parallel",
+                                        "data_table", "data_table_parallel")))
+
 
 ScatterBoxPlotH(timings, 
-                xvar = "seconds", yvar = "expr", 
+                xvar = "seconds", yvar = "method", 
                 title="task duration by method")
 ```
 
-![](Parallel_rqdatatable_files/figure-markdown_github/present-1.png)
+<img src="Parallel_rqdatatable_files/figure-markdown_github/present-1.png" width="1152" />
 
 In these timings `data.table` is by far the fastest. Part of it is the faster nature of `data.table`, and another contribution is `data.table`'s non-equi join avoids a lot of expense (which is why theta-style joins are in fact interesting).
 
@@ -623,6 +630,20 @@ packageVersion("multidplyr")
 ``` r
 multidplyr::set_default_cluster(cl)
 
+head(dplyr_pipeline(data, annotation)) 
+```
+
+    ## # A tibble: 6 x 7
+    ##   key      id   info key_group.x   data key_group.y rownum
+    ##   <chr> <int>  <dbl> <chr>        <dbl> <chr>        <int>
+    ## 1 key_1     1 0.199  6           0.197  6                1
+    ## 2 key_2     2 0.843  19          0.836  19               1
+    ## 3 key_3     3 0.0284 15          0.0226 15               1
+    ## 4 key_4     4 0.874  13          0.870  13               1
+    ## 5 key_5     5 0.838  15          0.835  15               1
+    ## 6 key_6     6 0.0284 12          0.0250 12               1
+
+``` r
 # example similar to https://github.com/hadley/multidplyr/blob/master/vignettes/multidplyr.Rmd
 class(data)
 ```
@@ -690,8 +711,7 @@ class(annotationp)
     ## [1] "party_df"
 
 ``` r
-dplyr_pipeline(datap, annotationp) %>%
-  collect()
+dplyr_pipeline(datap, annotationp) 
 ```
 
     ## Error in UseMethod("inner_join"): no applicable method for 'inner_join' applied to an object of class "party_df"
@@ -708,6 +728,20 @@ packageVersion("dtplyr")
 ```
 
     ## [1] '0.0.2'
+
+``` r
+head(dplyr_pipeline(data, annotation))
+```
+
+    ## # A tibble: 6 x 7
+    ##   key      id   info key_group.x   data key_group.y rownum
+    ##   <chr> <int>  <dbl> <chr>        <dbl> <chr>        <int>
+    ## 1 key_1     1 0.199  6           0.197  6                1
+    ## 2 key_2     2 0.843  19          0.836  19               1
+    ## 3 key_3     3 0.0284 15          0.0226 15               1
+    ## 4 key_4     4 0.874  13          0.870  13               1
+    ## 5 key_5     5 0.838  15          0.835  15               1
+    ## 6 key_6     6 0.0284 12          0.0250 12               1
 
 ``` r
 class(data)
