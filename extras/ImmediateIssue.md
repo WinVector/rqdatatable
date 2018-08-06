@@ -319,7 +319,7 @@ Our advice is: use `rqdatatable` immediate only for convenience. Please get in t
 
 `dtplyr` currently has the same problem as immediate-mode `rqdatatable` (to a lesser extent, though in `dtplyr`'s case there is no way to pre-build the operator tree to avoid the overhead). This is seen both in the runtime above and in the following note quoted from <https://github.com/hadley/dtplyr/blob/master/README.md>:
 
-> `dtplyr` will always be a bit slower than `data.table`, because it creates copies of objects rather than mutating in place (that's the `dplyr` philosophy). Currently, `dtplyr` is quite a lot slower than bare data.table because the methods aren't quite smart enough.
+> `dtplyr` will always be a bit slower than `data.table`, because it creates copies of objects rather than mutating in place (that's the `dplyr` philosophy). Currently, `dtplyr` is quite a lot slower than bare `data.table` because the methods aren't quite smart enough.
 
 We emphasize the "smart enough" is likely meaning "tracking more state" (such as tracking object visibility to avoid copying) and probably not a pejorative.
 
