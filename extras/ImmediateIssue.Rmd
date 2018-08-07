@@ -16,10 +16,6 @@ library("microbenchmark")
 library("WVPlots")
 library("rqdatatable")
 
-flights <- nycflights13::flights
-str(flights)
-
-flights_dt <- data.table::as.data.table(flights)
 
 con <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
                       host = 'localhost',
@@ -31,17 +27,16 @@ dbopts <- rq_connection_tests(con)
 db_info <- rquery_db_info(connection = con, 
                           is_dbi = TRUE,
                           connection_options = dbopts)
-  
-copy_to(con, flights, "flights",
-  temporary = TRUE, 
-  overwrite = TRUE,
-  indexes = list(
-    c("year", "month", "day"), 
-    "carrier", 
-    "tailnum",
-    "dest"
-  )
-)
+```
+
+```{r data}
+flights <- nycflights13::flights
+flights <- do.call(rbind, rep(list(flights), 10))
+str(flights)
+
+flights_dt <- data.table::as.data.table(flights)
+
+rq_copy_to(db_info, "flights", flights)
 
 flights_db <- tbl(con, "flights")
 ```
@@ -170,6 +165,8 @@ timings <- microbenchmark(
   )
 )
 
+print(timings)
+
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/10^9 
 timings$method <- factor(timings$expr)
@@ -227,6 +224,8 @@ timingsdb <- microbenchmark(
   rquery = db_info %.>% 
     ops 
 )
+
+print(timingsdb)
 
 timingsdb <- as.data.frame(timingsdb)
 timingsdb$seconds <- timingsdb$time/10^9 

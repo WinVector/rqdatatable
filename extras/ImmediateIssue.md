@@ -54,11 +54,25 @@ library("rqdatatable")
     ## Loading required package: rquery
 
 ``` r
+con <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
+                      host = 'localhost',
+                      port = 5432,
+                      user = 'johnmount',
+                      password = '')
+
+dbopts <- rq_connection_tests(con)
+db_info <- rquery_db_info(connection = con, 
+                          is_dbi = TRUE,
+                          connection_options = dbopts)
+```
+
+``` r
 flights <- nycflights13::flights
+flights <- do.call(rbind, rep(list(flights), 10))
 str(flights)
 ```
 
-    ## Classes 'tbl_df', 'tbl' and 'data.frame':    336776 obs. of  19 variables:
+    ## Classes 'tbl_df', 'tbl' and 'data.frame':    3367760 obs. of  19 variables:
     ##  $ year          : int  2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
     ##  $ month         : int  1 1 1 1 1 1 1 1 1 1 ...
     ##  $ day           : int  1 1 1 1 1 1 1 1 1 1 ...
@@ -82,28 +96,15 @@ str(flights)
 ``` r
 flights_dt <- data.table::as.data.table(flights)
 
-con <- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
-                      host = 'localhost',
-                      port = 5432,
-                      user = 'johnmount',
-                      password = '')
+rq_copy_to(db_info, "flights", flights)
+```
 
-dbopts <- rq_connection_tests(con)
-db_info <- rquery_db_info(connection = con, 
-                          is_dbi = TRUE,
-                          connection_options = dbopts)
-  
-copy_to(con, flights, "flights",
-  temporary = TRUE, 
-  overwrite = TRUE,
-  indexes = list(
-    c("year", "month", "day"), 
-    "carrier", 
-    "tailnum",
-    "dest"
-  )
-)
+    ## Warning in postgresqlWriteTable(conn, name, value, ...): table flights
+    ## exists in database: aborting assignTable
 
+    ## [1] "table(\"flights\"; year, month, day, dep_time, sched_dep_time, dep_delay, arr_time, sched_arr_time, arr_delay, carrier, flight, tailnum, origin, dest, air_time, distance, hour, minute, time_hour)"
+
+``` r
 flights_db <- tbl(con, "flights")
 ```
 
@@ -131,12 +132,12 @@ head(tailnum_delay_dplyr)
     ## # A tibble: 6 x 3
     ##   tailnum delay     n
     ##   <chr>   <dbl> <int>
-    ## 1 N11119   30.3   137
-    ## 2 N16919   29.9   231
-    ## 3 N14998   27.9   218
-    ## 4 N15910   27.6   265
-    ## 5 N13123   26.0   113
-    ## 6 N11192   25.9   149
+    ## 1 N337AT   66.5   130
+    ## 2 N203FR   59.1   410
+    ## 3 N645MQ   51     240
+    ## 4 N956AT   47.6   340
+    ## 5 N176DN   46.2   120
+    ## 6 N988AT   44.3   350
 
 [`dtplyr`](https://CRAN.R-project.org/package=dtplyr) example.
 
@@ -171,12 +172,12 @@ head(tailnum_delay_dtplyr)
     ## # A tibble: 6 x 3
     ##   tailnum delay     n
     ##   <chr>   <dbl> <int>
-    ## 1 N11119   30.3   137
-    ## 2 N16919   29.9   231
-    ## 3 N14998   27.9   218
-    ## 4 N15910   27.6   265
-    ## 5 N13123   26.0   113
-    ## 6 N11192   25.9   149
+    ## 1 N337AT   66.5   130
+    ## 2 N203FR   59.1   410
+    ## 3 N645MQ   51     240
+    ## 4 N956AT   47.6   340
+    ## 5 N176DN   46.2   120
+    ## 6 N988AT   44.3   350
 
 [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable) example.
 
@@ -199,12 +200,12 @@ head(tailnum_delay_rqdatatable)
 ```
 
     ##    tailnum    delay   n
-    ## 1:  N11119 30.30657 137
-    ## 2:  N16919 29.88745 231
-    ## 3:  N14998 27.92202 218
-    ## 4:  N15910 27.61132 265
-    ## 5:  N13123 25.97345 113
-    ## 6:  N11192 25.85235 149
+    ## 1:  N337AT 66.53846 130
+    ## 2:  N203FR 59.12195 410
+    ## 3:  N645MQ 51.00000 240
+    ## 4:  N956AT 47.64706 340
+    ## 5:  N176DN 46.25000 120
+    ## 6:  N988AT 44.34286 350
 
 ``` r
 cat(format(ops))
@@ -302,6 +303,24 @@ timings <- microbenchmark(
   )
 )
 
+print(timings)
+```
+
+    ## Unit: milliseconds
+    ##                     expr       min        lq      mean    median        uq
+    ##                    dplyr  682.6603  784.8969  908.0768  871.0583  952.8966
+    ##                   dtplyr 1195.3009 1406.3296 1545.3586 1502.1285 1621.6689
+    ##  rqdatatable_precompiled  295.4662  379.1123  446.0309  419.8077  452.4274
+    ##          rqdatatable_ops  307.4032  390.9464  451.6608  426.6453  483.9871
+    ##    rqdatatable_immediate 1792.8148 2096.9496 2294.4442 2241.5286 2482.9754
+    ##        max neval
+    ##  1676.3746   100
+    ##  2607.6168   100
+    ##   953.4196   100
+    ##   938.3608   100
+    ##  2983.1548   100
+
+``` r
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/10^9 
 timings$method <- factor(timings$expr)
@@ -345,12 +364,12 @@ head(tailnum_delay_dbplyr)
     ## # Ordered by: desc(delay)
     ##   tailnum delay     n
     ##   <chr>   <dbl> <dbl>
-    ## 1 N11119   30.3   137
-    ## 2 N16919   29.9   231
-    ## 3 N14998   27.9   218
-    ## 4 N15910   27.6   265
-    ## 5 N13123   26.0   113
-    ## 6 N11192   25.9   149
+    ## 1 N337AT   66.5   130
+    ## 2 N203FR   59.1   410
+    ## 3 N645MQ   51     240
+    ## 4 N956AT   47.6   340
+    ## 5 N176DN   46.2   120
+    ## 6 N988AT   44.3   350
 
 ``` r
 db_info %.>% 
@@ -359,12 +378,12 @@ db_info %.>%
 ```
 
     ##   tailnum    delay   n
-    ## 1  N11119 30.30657 137
-    ## 2  N16919 29.88745 231
-    ## 3  N14998 27.92202 218
-    ## 4  N15910 27.61132 265
-    ## 5  N13123 25.97345 113
-    ## 6  N11192 25.85235 149
+    ## 1  N337AT 66.53846 130
+    ## 2  N203FR 59.12195 410
+    ## 3  N645MQ 51.00000 240
+    ## 4  N956AT 47.64706 340
+    ## 5  N176DN 46.25000 120
+    ## 6  N988AT 44.34286 350
 
 ``` r
 timingsdb <- microbenchmark(
@@ -382,6 +401,15 @@ timingsdb <- microbenchmark(
     ops 
 )
 
+print(timingsdb)
+```
+
+    ## Unit: milliseconds
+    ##    expr      min        lq     mean   median       uq      max neval
+    ##  dbplyr 907.2541 1001.9244 1047.364 1040.704 1086.382 1240.307   100
+    ##  rquery 882.1298  999.7669 1031.006 1030.791 1062.052 1287.148   100
+
+``` r
 timingsdb <- as.data.frame(timingsdb)
 timingsdb$seconds <- timingsdb$time/10^9 
 timingsdb$method <- factor(timingsdb$expr)
