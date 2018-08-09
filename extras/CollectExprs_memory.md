@@ -55,7 +55,7 @@ ncol <- 100
 [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable)/[`rquery`](https://CRAN.R-project.org/package=rquery) torture function: add 100 columns to a 1000000 row table. This is implemented using [`data.table`](https://CRAN.R-project.org/package=data.table) in a batch mode.
 
 ``` r
-rquery_fn <- function(d, ncol) {
+rquery_fn_batch <- function(d, ncol) {
   expressions <- paste0("x + ", seq_len(ncol))
   names(expressions) <- paste0("x_", seq_len(ncol))
   ops <- local_td(d) %.>%
@@ -64,13 +64,49 @@ rquery_fn <- function(d, ncol) {
   d %.>% ops
 }
 
-rquery_fn(d, 5)
+rquery_fn_batch(d, 5)[]
 ```
 
     ##    x x_1 x_2 x_3 x_4 x_5
     ## 1: 3   4   5   6   7   8
 
 The row-selection step is to cut down on the in-memory cost of bringing the result back to `R`. Obviously we could optimize the example away by pivoting the filter to earlier in the example pipeline. We ask the reader to take this example as a stand-in for a more complicated (though nasty) real-world example where such optimizations are not available.
+
+A sequentinal versin.
+
+``` r
+rquery_fn_seq <- function(d, ncol) {
+  ops <- local_td(d) 
+  for(i in seq_len(ncol)) {
+    ops <- extend_se(ops, paste0("x_", i) %:=% paste0("x + ", i))
+  }
+  ops <- select_rows_nse(ops, x == 3)
+  d %.>% ops
+}
+
+rquery_fn_seq(d, 5)[]
+```
+
+    ##    x x_1 x_2 x_3 x_4 x_5
+    ## 1: 3   4   5   6   7   8
+
+And a pre-compiled `rquery` sequential pipeline.
+
+``` r
+rquery_fn_seq_comp <- function(d, ncol) {
+  ops <- local_td(d) 
+  for(i in seq_len(ncol)) {
+    ops <- extend_se(ops, paste0("x_", i) %:=% paste0("x + ", i))
+  }
+  select_rows_nse(ops, x == 3)
+}
+
+ops <- rquery_fn_seq_comp(d, 5)
+d %.>% ops
+```
+
+    ##    x x_1 x_2 x_3 x_4 x_5
+    ## 1: 3   4   5   6   7   8
 
 Same torture for [`dplyr`](https://CRAN.R-project.org/package=dplyr).
 
@@ -137,8 +173,11 @@ data_table_sequential_fn(tbl, 5)
 Time the functions.
 
 ``` r
+opsc <- rquery_fn_seq_comp(d, ncol)
 timings <- microbenchmark(
-  rqdatatable = rquery_fn(d, ncol),
+  rqdatatable_batch = rquery_fn_batch(d, ncol),
+  rqdatatable_sequential = rquery_fn_seq(d, ncol),
+  rqdatatable_sequential_compiled = { d %.>% opsc },
   dplyr = dplyr_fn(tbl, ncol),
   seplyr = seplyr_fn(tbl, ncol),
   data_table_sequential = data_table_sequential_fn(d, ncol),
@@ -154,16 +193,20 @@ print(timings)
 ```
 
     ## Unit: milliseconds
-    ##                   expr       min        lq      mean    median        uq
-    ##            rqdatatable 1327.1253 1481.9942 1630.8643 1568.7860 1715.9464
-    ##                  dplyr  752.2442  773.6876  919.7230  833.4448 1094.4451
-    ##                 seplyr  598.8906  827.1614  861.3842  855.3084  938.5036
-    ##  data_table_sequential  729.8585  952.9952  995.9484  986.7933 1068.0681
-    ##       max neval
-    ##  2610.145   100
-    ##  1675.631   100
-    ##  1233.909   100
-    ##  1365.402   100
+    ##                             expr       min        lq      mean    median
+    ##                rqdatatable_batch 1279.1656 1455.2240 1581.3552 1539.5738
+    ##           rqdatatable_sequential 2607.6475 2845.1221 2974.1527 2933.4133
+    ##  rqdatatable_sequential_compiled 1486.3553 1638.4192 1727.4547 1700.3718
+    ##                            dplyr  735.6455  782.3580  913.0006  855.8226
+    ##                           seplyr  586.0767  830.4310  892.0809  881.8349
+    ##            data_table_sequential  729.6060  936.2447  997.1129  982.9807
+    ##         uq      max neval
+    ##  1673.0563 2025.577   100
+    ##  3038.4283 4385.594   100
+    ##  1809.7341 2257.403   100
+    ##  1007.5346 1535.456   100
+    ##   946.1194 1300.669   100
+    ##  1068.9589 1389.268   100
 
 ``` r
 #autoplot(timings)
@@ -187,16 +230,20 @@ tratio <- timings %.>%
                    columnToTakeValuesFrom = "mean_seconds", 
                    rowKeyColumns = NULL) %.>%
   extend_nse(.,
-             ratio = dplyr/rqdatatable)
+             ratio = dplyr/rqdatatable_batch)
 
 tratio[]
 ```
 
-    ##    data_table_sequential    dplyr rqdatatable    seplyr     ratio
-    ## 1:             0.9959484 0.919723    1.630864 0.8613842 0.5639482
+    ##    data_table_sequential     dplyr rqdatatable_batch
+    ## 1:             0.9971129 0.9130006          1.581355
+    ##    rqdatatable_sequential rqdatatable_sequential_compiled    seplyr
+    ## 1:               2.974153                        1.727455 0.8920809
+    ##        ratio
+    ## 1: 0.5773532
 
 ``` r
 ratio_str <- sprintf("%.2g", 1/tratio$ratio)
 ```
 
-`rqdatatable` is about 1.8 times slower than `dplyr` (and the other sequential implementations and even batch implementations) for this task at this scale for this data implementation and configuration. Likely this is due to copying and re-parsing overhead from `rqdatatable` itself (unlikely to be a `data.table` issue).
+`rqdatatable` in batch mode is about 1.7 times slower than `dplyr` (and the other sequential implementations and even batch implementations) for this task at this scale for this data implementation and configuration. Likely this is due to copying and re-parsing overhead from `rqdatatable` itself (unlikely to be a `data.table` issue).

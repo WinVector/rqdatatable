@@ -32,8 +32,8 @@ ncol <- 100
 
 [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable )/[`rquery`](https://CRAN.R-project.org/package=rquery) torture function: add `r sprintf("%d", ncol)` columns to a `r sprintf("%d", nrow)` row table.  This is implemented using [`data.table`](https://CRAN.R-project.org/package=data.table) in a batch mode.
 
-```{r rqueryfn}
-rquery_fn <- function(d, ncol) {
+```{r rqueryfn_batch}
+rquery_fn_batch <- function(d, ncol) {
   expressions <- paste0("x + ", seq_len(ncol))
   names(expressions) <- paste0("x_", seq_len(ncol))
   ops <- local_td(d) %.>%
@@ -42,10 +42,41 @@ rquery_fn <- function(d, ncol) {
   d %.>% ops
 }
 
-rquery_fn(d, 5)
+rquery_fn_batch(d, 5)[]
 ```
 
 The row-selection step is to cut down on the in-memory cost of bringing the result back to `R`. Obviously we could optimize the example away by pivoting the filter to earlier in the example pipeline.  We ask the reader to take this example as a stand-in for a more complicated (though nasty) real-world example where such optimizations are not available.
+
+A sequentinal versin.
+
+```{r rqueryfn_seq}
+rquery_fn_seq <- function(d, ncol) {
+  ops <- local_td(d) 
+  for(i in seq_len(ncol)) {
+    ops <- extend_se(ops, paste0("x_", i) %:=% paste0("x + ", i))
+  }
+  ops <- select_rows_nse(ops, x == 3)
+  d %.>% ops
+}
+
+rquery_fn_seq(d, 5)[]
+```
+
+And a pre-compiled `rquery` sequential pipeline.
+
+```{r rqueryfn_seq_comp}
+rquery_fn_seq_comp <- function(d, ncol) {
+  ops <- local_td(d) 
+  for(i in seq_len(ncol)) {
+    ops <- extend_se(ops, paste0("x_", i) %:=% paste0("x + ", i))
+  }
+  select_rows_nse(ops, x == 3)
+}
+
+ops <- rquery_fn_seq_comp(d, 5)
+d %.>% ops
+```
+
 
 Same torture for [`dplyr`](https://CRAN.R-project.org/package=dplyr).
 
@@ -101,8 +132,11 @@ data_table_sequential_fn(tbl, 5)
 Time the functions. 
 
 ```{r timing}
+opsc <- rquery_fn_seq_comp(d, ncol)
 timings <- microbenchmark(
-  rqdatatable = rquery_fn(d, ncol),
+  rqdatatable_batch = rquery_fn_batch(d, ncol),
+  rqdatatable_sequential = rquery_fn_seq(d, ncol),
+  rqdatatable_sequential_compiled = { d %.>% opsc },
   dplyr = dplyr_fn(tbl, ncol),
   seplyr = seplyr_fn(tbl, ncol),
   data_table_sequential = data_table_sequential_fn(d, ncol),
@@ -132,12 +166,12 @@ tratio <- timings %.>%
                    columnToTakeValuesFrom = "mean_seconds", 
                    rowKeyColumns = NULL) %.>%
   extend_nse(.,
-             ratio = dplyr/rqdatatable)
+             ratio = dplyr/rqdatatable_batch)
 
 tratio[]
 
 ratio_str <- sprintf("%.2g", 1/tratio$ratio)
 ```
 
-`rqdatatable` is about `r ratio_str` times slower than `dplyr` (and the other sequential implementations and even batch implementations) for this task at this scale for this data implementation and configuration.  Likely this is due to copying and re-parsing overhead from `rqdatatable` itself (unlikely to be a `data.table` issue).
+`rqdatatable` in batch mode is about `r ratio_str` times slower than `dplyr` (and the other sequential implementations and even batch implementations) for this task at this scale for this data implementation and configuration.  Likely this is due to copying and re-parsing overhead from `rqdatatable` itself (unlikely to be a `data.table` issue).
 
