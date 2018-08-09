@@ -72,7 +72,26 @@ rquery_fn_batch(d, 5)[]
 
 The row-selection step is to cut down on the in-memory cost of bringing the result back to `R`. Obviously we could optimize the example away by pivoting the filter to earlier in the example pipeline. We ask the reader to take this example as a stand-in for a more complicated (though nasty) real-world example where such optimizations are not available.
 
-A sequentinal versin.
+To break out how much time we are losing in planning/parsing (something we intend to improve) we can more a pre-compiled version of the `rquery` batch query.
+
+``` r
+rquery_fn_batch_compiled <- function(d, ncol) {
+  expressions <- paste0("x + ", seq_len(ncol))
+  names(expressions) <- paste0("x_", seq_len(ncol))
+  local_td(d) %.>%
+    extend_se(., expressions) %.>%
+    select_rows_nse(., x == 3)
+}
+
+ops <- rquery_fn_batch_compiled(d, 5)
+
+(d %.>% ops)[]
+```
+
+    ##    x x_1 x_2 x_3 x_4 x_5
+    ## 1: 3   4   5   6   7   8
+
+We can also try a sequentinal version.
 
 ``` r
 rquery_fn_seq <- function(d, ncol) {
@@ -102,7 +121,7 @@ rquery_fn_seq_comp <- function(d, ncol) {
 }
 
 ops <- rquery_fn_seq_comp(d, 5)
-d %.>% ops
+(d %.>% ops)[]
 ```
 
     ##    x x_1 x_2 x_3 x_4 x_5
@@ -173,44 +192,48 @@ data_table_sequential_fn(tbl, 5)
 Time the functions.
 
 ``` r
-opsc <- rquery_fn_seq_comp(d, ncol)
+opsbc <- rquery_fn_batch_compiled(d, ncol)
+opssc <- rquery_fn_seq_comp(d, ncol)
+
 timings <- microbenchmark(
   rqdatatable_batch = rquery_fn_batch(d, ncol),
+  rqdatatable_batch_compiled = { d %.>% opsbc },
   rqdatatable_sequential = rquery_fn_seq(d, ncol),
-  rqdatatable_sequential_compiled = { d %.>% opsc },
+  rqdatatable_sequential_compiled = { d %.>% opssc },
   dplyr = dplyr_fn(tbl, ncol),
   seplyr = seplyr_fn(tbl, ncol),
   data_table_sequential = data_table_sequential_fn(d, ncol),
   times = 100L)
 
 saveRDS(timings, "CollectExprs_memory_timings.RDS")
-```
-
-Present the results.
-
-``` r
 print(timings)
 ```
 
     ## Unit: milliseconds
     ##                             expr       min        lq      mean    median
-    ##                rqdatatable_batch 1279.1656 1455.2240 1581.3552 1539.5738
-    ##           rqdatatable_sequential 2607.6475 2845.1221 2974.1527 2933.4133
-    ##  rqdatatable_sequential_compiled 1486.3553 1638.4192 1727.4547 1700.3718
-    ##                            dplyr  735.6455  782.3580  913.0006  855.8226
-    ##                           seplyr  586.0767  830.4310  892.0809  881.8349
-    ##            data_table_sequential  729.6060  936.2447  997.1129  982.9807
+    ##                rqdatatable_batch 1248.6449 1412.5535 1561.0661 1498.3010
+    ##       rqdatatable_batch_compiled 1195.2919 1364.2783 1508.9881 1459.5200
+    ##           rqdatatable_sequential 2674.3209 2822.3152 2999.8298 2961.0056
+    ##  rqdatatable_sequential_compiled 1476.3741 1627.9700 1760.0313 1691.8208
+    ##                            dplyr  723.5657  766.8512  922.2574  843.1273
+    ##                           seplyr  583.6540  803.2014  863.6107  846.1414
+    ##            data_table_sequential  706.9933  925.6701  971.3457  969.2892
     ##         uq      max neval
-    ##  1673.0563 2025.577   100
-    ##  3038.4283 4385.594   100
-    ##  1809.7341 2257.403   100
-    ##  1007.5346 1535.456   100
-    ##   946.1194 1300.669   100
-    ##  1068.9589 1389.268   100
+    ##  1591.6803 3435.489   100
+    ##  1607.2087 2293.913   100
+    ##  3065.6322 4714.208   100
+    ##  1820.1758 2779.317   100
+    ##  1063.2391 1822.095   100
+    ##   913.3188 1405.777   100
+    ##  1028.2709 1393.019   100
 
 ``` r
 #autoplot(timings)
+```
 
+Present the results.
+
+``` r
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/10^9
 timings$method <- factor(timings$expr)
@@ -236,11 +259,11 @@ tratio[]
 ```
 
     ##    data_table_sequential     dplyr rqdatatable_batch
-    ## 1:             0.9971129 0.9130006          1.581355
-    ##    rqdatatable_sequential rqdatatable_sequential_compiled    seplyr
-    ## 1:               2.974153                        1.727455 0.8920809
-    ##        ratio
-    ## 1: 0.5773532
+    ## 1:             0.9713457 0.9222574          1.561066
+    ##    rqdatatable_batch_compiled rqdatatable_sequential
+    ## 1:                   1.508988                2.99983
+    ##    rqdatatable_sequential_compiled    seplyr     ratio
+    ## 1:                        1.760031 0.8636107 0.5907869
 
 ``` r
 ratio_str <- sprintf("%.2g", 1/tratio$ratio)

@@ -47,7 +47,24 @@ rquery_fn_batch(d, 5)[]
 
 The row-selection step is to cut down on the in-memory cost of bringing the result back to `R`. Obviously we could optimize the example away by pivoting the filter to earlier in the example pipeline.  We ask the reader to take this example as a stand-in for a more complicated (though nasty) real-world example where such optimizations are not available.
 
-A sequentinal versin.
+To break out how much time we are losing in planning/parsing (something we intend to improve) we can more a pre-compiled version of the `rquery` batch query.
+
+
+```{r rqueryfn_batch_c}
+rquery_fn_batch_compiled <- function(d, ncol) {
+  expressions <- paste0("x + ", seq_len(ncol))
+  names(expressions) <- paste0("x_", seq_len(ncol))
+  local_td(d) %.>%
+    extend_se(., expressions) %.>%
+    select_rows_nse(., x == 3)
+}
+
+ops <- rquery_fn_batch_compiled(d, 5)
+
+(d %.>% ops)[]
+```
+
+We can also try a sequentinal version.
 
 ```{r rqueryfn_seq}
 rquery_fn_seq <- function(d, ncol) {
@@ -74,7 +91,7 @@ rquery_fn_seq_comp <- function(d, ncol) {
 }
 
 ops <- rquery_fn_seq_comp(d, 5)
-d %.>% ops
+(d %.>% ops)[]
 ```
 
 
@@ -132,25 +149,27 @@ data_table_sequential_fn(tbl, 5)
 Time the functions. 
 
 ```{r timing}
-opsc <- rquery_fn_seq_comp(d, ncol)
+opsbc <- rquery_fn_batch_compiled(d, ncol)
+opssc <- rquery_fn_seq_comp(d, ncol)
+
 timings <- microbenchmark(
   rqdatatable_batch = rquery_fn_batch(d, ncol),
+  rqdatatable_batch_compiled = { d %.>% opsbc },
   rqdatatable_sequential = rquery_fn_seq(d, ncol),
-  rqdatatable_sequential_compiled = { d %.>% opsc },
+  rqdatatable_sequential_compiled = { d %.>% opssc },
   dplyr = dplyr_fn(tbl, ncol),
   seplyr = seplyr_fn(tbl, ncol),
   data_table_sequential = data_table_sequential_fn(d, ncol),
   times = 100L)
 
 saveRDS(timings, "CollectExprs_memory_timings.RDS")
+print(timings)
+#autoplot(timings)
 ```
 
 Present the results.
 
 ```{r present}
-print(timings)
-#autoplot(timings)
-
 timings <- as.data.frame(timings)
 timings$seconds <- timings$time/10^9
 timings$method <- factor(timings$expr)
