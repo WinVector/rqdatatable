@@ -36,7 +36,7 @@ my_check <- function(values) {
   all(sapply(values[-1], function(x) identical(values[[1]], x)))
 }
 
-szs <- expand.grid(a = c(1,2,5), b = 10^{3:6})
+szs <- expand.grid(a = c(1,2,5), b = 10^{0:8})
 szs <- sort(unique(szs$a * szs$b))
 runs <- lapply(
   szs,
