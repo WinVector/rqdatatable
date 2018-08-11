@@ -2,6 +2,8 @@
 title: "Sorting"
 output: github_document
 ---
+ 
+Amazon EC2 `r4.8xlarge` 
 
 ```{r setup}
 library("rqdatatable")
@@ -9,6 +11,9 @@ library("microbenchmark")
 library("ggplot2")
 library("WVPlots")
 library("cdata")
+library("dplyr")
+packageVersion("dplyr")
+R.version
 
 set.seed(32523)
 
