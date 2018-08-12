@@ -1,6 +1,8 @@
 Sorting
 ================
 
+Amazon EC2 `r4.8xlarge`.
+
 ``` r
 library("rqdatatable")
 ```
@@ -12,7 +14,47 @@ library("microbenchmark")
 library("ggplot2")
 library("WVPlots")
 library("cdata")
+library("dplyr")
+```
 
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
+packageVersion("dplyr")
+```
+
+    ## [1] '0.7.6'
+
+``` r
+R.version
+```
+
+    ##                _                           
+    ## platform       x86_64-pc-linux-gnu         
+    ## arch           x86_64                      
+    ## os             linux-gnu                   
+    ## system         x86_64, linux-gnu           
+    ## status                                     
+    ## major          3                           
+    ## minor          4.4                         
+    ## year           2018                        
+    ## month          03                          
+    ## day            15                          
+    ## svn rev        74408                       
+    ## language       R                           
+    ## version.string R version 3.4.4 (2018-03-15)
+    ## nickname       Someone to Lean On
+
+``` r
 set.seed(32523)
 
 mk_data <- function(nrow) {
@@ -33,7 +75,7 @@ my_check <- function(values) {
   all(sapply(values[-1], function(x) identical(values[[1]], x)))
 }
 
-szs <- expand.grid(a = c(1,2,5), b = 10^{3:6})
+szs <- expand.grid(a = c(1,2,5), b = 10^{0:8})
 szs <- sort(unique(szs$a * szs$b))
 runs <- lapply(
   szs,
@@ -101,5 +143,7 @@ ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
 ```
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_smooth).
 
 <img src="Sorting_files/figure-markdown_github/present-3.png" width="1152" />

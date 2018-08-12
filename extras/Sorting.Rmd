@@ -3,7 +3,7 @@ title: "Sorting"
 output: github_document
 ---
  
-Amazon EC2 `r4.8xlarge` 
+Amazon EC2 `r4.8xlarge`.
 
 ```{r setup}
 library("rqdatatable")
