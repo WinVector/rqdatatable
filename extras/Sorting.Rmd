@@ -3,7 +3,7 @@ title: "Sorting"
 output: github_document
 ---
  
-Amazon EC2 `r4.8xlarge`.
+Amazon EC2 `r4.8xlarge` run (8-12-2018).
 
 ```{r setup}
 library("rqdatatable")
@@ -12,8 +12,6 @@ library("ggplot2")
 library("WVPlots")
 library("cdata")
 library("dplyr")
-packageVersion("dplyr")
-R.version
 
 set.seed(32523)
 
@@ -62,7 +60,8 @@ if(!file.exists("Sorting_runs.RDS")) {
 ```{r present, fig.retina=2, fig.width=12, fig.height=8}
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
-timings$method <- factor(timings$expr)
+timings$method <- gsub("^rqdatatable$", "data.table", timings$expr)
+timings$method <- factor(timings$method)
 timings$method <- reorder(timings$method, -timings$seconds)
 
 ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
@@ -80,7 +79,7 @@ means <- timings %.>%
                    columnToTakeValuesFrom = "seconds",
                    rowKeyColumns = "rows") %.>%
   extend_nse(., 
-             ratio = dplyr/rqdatatable,
+             ratio = dplyr/data.table,
              ratio_by_log_rows = ratio/log(rows)) %.>%
   orderby(., "rows")
 
@@ -90,13 +89,13 @@ ggplot(data = means, aes(x = rows, y = ratio)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
-  ggtitle("ratio of dplyr runtime to rqdatatable runtime")
+  ggtitle("ratio of dplyr runtime to data.table runtime")
 
 ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
-  ggtitle("ratio of dplyr runtime to rqdatatable runtime dived by log(rows)")
+  ggtitle("ratio of dplyr runtime to data.table runtime dived by log(rows)")
 ```
 
 
