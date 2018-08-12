@@ -38,11 +38,12 @@ my_check <- function(values) {
 
 
 ```{r time}
+pow <- 8
 rds_name <- "GroupedSorting_runs.RDS"
 if(!file.exists(rds_name)) {
-  szs <- expand.grid(a = c(1,2,5), b = 10^{0:7}) 
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
   szs <- sort(unique(szs$a * szs$b))
-  szs <- szs[szs<=1e+7]
+  szs <- szs[szs<=10^pow]
   runs <- lapply(
     szs,
     function(sz) {
@@ -95,8 +96,37 @@ ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + scale_y_log10() +
-  ggtitle("sorting task time by rows and method",
+  ggtitle("grouped sorting task time by rows and method",
           subtitle = "log-log trend shown")
+
+means <- timings %.>%
+  project_nse(., 
+              groupby = c("method", "rows"), 
+              seconds = mean(seconds)) %.>%
+  pivot_to_rowrecs(., 
+                   columnToTakeKeysFrom = "method",
+                   columnToTakeValuesFrom = "seconds",
+                   rowKeyColumns = "rows") %.>%
+  extend_nse(., 
+             ratio = dplyr/data.table,
+             ratio_by_log_rows = ratio/log(rows)) %.>%
+  orderby(., "rows")
+
+knitr::kable(means)
+  
+ggplot(data = means, aes(x = rows, y = ratio)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  scale_x_log10() + 
+  ggtitle("ratio of dplyr runtime to data.table runtime",
+          subtitle = "grouped sorting/sum task")
+
+ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  scale_x_log10() + 
+  ggtitle("ratio of dplyr runtime to data.table runtime dived by log(rows)",
+          subtitle = "grouped sorting/sum task")
 ```
 
 
