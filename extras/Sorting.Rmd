@@ -83,7 +83,7 @@ means <- timings %.>%
              ratio_by_log_rows = ratio/log(rows)) %.>%
   orderby(., "rows")
 
-means[]
+knitr::kable(means)
   
 ggplot(data = means, aes(x = rows, y = ratio)) +
   geom_point() + 
