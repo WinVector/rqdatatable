@@ -1,7 +1,7 @@
 Sorting
 ================
 
-Amazon EC2 `r4.8xlarge` run (8-12-2018).
+Amazon EC2 `r4.8xlarge` (244 GiB RAM) run (8-12-2018, 64-bit Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-ba602bc2, R 3.4.4 all packages current).
 
 ``` r
 library("rqdatatable")
