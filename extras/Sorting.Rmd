@@ -36,33 +36,37 @@ my_check <- function(values) {
   all(sapply(values[-1], function(x) identical(values[[1]], x)))
 }
 
-szs <- expand.grid(a = c(1,2,5), b = 10^{0:8})
-szs <- sort(unique(szs$a * szs$b))
-runs <- lapply(
-  szs,
-  function(sz) {
-    d <- mk_data(sz)
-    ti <- microbenchmark(
-      rqdatatable = { d %.>% ops %.>% as.data.frame(.) },
-      dplyr = dplyr::arrange(d, col_a, col_b, col_c, col_x),
-      times = 5L,
-      check = my_check)
-    ti <- as.data.frame(ti)
-    ti$rows <- sz
-    ti
-  })
-saveRDS(runs, "Sorting_runs.RDS")
+if(!file.exists("Sorting_runs.RDS")) {
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:9})
+  szs <- sort(unique(szs$a * szs$b))
+  szs <- szs[szs<=1e+9]
+  runs <- lapply(
+    szs,
+    function(sz) {
+      d <- mk_data(sz)
+      ti <- microbenchmark(
+        rqdatatable = { d %.>% ops %.>% as.data.frame(.) },
+        dplyr = dplyr::arrange(d, col_a, col_b, col_c, col_x),
+        times = 3L,
+        check = my_check)
+      ti <- as.data.frame(ti)
+      ti$rows <- sz
+      ti
+    })
+  saveRDS(runs, "Sorting_runs.RDS")
+} else {
+  runs <- readRDS("Sorting_runs.RDS")
+}
 ```
 
 ```{r present, fig.retina=2, fig.width=12, fig.height=8}
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
 timings$method <- factor(timings$expr)
-timings$method <- reorder(timings$method, timings$seconds)
+timings$method <- reorder(timings$method, -timings$seconds)
 
 ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
   geom_point() + 
-  geom_smooth(method = "lm") +
   scale_x_log10() + scale_y_log10() +
   ggtitle("sorting task time by rows and method",
           subtitle = "log-log trend shown")

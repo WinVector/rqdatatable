@@ -17,6 +17,8 @@ library("cdata")
 library("dplyr")
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.5.1
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -39,20 +41,20 @@ R.version
 ```
 
     ##                _                           
-    ## platform       x86_64-pc-linux-gnu         
+    ## platform       x86_64-apple-darwin15.6.0   
     ## arch           x86_64                      
-    ## os             linux-gnu                   
-    ## system         x86_64, linux-gnu           
+    ## os             darwin15.6.0                
+    ## system         x86_64, darwin15.6.0        
     ## status                                     
     ## major          3                           
-    ## minor          4.4                         
+    ## minor          5.0                         
     ## year           2018                        
-    ## month          03                          
-    ## day            15                          
-    ## svn rev        74408                       
+    ## month          04                          
+    ## day            23                          
+    ## svn rev        74626                       
     ## language       R                           
-    ## version.string R version 3.4.4 (2018-03-15)
-    ## nickname       Someone to Lean On
+    ## version.string R version 3.5.0 (2018-04-23)
+    ## nickname       Joy in Playing
 
 ``` r
 set.seed(32523)
@@ -75,33 +77,37 @@ my_check <- function(values) {
   all(sapply(values[-1], function(x) identical(values[[1]], x)))
 }
 
-szs <- expand.grid(a = c(1,2,5), b = 10^{0:8})
-szs <- sort(unique(szs$a * szs$b))
-runs <- lapply(
-  szs,
-  function(sz) {
-    d <- mk_data(sz)
-    ti <- microbenchmark(
-      rqdatatable = { d %.>% ops %.>% as.data.frame(.) },
-      dplyr = dplyr::arrange(d, col_a, col_b, col_c, col_x),
-      times = 5L,
-      check = my_check)
-    ti <- as.data.frame(ti)
-    ti$rows <- sz
-    ti
-  })
-saveRDS(runs, "Sorting_runs.RDS")
+if(!file.exists("Sorting_runs.RDS")) {
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:9})
+  szs <- sort(unique(szs$a * szs$b))
+  szs <- szs[szs<=1e+9]
+  runs <- lapply(
+    szs,
+    function(sz) {
+      d <- mk_data(sz)
+      ti <- microbenchmark(
+        rqdatatable = { d %.>% ops %.>% as.data.frame(.) },
+        dplyr = dplyr::arrange(d, col_a, col_b, col_c, col_x),
+        times = 3L,
+        check = my_check)
+      ti <- as.data.frame(ti)
+      ti$rows <- sz
+      ti
+    })
+  saveRDS(runs, "Sorting_runs.RDS")
+} else {
+  runs <- readRDS("Sorting_runs.RDS")
+}
 ```
 
 ``` r
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
 timings$method <- factor(timings$expr)
-timings$method <- reorder(timings$method, timings$seconds)
+timings$method <- reorder(timings$method, -timings$seconds)
 
 ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
   geom_point() + 
-  geom_smooth(method = "lm") +
   scale_x_log10() + scale_y_log10() +
   ggtitle("sorting task time by rows and method",
           subtitle = "log-log trend shown")
