@@ -1,0 +1,102 @@
+---
+title: "Grouped Sorting"
+output: github_document
+---
+ 
+Amazon EC2 `r4.8xlarge` (244 GiB RAM) run (8-12-2018, 64-bit Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-ba602bc2, R 3.4.4 all packages current).
+
+```{r setup}
+library("rqdatatable")
+library("microbenchmark")
+library("ggplot2")
+library("WVPlots")
+library("cdata")
+library("dplyr")
+library("data.table")
+
+set.seed(32523)
+
+mk_data <- function(nrow) {
+  data.frame(col_a = sample(letters, nrow, replace=TRUE),
+             col_b = sample(letters, nrow, replace=TRUE),
+             col_c = sample(letters, nrow, replace=TRUE),
+             col_x = runif(nrow),
+             stringsAsFactors = FALSE)
+}
+```
+
+
+```{r def}
+ops <- mk_td("d", c("col_a", "col_b", "col_c", "col_x")) %.>%
+  orderby(., cols = c("col_a", "col_b", "col_c", "col_x"))
+
+# from help(microbenchmark)
+my_check <- function(values) {
+  all(sapply(values[-1], function(x) identical(values[[1]], x)))
+}
+```
+
+
+```{r time}
+rds_name <- "GroupedSorting_runs.RDS"
+if(!file.exists(rds_name)) {
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:7}) 
+  szs <- sort(unique(szs$a * szs$b))
+  szs <- szs[szs<=1e+7]
+  runs <- lapply(
+    szs,
+    function(sz) {
+      d <- mk_data(sz)
+      ti <- microbenchmark(
+        data.table = { 
+          d %.>% 
+            as.data.table(.) %.>% 
+            setorder(., col_x) %.>%
+            .[, running := cumsum(col_x), by=list(col_a, col_b, col_c)] %.>%
+            setorder(., col_a, col_b, col_c, col_x) %.>%
+            setDF(.)[] 
+        },
+        rqdatatable = { 
+          d %.>%
+            extend_nse(., 
+                       running = cumsum(col_x),
+                       partitionby = c("col_a", "col_b", "col_c"),
+                       orderby = "col_x") %.>%
+            orderby(., c("col_a", "col_b", "col_c", "col_x")) %.>%
+            setDF(.)[]
+        },
+        dplyr = {
+          d %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            arrange(col_x) %>% 
+            mutate(running = cumsum(col_x)) %>% 
+            arrange(col_a, col_b, col_c, col_x)
+            as.data.frame(.)
+        },
+        times = 3L,
+        check = my_check)
+      ti <- as.data.frame(ti)
+      ti$rows <- sz
+      ti
+    })
+  saveRDS(runs, rds_name)
+} else {
+  runs <- readRDS(rds_name)
+}
+```
+
+```{r present, fig.retina=2, fig.width=12, fig.height=8}
+timings <- do.call(rbind, runs)
+timings$seconds <- timings$time/1e+9
+timings$method <- factor(timings$expr)
+timings$method <- reorder(timings$method, -timings$seconds)
+
+ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  scale_x_log10() + scale_y_log10() +
+  ggtitle("sorting task time by rows and method",
+          subtitle = "log-log trend shown")
+```
+
+
