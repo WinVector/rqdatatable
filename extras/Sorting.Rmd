@@ -81,8 +81,10 @@ means <- timings %.>%
                    rowKeyColumns = "rows") %.>%
   extend_nse(., 
              ratio = dplyr/rqdatatable,
-             ratio_by_log_rows = ratio/log(rows))
-  
+             ratio_by_log_rows = ratio/log(rows)) %.>%
+  orderby(., "rows")
+
+means[]
   
 ggplot(data = means, aes(x = rows, y = ratio)) +
   geom_point() + 
