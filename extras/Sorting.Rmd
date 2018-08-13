@@ -37,8 +37,9 @@ my_check <- function(values) {
 ```
 
 ```{r time}
-if(!file.exists("Sorting_runs.RDS")) {
-  pow <- 9
+rds_file <- "Sorting_runs.RDS"
+if(!file.exists(rds_file)) {
+  pow <- 8
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow})
   szs <- sort(unique(szs$a * szs$b))
   szs <- szs[szs<=10^pow]
@@ -67,9 +68,9 @@ if(!file.exists("Sorting_runs.RDS")) {
       ti$rows <- sz
       ti
     })
-  saveRDS(runs, "Sorting_runs.RDS")
+  saveRDS(runs, rds_file)
 } else {
-  runs <- readRDS("Sorting_runs.RDS")
+  runs <- readRDS(rds_file)
 }
 ```
 

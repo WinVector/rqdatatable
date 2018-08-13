@@ -17,8 +17,6 @@ library("cdata")
 library("dplyr")
 ```
 
-    ## Warning: package 'dplyr' was built under R version 3.5.1
-
     ## 
     ## Attaching package: 'dplyr'
 
@@ -29,6 +27,17 @@ library("dplyr")
     ## The following objects are masked from 'package:base':
     ## 
     ##     intersect, setdiff, setequal, union
+
+``` r
+library("data.table")
+```
+
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     between, first, last
 
 ``` r
 set.seed(32523)
@@ -50,45 +59,78 @@ ops <- mk_td("d", c("col_a", "col_b", "col_c", "col_x")) %.>%
 my_check <- function(values) {
   all(sapply(values[-1], function(x) identical(values[[1]], x)))
 }
+```
 
-if(!file.exists("Sorting_runs.RDS")) {
-  szs <- expand.grid(a = c(1,2,5), b = 10^{0:9})
+``` r
+rds_file <- "Sorting_runs.RDS"
+if(!file.exists(rds_file)) {
+  pow <- 8
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow})
   szs <- sort(unique(szs$a * szs$b))
-  szs <- szs[szs<=1e+9]
+  szs <- szs[szs<=10^pow]
   runs <- lapply(
     szs,
     function(sz) {
       d <- mk_data(sz)
       ti <- microbenchmark(
-        rqdatatable = { d %.>% ops %.>% as.data.frame(.) },
-        dplyr = dplyr::arrange(d, col_a, col_b, col_c, col_x),
+        data.table = {
+          d %.>%
+            as.data.table(.) %.>% 
+            setorder(., col_a, col_b, col_c, col_x) %.>%
+            setDF(.)[] 
+        },
+        rqdatatable = { 
+          d %.>% 
+            ops %.>% 
+            as.data.frame(.) 
+        },
+        dplyr = {
+          dplyr::arrange(d, col_a, col_b, col_c, col_x)
+        },
         times = 3L,
         check = my_check)
       ti <- as.data.frame(ti)
       ti$rows <- sz
       ti
     })
-  saveRDS(runs, "Sorting_runs.RDS")
+  saveRDS(runs, rds_file)
 } else {
-  runs <- readRDS("Sorting_runs.RDS")
+  runs <- readRDS(rds_file)
 }
 ```
 
 ``` r
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
-timings$method <- gsub("^rqdatatable$", "data.table", timings$expr)
-timings$method <- factor(timings$method)
+timings$method <- factor(timings$expr)
 timings$method <- reorder(timings$method, -timings$seconds)
 
-ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
+ggplot(data = timings, 
+       aes(x = rows, y = seconds, color = method)) +
   geom_point() + 
+  geom_smooth(se = FALSE) +
   scale_x_log10() + scale_y_log10() +
   ggtitle("sorting task time by rows and method",
           subtitle = "log-log trend shown")
 ```
 
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
 <img src="Sorting_files/figure-markdown_github/present-1.png" width="1152" />
+
+``` r
+ggplot(data = timings[timings$method!="rqdatatable", , drop = FALSE], 
+       aes(x = rows, y = seconds, color = method)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  scale_x_log10() + scale_y_log10() +
+  ggtitle("sorting task time by rows and method",
+          subtitle = "log-log trend shown")
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="Sorting_files/figure-markdown_github/present-2.png" width="1152" />
 
 ``` r
 means <- timings %.>%
@@ -102,44 +144,43 @@ means <- timings %.>%
   extend_nse(., 
              ratio = dplyr/data.table,
              ratio_by_log_rows = ratio/log(rows)) %.>%
-  orderby(., "rows")
+  orderby(., "rows") %.>%
+  as.data.frame(.)
 
 knitr::kable(means)
 ```
 
-|   rows|   data.table|         dplyr|     ratio|  ratio\_by\_log\_rows|
-|------:|------------:|-------------:|---------:|---------------------:|
-|  1e+00|    0.0008447|     0.0075125|  8.893619|                   Inf|
-|  2e+00|    0.0008826|     0.0014331|  1.623732|             2.3425501|
-|  5e+00|    0.0008745|     0.0014337|  1.639380|             1.0186042|
-|  1e+01|    0.0008821|     0.0014334|  1.625015|             0.7057349|
-|  2e+01|    0.0009189|     0.0014090|  1.533443|             0.5118759|
-|  5e+01|    0.0008773|     0.0014871|  1.695088|             0.4333021|
-|  1e+02|    0.0009320|     0.0015343|  1.646189|             0.3574653|
-|  2e+02|    0.0009497|     0.0015034|  1.583013|             0.2987765|
-|  5e+02|    0.0009695|     0.0015608|  1.609916|             0.2590536|
-|  1e+03|    0.0009974|     0.0017879|  1.792502|             0.2594912|
-|  2e+03|    0.0011463|     0.0021422|  1.868716|             0.2458545|
-|  5e+03|    0.0015462|     0.0031856|  2.060303|             0.2418993|
-|  1e+04|    0.0016717|     0.0053182|  3.181343|             0.3454099|
-|  2e+04|    0.0027123|     0.0099019|  3.650701|             0.3686278|
-|  5e+04|    0.0068707|     0.0266648|  3.880951|             0.3586904|
-|  1e+05|    0.0139790|     0.0580948|  4.155857|             0.3609731|
-|  2e+05|    0.0546940|     0.1280969|  2.342063|             0.1918769|
-|  5e+05|    0.0844396|     0.3875499|  4.589670|             0.3497594|
-|  1e+06|    0.1417959|     0.7440808|  5.247547|             0.3798301|
-|  2e+06|    0.2911317|     1.7887026|  6.143964|             0.4234688|
-|  5e+06|    0.7923789|     5.3594062|  6.763691|             0.4384903|
-|  1e+07|    1.6448312|    12.0048937|  7.298557|             0.4528176|
-|  2e+07|    3.3158578|    26.4237598|  7.968906|             0.4740224|
-|  5e+07|    9.3422346|    73.0847586|  7.823049|             0.4412937|
-|  1e+08|   21.3954544|   158.2277751|  7.395392|             0.4014722|
-|  2e+08|   43.5116136|   345.7414166|  7.945957|             0.4157177|
-|  5e+08|  107.2533052|  1026.9141090|  9.574662|             0.4780132|
-|  1e+09|  238.3929687|  2323.0695705|  9.744707|             0.4702303|
+|   rows|  data.table|        dplyr|  rqdatatable|      ratio|  ratio\_by\_log\_rows|
+|------:|-----------:|------------:|------------:|----------:|---------------------:|
+|  1e+00|   0.0004077|    0.0076316|    0.0008804|  18.719959|                   Inf|
+|  2e+00|   0.0004035|    0.0014585|    0.0008818|   3.614217|             5.2142136|
+|  5e+00|   0.0004741|    0.0015127|    0.0008543|   3.190409|             1.9823126|
+|  1e+01|   0.0004051|    0.0014841|    0.0008885|   3.663244|             1.5909266|
+|  2e+01|   0.0004001|    0.0014963|    0.0008898|   3.739903|             1.2484104|
+|  5e+01|   0.0004791|    0.0014716|    0.0008554|   3.071596|             0.7851683|
+|  1e+02|   0.0004747|    0.0015271|    0.0008471|   3.216743|             0.6985069|
+|  2e+02|   0.0004983|    0.0015067|    0.0008857|   3.023557|             0.5706636|
+|  5e+02|   0.0005444|    0.0015958|    0.0009128|   2.931345|             0.4716862|
+|  1e+03|   0.0005576|    0.0017957|    0.0009517|   3.220292|             0.4661850|
+|  2e+03|   0.0006078|    0.0021119|    0.0011654|   3.474785|             0.4571543|
+|  5e+03|   0.0009465|    0.0032869|    0.0014573|   3.472520|             0.4077071|
+|  1e+04|   0.0012682|    0.0052561|    0.0016782|   4.144441|             0.4499770|
+|  2e+04|   0.0019908|    0.0104596|    0.0025562|   5.254009|             0.5305210|
+|  5e+04|   0.0057635|    0.0594585|    0.0068824|  10.316401|             0.9534761|
+|  1e+05|   0.0128816|    0.0584981|    0.0135057|   4.541204|             0.3944440|
+|  2e+05|   0.0155656|    0.1291835|    0.0558137|   8.299297|             0.6799318|
+|  5e+05|   0.0740364|    0.3483736|    0.0521505|   4.705438|             0.3585816|
+|  1e+06|   0.1285398|    0.7447626|    0.1051548|   5.794021|             0.4193852|
+|  2e+06|   0.2023114|    1.6917564|    0.2341636|   8.362141|             0.5763552|
+|  5e+06|   0.5872843|    5.3194821|    0.7157426|   9.057763|             0.5872151|
+|  1e+07|   1.2644908|   11.9558664|    1.6543575|   9.455084|             0.5866129|
+|  2e+07|   2.6836465|   26.7849712|    3.2131316|   9.980812|             0.5936986|
+|  5e+07|   7.9980163|   73.4681060|    8.4911241|   9.185791|             0.5181652|
+|  1e+08|  20.2643089|  156.8686366|   21.8431452|   7.741129|             0.4202412|
 
 ``` r
-ggplot(data = means, aes(x = rows, y = ratio)) +
+ggplot(data = means, 
+       aes(x = rows, y = ratio)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
@@ -148,10 +189,11 @@ ggplot(data = means, aes(x = rows, y = ratio)) +
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-<img src="Sorting_files/figure-markdown_github/present-2.png" width="1152" />
+<img src="Sorting_files/figure-markdown_github/present-3.png" width="1152" />
 
 ``` r
-ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
+ggplot(data = means, 
+       aes(x = rows, y = ratio_by_log_rows)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
@@ -162,4 +204,4 @@ ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
 
     ## Warning: Removed 1 rows containing non-finite values (stat_smooth).
 
-<img src="Sorting_files/figure-markdown_github/present-3.png" width="1152" />
+<img src="Sorting_files/figure-markdown_github/present-4.png" width="1152" />
