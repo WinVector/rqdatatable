@@ -12,6 +12,7 @@ library("ggplot2")
 library("WVPlots")
 library("cdata")
 library("dplyr")
+library("data.table")
 
 set.seed(32523)
 
@@ -25,7 +26,7 @@ mk_data <- function(nrow) {
 ```
 
 
-```{r time}
+```{r def}
 ops <- mk_td("d", c("col_a", "col_b", "col_c", "col_x")) %.>%
   orderby(., cols = c("col_a", "col_b", "col_c", "col_x"))
 
@@ -33,18 +34,33 @@ ops <- mk_td("d", c("col_a", "col_b", "col_c", "col_x")) %.>%
 my_check <- function(values) {
   all(sapply(values[-1], function(x) identical(values[[1]], x)))
 }
+```
 
+```{r time}
 if(!file.exists("Sorting_runs.RDS")) {
-  szs <- expand.grid(a = c(1,2,5), b = 10^{0:9})
+  pow <- 9
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow})
   szs <- sort(unique(szs$a * szs$b))
-  szs <- szs[szs<=1e+9]
+  szs <- szs[szs<=10^pow]
   runs <- lapply(
     szs,
     function(sz) {
       d <- mk_data(sz)
       ti <- microbenchmark(
-        rqdatatable = { d %.>% ops %.>% as.data.frame(.) },
-        dplyr = dplyr::arrange(d, col_a, col_b, col_c, col_x),
+        data.table = {
+          d %.>%
+            as.data.table(.) %.>% 
+            setorder(., col_a, col_b, col_c, col_x) %.>%
+            setDF(.)[] 
+        },
+        rqdatatable = { 
+          d %.>% 
+            ops %.>% 
+            as.data.frame(.) 
+        },
+        dplyr = {
+          dplyr::arrange(d, col_a, col_b, col_c, col_x)
+        },
         times = 3L,
         check = my_check)
       ti <- as.data.frame(ti)
@@ -60,12 +76,21 @@ if(!file.exists("Sorting_runs.RDS")) {
 ```{r present, fig.retina=2, fig.width=12, fig.height=8}
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
-timings$method <- gsub("^rqdatatable$", "data.table", timings$expr)
-timings$method <- factor(timings$method)
+timings$method <- factor(timings$expr)
 timings$method <- reorder(timings$method, -timings$seconds)
 
-ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
+ggplot(data = timings, 
+       aes(x = rows, y = seconds, color = method)) +
   geom_point() + 
+  geom_smooth(se = FALSE) +
+  scale_x_log10() + scale_y_log10() +
+  ggtitle("sorting task time by rows and method",
+          subtitle = "log-log trend shown")
+
+ggplot(data = timings[timings$method!="rqdatatable", , drop = FALSE], 
+       aes(x = rows, y = seconds, color = method)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
   scale_x_log10() + scale_y_log10() +
   ggtitle("sorting task time by rows and method",
           subtitle = "log-log trend shown")
@@ -81,17 +106,20 @@ means <- timings %.>%
   extend_nse(., 
              ratio = dplyr/data.table,
              ratio_by_log_rows = ratio/log(rows)) %.>%
-  orderby(., "rows")
+  orderby(., "rows") %.>%
+  as.data.frame(.)
 
 knitr::kable(means)
   
-ggplot(data = means, aes(x = rows, y = ratio)) +
+ggplot(data = means, 
+       aes(x = rows, y = ratio)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
   ggtitle("ratio of dplyr runtime to data.table runtime")
 
-ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
+ggplot(data = means, 
+       aes(x = rows, y = ratio_by_log_rows)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
