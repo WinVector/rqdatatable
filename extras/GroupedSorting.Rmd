@@ -42,7 +42,7 @@ my_check <- function(values) {
 
 
 ```{r time}
-pow <- 6
+pow <- 8
 rds_name <- "GroupedSorting_runs.RDS"
 if(!file.exists(rds_name)) {
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
@@ -54,25 +54,27 @@ if(!file.exists(rds_name)) {
       d <- mk_data(sz)
       ti <- microbenchmark(
         data.table = { 
+          # https://stackoverflow.com/questions/16325641/how-to-extract-the-first-n-rows-per-group
           d %.>% 
             as.data.table(.) %.>% 
-            setorder(., col_x) %.>%
-            .[, running := cumsum(col_x), by=list(col_a, col_b, col_c)] %.>%
+            setorder(., col_a, col_b, col_c, col_x) %.>%
+            .[, .SD[1], by=list(col_a, col_b, col_c)] %.>%
             setorder(., col_a, col_b, col_c, col_x)
         },
         rqdatatable = { 
           d %.>%
-            extend_nse(., 
-                       running = cumsum(col_x),
+            pick_top_k(., 
+                       orderby = "col_x",
                        partitionby = c("col_a", "col_b", "col_c"),
-                       orderby = "col_x") %.>%
+                       keep_order_column = FALSE) %.>%
             orderby(., c("col_a", "col_b", "col_c", "col_x"))
         },
         dplyr = {
           d %>% 
             group_by(col_a, col_b, col_c) %>% 
             arrange(col_x) %>% 
-            mutate(running = cumsum(col_x)) %>% 
+            filter(row_number() == 1) %>%
+            ungroup() %>%
             arrange(col_a, col_b, col_c, col_x)
         },
         times = 3L,
@@ -109,8 +111,7 @@ means <- timings %.>%
                    columnToTakeValuesFrom = "seconds",
                    rowKeyColumns = "rows") %.>%
   extend_nse(., 
-             ratio = dplyr/data.table,
-             ratio_by_log_rows = ratio/log(rows)) %.>%
+             ratio = dplyr/data.table) %.>%
   orderby(., "rows")
 
 knitr::kable(means)
@@ -120,13 +121,6 @@ ggplot(data = means, aes(x = rows, y = ratio)) +
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
   ggtitle("ratio of dplyr runtime to data.table runtime",
-          subtitle = "grouped sorting/sum task")
-
-ggplot(data = means, aes(x = rows, y = ratio_by_log_rows)) +
-  geom_point() + 
-  geom_smooth(se = FALSE) +
-  scale_x_log10() + 
-  ggtitle("ratio of dplyr runtime to data.table runtime dived by log(rows)",
           subtitle = "grouped sorting/sum task")
 ```
 
