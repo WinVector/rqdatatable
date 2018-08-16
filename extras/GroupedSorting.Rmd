@@ -17,9 +17,10 @@ library("data.table")
 set.seed(32523)
 
 mk_data <- function(nrow) {
-  data.frame(col_a = sample(letters, nrow, replace=TRUE),
-             col_b = sample(letters, nrow, replace=TRUE),
-             col_c = sample(letters, nrow, replace=TRUE),
+  alphabet <- paste("sym", seq_len(max(2, floor(nrow^(1/3)))), sep = "_")
+  data.frame(col_a = sample(alphabet, nrow, replace=TRUE),
+             col_b = sample(alphabet, nrow, replace=TRUE),
+             col_c = sample(alphabet, nrow, replace=TRUE),
              col_x = runif(nrow),
              stringsAsFactors = FALSE)
 }
@@ -27,18 +28,21 @@ mk_data <- function(nrow) {
 
 
 ```{r def}
-ops <- mk_td("d", c("col_a", "col_b", "col_c", "col_x")) %.>%
-  orderby(., cols = c("col_a", "col_b", "col_c", "col_x"))
-
-# from help(microbenchmark)
+# adapted from help(microbenchmark)
 my_check <- function(values) {
-  all(sapply(values[-1], function(x) identical(values[[1]], x)))
+  values <- lapply(values,
+                   function(vi) {
+                     vi <- as.data.frame(vi)
+                     rownames(vi) <- NULL
+                     vi
+                   })
+  isTRUE(all(sapply(values[-1], function(x) identical(values[[1]], x))))
 }
 ```
 
 
 ```{r time}
-pow <- 8
+pow <- 6
 rds_name <- "GroupedSorting_runs.RDS"
 if(!file.exists(rds_name)) {
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
@@ -54,8 +58,7 @@ if(!file.exists(rds_name)) {
             as.data.table(.) %.>% 
             setorder(., col_x) %.>%
             .[, running := cumsum(col_x), by=list(col_a, col_b, col_c)] %.>%
-            setorder(., col_a, col_b, col_c, col_x) %.>%
-            setDF(.)[] 
+            setorder(., col_a, col_b, col_c, col_x)
         },
         rqdatatable = { 
           d %.>%
@@ -63,8 +66,7 @@ if(!file.exists(rds_name)) {
                        running = cumsum(col_x),
                        partitionby = c("col_a", "col_b", "col_c"),
                        orderby = "col_x") %.>%
-            orderby(., c("col_a", "col_b", "col_c", "col_x")) %.>%
-            setDF(.)[]
+            orderby(., c("col_a", "col_b", "col_c", "col_x"))
         },
         dplyr = {
           d %>% 
@@ -72,7 +74,6 @@ if(!file.exists(rds_name)) {
             arrange(col_x) %>% 
             mutate(running = cumsum(col_x)) %>% 
             arrange(col_a, col_b, col_c, col_x)
-            as.data.frame(.)
         },
         times = 3L,
         check = my_check)
