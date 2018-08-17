@@ -3,7 +3,8 @@ title: "Grouped Rank Filter"
 output: github_document
 ---
 
-Late 2014 Mac Mini 2.8 GHz Intel Core i5, 8 GB 1600 MHz DDR3 RAM.
+Amazon EC2 `r4.8xlarge` (244 GiB RAM) run (8-12-2018, 64-bit Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-ba602bc2, R 3.4.4 all packages current).
+
 
 ```{r pythonsetup}
 # https://cran.r-project.org/web/packages/reticulate/vignettes/r_markdown.html
@@ -63,7 +64,7 @@ my_check <- function(values) {
 
 
 ```{r time}
-pow <- 6
+pow <- 8
 rds_name <- "GroupedRankFilter2_runs.RDS"
 if(!file.exists(rds_name)) {
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
