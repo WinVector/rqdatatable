@@ -23,7 +23,6 @@ do_pandas <- function(d) {
   rownames(res) <- NULL
   return(res)
 }
-
 ```
 
 
@@ -84,12 +83,14 @@ if(!file.exists(rds_name)) {
             setorder(., col_a, col_b, col_c, col_x)
         },
         rqdatatable = { 
-          d %.>%
+          ops <- local_td(d) %.>%
             pick_top_k(., 
+                       k = 1L,
                        orderby = "col_x",
                        partitionby = c("col_a", "col_b", "col_c"),
                        keep_order_column = FALSE) %.>%
             orderby(., c("col_a", "col_b", "col_c", "col_x"))
+          d %.>% ops
         },
         dplyr = {
           d %>% 
