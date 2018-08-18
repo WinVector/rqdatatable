@@ -38,6 +38,6 @@ test_p <- local_td(dL) \%.>\%
               maxscore = max(assessmentTotal),
               groupby = 'subjectID')
 cat(format(test_p))
-ex_data_table(test_p)[]
+ex_data_table(test_p)
 
 }

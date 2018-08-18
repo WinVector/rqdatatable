@@ -65,10 +65,10 @@ cat(format(rquery_pipeline))
 And execute it using `data.table`.
 
 ```{r}
-ex_data_table(rquery_pipeline)[]
+ex_data_table(rquery_pipeline)
 ```
 
-Can also execute on new tables.
+One can also apply the pipeline to new tables.
 
 ```{r}
 build_frame(

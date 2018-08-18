@@ -12,7 +12,7 @@ order_table <- function(x, orderby, reverse) {
     order[orderby %in% reverse] <- -1L
   }
   data.table::setorderv(x, cols = orderby, order = order)
-  x
+  x[]
 }
 
 #' Reorder rows.
@@ -30,7 +30,7 @@ order_table <- function(x, orderby, reverse) {
 #'     3L , "c" )
 #' rquery_pipeline <- local_td(dL) %.>%
 #'   orderby(., "y")
-#' ex_data_table(rquery_pipeline)[]
+#' ex_data_table(rquery_pipeline)
 #'
 #' @export
 ex_data_table.relop_orderby <- function(optree,

@@ -16,7 +16,7 @@
 #' op_tree <- local_td(d) %.>%
 #'   set_indicator(., "one_two", "a", set) %.>%
 #'   set_indicator(., "z", "a", c())
-#' ex_data_table(op_tree)[]
+#' ex_data_table(op_tree)
 #'
 #'
 #' @export
@@ -45,6 +45,6 @@ ex_data_table.relop_set_indicator <- function(optree,
       x[ TEST_COL %in% optree$testvalues, RES_COL := 1 ]
     }
   )
-  x
+  x[]
 }
 

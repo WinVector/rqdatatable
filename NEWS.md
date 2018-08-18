@@ -1,7 +1,8 @@
 
-# rqdatatable 0.1.4 2018/08/04
+# rqdatatable 0.1.4 2018/08/18
 
   * More tests.
+  * Work on result print-visibility.
 
 # rqdatatable 0.1.3 2018/07/28
 

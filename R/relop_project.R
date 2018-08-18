@@ -20,7 +20,7 @@
 #'               maxscore = max(assessmentTotal),
 #'               groupby = 'subjectID')
 #' cat(format(test_p))
-#' ex_data_table(test_p)[]
+#' ex_data_table(test_p)
 #'
 #' @export
 ex_data_table.relop_project <- function(optree,

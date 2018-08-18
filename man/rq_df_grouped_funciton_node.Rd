@@ -64,7 +64,7 @@ rquery_pipeline <- local_td(d) \%.>\%
 
 cat(format(rquery_pipeline))
 
-ex_data_table(rquery_pipeline)[]
+ex_data_table(rquery_pipeline)
 
 if (requireNamespace("DBI", quietly = TRUE) &&
     requireNamespace("RSQLite", quietly = TRUE)) {

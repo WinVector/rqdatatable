@@ -104,7 +104,7 @@ wrapr::apply_right
 #'      select_columns(., c("x", "y")) %.>%
 #'      select_rows_nse(., x<2 & y<30)
 #'   cat(format(optree))
-#'   print(ex_data_table(optree)[])
+#'   ex_data_table(optree)
 #'
 #'   # other ways to execute the pipeline include
 #'   as.data.frame(optree)

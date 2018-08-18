@@ -33,6 +33,6 @@ dL <- build_frame(
     3L , "c" )
 rquery_pipeline <- local_td(dL) \%.>\%
   rename_columns(., c("x" = "y", "y" = "x"))
-ex_data_table(rquery_pipeline)[]
+ex_data_table(rquery_pipeline)
 
 }

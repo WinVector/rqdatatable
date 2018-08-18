@@ -14,7 +14,7 @@
 #'     3L , "c" )
 #' rquery_pipeline <- local_td(dL) %.>%
 #'   select_rows_nse(., x <= 2)
-#' ex_data_table(rquery_pipeline)[]
+#' ex_data_table(rquery_pipeline)
 #'
 #' @export
 ex_data_table.relop_select_rows <- function(optree,

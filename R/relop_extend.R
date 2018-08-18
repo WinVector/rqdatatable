@@ -39,7 +39,7 @@ data_table_extend_fns <- list(
 #'              reverse = c("assessmentTotal"),
 #'              partitionby = 'subjectID') %.>%
 #'   orderby(., c("subjectID", "probability"))
-#' ex_data_table(rquery_pipeline)[]
+#' ex_data_table(rquery_pipeline)
 #'
 #' @export
 ex_data_table.relop_extend <- function(optree,
@@ -123,6 +123,6 @@ ex_data_table.relop_extend <- function(optree,
   if(need_one_col) {
     x[ , rqdatatable_temp_one_col := NULL]
   }
-  x
+  x[]
 }
 

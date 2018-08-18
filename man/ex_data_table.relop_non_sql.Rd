@@ -34,7 +34,7 @@ ex_data_table(optree)
 
 p2 <- local_td(d) \%.>\%
   rsummary_node(.)
-ex_data_table(p2)[]
+ex_data_table(p2)
 
 summary(d)
 

@@ -63,7 +63,7 @@ cat(format(rquery_pipeline))
 Execute the calculation.
 
 ```{r}
-ex_data_table(rquery_pipeline)[]
+ex_data_table(rquery_pipeline)
 ```
 
 

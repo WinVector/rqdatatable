@@ -68,7 +68,7 @@ mk_f_db_default <- function(f, cols) {
 #'
 #' cat(format(rquery_pipeline))
 #'
-#' ex_data_table(rquery_pipeline)[]
+#' ex_data_table(rquery_pipeline)
 #'
 #' @export
 #'
@@ -151,7 +151,7 @@ rq_df_funciton_node <- function(., f,
 #'
 #' cat(format(rquery_pipeline))
 #'
-#' ex_data_table(rquery_pipeline)[]
+#' ex_data_table(rquery_pipeline)
 #'
 #' if (requireNamespace("DBI", quietly = TRUE) &&
 #'     requireNamespace("RSQLite", quietly = TRUE)) {
@@ -242,7 +242,7 @@ rq_df_grouped_funciton_node <- function(., f,
 #'
 #' p2 <- local_td(d) %.>%
 #'   rsummary_node(.)
-#' ex_data_table(p2)[]
+#' ex_data_table(p2)
 #'
 #' summary(d)
 #'

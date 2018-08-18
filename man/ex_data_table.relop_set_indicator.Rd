@@ -33,7 +33,7 @@ set <- c("1", "2")
 op_tree <- local_td(d) \%.>\%
   set_indicator(., "one_two", "a", set) \%.>\%
   set_indicator(., "z", "a", c())
-ex_data_table(op_tree)[]
+ex_data_table(op_tree)
 
 
 }

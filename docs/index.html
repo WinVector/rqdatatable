@@ -144,11 +144,11 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://w
    subjectID, diagnosis, probability) %.&gt;%
  orderby(., subjectID)</code></pre>
 <p>And execute it using <code>data.table</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline)[]</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline)</code></pre></div>
 <pre><code>##    subjectID           diagnosis probability
 ## 1:         1 withdrawal behavior   0.6706221
 ## 2:         2 positive re-framing   0.5589742</code></pre>
-<p>Can also execute on new tables.</p>
+<p>One can also apply the pipeline to new tables.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="http://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(
    <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span>
 <span class="st">   </span><span class="dv">7</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span>

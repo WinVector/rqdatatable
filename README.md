@@ -75,14 +75,14 @@ cat(format(rquery_pipeline))
 And execute it using `data.table`.
 
 ``` r
-ex_data_table(rquery_pipeline)[]
+ex_data_table(rquery_pipeline)
 ```
 
     ##    subjectID           diagnosis probability
     ## 1:         1 withdrawal behavior   0.6706221
     ## 2:         2 positive re-framing   0.5589742
 
-Can also execute on new tables.
+One can also apply the pipeline to new tables.
 
 ``` r
 build_frame(

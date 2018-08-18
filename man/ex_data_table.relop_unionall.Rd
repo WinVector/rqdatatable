@@ -31,6 +31,6 @@ dL <- build_frame(
     1L , "a" |
     3L , "c" )
 rquery_pipeline <- unionall(list(local_td(dL), local_td(dL)))
-ex_data_table(rquery_pipeline)[]
+ex_data_table(rquery_pipeline)
 
 }

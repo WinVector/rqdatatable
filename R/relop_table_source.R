@@ -21,7 +21,7 @@
 #'     1L , "a" |
 #'     3L , "c" )
 #' rquery_pipeline <- local_td(dL)
-#' ex_data_table(rquery_pipeline)[]
+#' ex_data_table(rquery_pipeline)
 #'
 #' @export
 ex_data_table.relop_table_source <- function(optree,
