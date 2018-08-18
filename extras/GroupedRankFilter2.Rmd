@@ -70,7 +70,7 @@ if(!file.exists(rds_name)) {
   szs <- sort(unique(szs$a * szs$b))
   szs <- szs[szs<=10^pow]
   runs <- lapply(
-    szs,
+    rev(szs),
     function(sz) {
       d <- mk_data(sz)
       ti <- microbenchmark(
