@@ -33,6 +33,7 @@ library("ggplot2")
 library("WVPlots")
 library("cdata")
 library("dplyr")
+library("dtplyr")
 library("data.table")
 
 set.seed(32523)
@@ -59,6 +60,25 @@ my_check <- function(values) {
                    })
   isTRUE(all(sapply(values[-1], function(x) identical(values[[1]], x))))
 }
+```
+
+```{r dtplyr, error=TRUE}
+ds <- mk_data(3)
+
+ds %>%  
+  group_by(col_a, col_b, col_c) %>% 
+  arrange(col_x) %>% 
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  arrange(col_a, col_b, col_c, col_x)
+
+ds %>%  
+  as.data.table() %>%
+  group_by(col_a, col_b, col_c) %>% 
+  arrange(col_x) %>% 
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  arrange(col_a, col_b, col_c, col_x)
 ```
 
 
