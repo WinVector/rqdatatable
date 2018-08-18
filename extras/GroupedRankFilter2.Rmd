@@ -9,7 +9,7 @@ Amazon EC2 `r4.8xlarge` (244 GiB RAM) run (8-12-2018, 64-bit Ubuntu Server 16.04
 ```{r pythonsetup}
 # https://cran.r-project.org/web/packages/reticulate/vignettes/r_markdown.html
 library("reticulate")
-use_python("/Users/johnmount/anaconda3/bin/python3")
+use_python("/home/ruser/miniconda3/bin/python3")
 pandas_handle <- reticulate::import("pandas") # don't use as https://github.com/rstudio/reticulate/issues/319
 
 pandas_fn <- py_run_string("
