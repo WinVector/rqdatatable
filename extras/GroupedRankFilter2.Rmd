@@ -10,6 +10,7 @@ Amazon EC2 `r4.8xlarge` (244 GiB RAM) run (8-12-2018, 64-bit Ubuntu Server 16.04
 # https://cran.r-project.org/web/packages/reticulate/vignettes/r_markdown.html
 library("reticulate")
 use_python("/home/ruser/miniconda3/bin/python3")
+# use_python("/Users/johnmount/anaconda3/bin/python3")
 pandas_handle <- reticulate::import("pandas") # don't use as https://github.com/rstudio/reticulate/issues/319
 
 pandas_fn <- py_run_string("
@@ -81,6 +82,22 @@ ds %>%
   arrange(col_a, col_b, col_c, col_x)
 ```
 
+```{r baser}
+shift_col <- function(col) { c(col[1], col[-length(col)]) }
+
+base_r <- function(df) {
+  df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x), , drop = FALSE]
+  first <- (df$col_a != shift_col(df$col_a)) | 
+    (df$col_b != shift_col(df$col_b)) | 
+    (df$col_c != shift_col(df$col_c))
+  first[[1]] <- TRUE
+  df <- df[first, , drop = FALSE]
+  rownames(df) <- NULL
+  df
+}
+```
+
+
 
 ```{r time}
 pow <- 8
@@ -92,8 +109,12 @@ if(!file.exists(rds_name)) {
   runs <- lapply(
     rev(szs),
     function(sz) {
+      gc()
       d <- mk_data(sz)
       ti <- microbenchmark(
+        base_r = {
+          base_r(d)
+        },
         data.table = { 
           # https://stackoverflow.com/questions/16325641/how-to-extract-the-first-n-rows-per-group
           d %.>% 
@@ -143,12 +164,16 @@ timings$seconds <- timings$time/1e+9
 timings$method <- factor(timings$expr)
 timings$method <- reorder(timings$method, -timings$seconds)
 
-ggplot(data = timings, aes(x = rows, y = seconds, color = method)) +
+ggplot(data = timings, aes(x = rows, y = seconds, 
+                           color = method, linetype = method)) +
   geom_point() + 
-  geom_smooth(se = FALSE) +
-  scale_x_log10() + scale_y_log10() +
+  geom_smooth(se = FALSE, size = 2) +
+  scale_x_log10() +
+  scale_y_log10() +
   ggtitle("grouped sorting task time by rows and method",
-          subtitle = "log-log trend shown")
+          subtitle = "log-log trend shown") +
+  theme(legend.position="bottom",
+        legend.key.width = unit(5, "line"))
 
 means <- timings %.>%
   project_nse(., 
@@ -168,6 +193,7 @@ ggplot(data = means, aes(x = rows, y = ratio)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
+  scale_color_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00")) + 
   ggtitle("ratio of dplyr runtime to data.table runtime",
           subtitle = "grouped sorting/sum task")
 ```
