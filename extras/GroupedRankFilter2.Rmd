@@ -17,7 +17,7 @@ pandas_fn <- py_run_string("
 def py_fn(df):
    ord = df.sort_values(by = ['col_a', 'col_b', 'col_c', 'col_x'], ascending = [True, True, True, True])
    ord['rank_col'] = ord.groupby(['col_a', 'col_b', 'col_c']).cumcount()
-   return ord[ord.rank_col == 0].sort_values(by = ['col_a', 'col_b', 'col_c', 'col_x'], ascending = True).ix[:, ['col_a', 'col_b', 'col_c', 'col_x']]
+   return ord[ord.rank_col == 0].ix[:, ['col_a', 'col_b', 'col_c', 'col_x']]
 ")
 do_pandas <- function(d) {
   res <- pandas_fn$py_fn(pandas_handle$DataFrame(d))
@@ -86,7 +86,9 @@ ds %>%
 shift_col <- function(col) { c(col[1], col[-length(col)]) }
 
 base_r <- function(df) {
+  rownames(df) <- NULL
   df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x), , drop = FALSE]
+  rownames(df) <- NULL
   first <- (df$col_a != shift_col(df$col_a)) | 
     (df$col_b != shift_col(df$col_b)) | 
     (df$col_c != shift_col(df$col_c))
@@ -100,7 +102,7 @@ base_r <- function(df) {
 
 
 ```{r time}
-pow <- 8
+pow <- 5
 rds_name <- "GroupedRankFilter2_runs.RDS"
 if(!file.exists(rds_name)) {
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
@@ -120,8 +122,7 @@ if(!file.exists(rds_name)) {
           d %.>% 
             as.data.table(.) %.>% 
             setorder(., col_a, col_b, col_c, col_x) %.>%
-            .[, .SD[1], by=list(col_a, col_b, col_c)] %.>%
-            setorder(., col_a, col_b, col_c, col_x)
+            .[, .SD[1], by=list(col_a, col_b, col_c)] 
         },
         rqdatatable = { 
           ops <- local_td(d) %.>%
@@ -139,6 +140,16 @@ if(!file.exists(rds_name)) {
             arrange(col_x) %>% 
             filter(row_number() == 1) %>%
             ungroup() %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        dplyr_b = {
+          d %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            arrange(col_x) %>% 
+            mutate(rn = row_number()) %>%
+            ungroup() %>%
+            filter(rn == 1) %>%
+            select(col_a, col_b, col_c, col_x) %>%
             arrange(col_a, col_b, col_c, col_x)
         },
         pandas_reticulate = {
@@ -161,19 +172,52 @@ if(!file.exists(rds_name)) {
 ```{r present, fig.retina=2, fig.width=12, fig.height=8}
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
-timings$method <- factor(timings$expr)
-timings$method <- reorder(timings$method, -timings$seconds)
+timings$method <- factor(timings$expr,
+                         levels = c("dplyr", "dplyr_b",
+                                    "base_r", "pandas_reticulate",
+                                    "rqdatatable", "data.table"))
+method_map <- c(dplyr = "dplyr", 
+                dplyr_b = "dplyr",
+                pandas_reticulate = "base-R or R/python roundtrip",
+                data.table =   "data.table",
+                rqdatatable = "data.table",   
+                base_r  = "base-R or R/python roundtrip")
+timings$method_family <- method_map[as.character(timings$method)]
+timings$method_family <- reorder(timings$method_family, -timings$seconds)
+rowset <- sort(unique(timings$rows))
+smooths <- lapply(
+  unique(as.character(timings$method)),
+  function(mi) {
+    ti <- timings[timings$method == mi, , drop = FALSE]
+    ti$rows <- log(ti$rows)
+    si <- loess(log(seconds) ~ rows, data = ti)
+    pi <- data.frame(
+      method = mi,
+      rows = log(rowset),
+      stringsAsFactors = FALSE)
+    pi$seconds <- exp(predict(si, newdata = pi))
+    pi$rows <- rowset
+    pi
+  })
+smooths <- do.call(rbind, smooths)
 
-ggplot(data = timings, aes(x = rows, y = seconds, 
-                           color = method, linetype = method)) +
-  geom_point() + 
-  geom_smooth(se = FALSE, size = 2) +
+ggplot(data = timings, aes(x = rows, y = seconds)) +
+  geom_line(data = smooths,
+            alpha = 0.7,
+            linetype = 2,
+            aes(group = method, color = method)) +
+  geom_point(data = timings, aes(color = method)) + 
+  geom_smooth(data = timings, aes(color = method),
+              se = FALSE, size = 2) +
   scale_x_log10() +
   scale_y_log10() +
+  scale_color_manual(values = 
+                       c("#1b9e77", "#d95f02",
+                         "#7570b3", "#e7298a",
+                         "#66a61e", "#e6ab02")) +
   ggtitle("grouped sorting task time by rows and method",
           subtitle = "log-log trend shown") +
-  theme(legend.position="bottom",
-        legend.key.width = unit(5, "line"))
+  facet_wrap(~method_family, ncol=1, labeller = "label_both")
 
 means <- timings %.>%
   project_nse(., 
@@ -193,7 +237,6 @@ ggplot(data = means, aes(x = rows, y = ratio)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
-  scale_color_manual(values = c("#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00")) + 
   ggtitle("ratio of dplyr runtime to data.table runtime",
           subtitle = "grouped sorting/sum task")
 ```
