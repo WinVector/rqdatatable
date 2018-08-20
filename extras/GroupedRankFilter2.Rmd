@@ -144,8 +144,8 @@ if(!file.exists(rds_name)) {
         },
         dplyr_b = {
           d %>% 
-            group_by(col_a, col_b, col_c) %>% 
             arrange(col_x) %>% 
+            group_by(col_a, col_b, col_c) %>% 
             mutate(rn = row_number()) %>%
             ungroup() %>%
             filter(rn == 1) %>%
