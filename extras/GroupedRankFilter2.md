@@ -204,16 +204,21 @@ if(!file.exists(rds_name)) {
 ``` r
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
-timings$method <- factor(timings$expr,
-                         levels = c("dplyr", "dplyr_b",
-                                    "base_r", "pandas_reticulate",
-                                    "rqdatatable", "data.table"))
+timings$method <- factor(timings$expr)
+timings$method <- reorder(timings$method, -timings$seconds)
 method_map <- c(dplyr = "dplyr", 
                 dplyr_b = "dplyr",
                 pandas_reticulate = "base-R or R/python roundtrip",
-                data.table =   "data.table",
+                data.table = "data.table",
                 rqdatatable = "data.table",   
                 base_r  = "base-R or R/python roundtrip")
+color_map <- c(
+   dplyr = "#e7298a",
+   dplyr_b = "#d95f02",
+   pandas_reticulate = "#e6ab02",
+   data.table = "#66a61e",
+   rqdatatable = "#1b9e77",
+   base_r = "#7570b3")
 timings$method_family <- method_map[as.character(timings$method)]
 timings$method_family <- reorder(timings$method_family, -timings$seconds)
 rowset <- sort(unique(timings$rows))
@@ -234,6 +239,43 @@ smooths <- lapply(
 smooths <- do.call(rbind, smooths)
 smooths$method <- factor(smooths$method, levels = levels(timings$method))
 
+
+ggplot(data = timings[timings$method %in% qc(dplyr, base_r, pandas_reticulate),], 
+       aes(x = rows, y = seconds)) +
+  geom_point(aes(color = method)) + 
+  geom_smooth(aes(color = method),
+              se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10() +
+  scale_color_manual(values = color_map[qc(dplyr, base_r, "pandas_reticulate")]) +
+  ggtitle("grouped ranked selection task time by rows and method",
+          subtitle = "log-log trend shown") 
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="GroupedRankFilter2_files/figure-markdown_github/present-1.png" width="1152" />
+
+``` r
+ggplot(data = timings[timings$method %in% qc(dplyr, base_r, dplyr_b,
+                                             data.table),], 
+       aes(x = rows, y = seconds)) +
+  geom_point(aes(color = method)) + 
+  geom_smooth(aes(color = method),
+              se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10() +
+  scale_color_manual(values = color_map[qc(dplyr, base_r, dplyr_b,
+                                             data.table)]) +
+  ggtitle("grouped ranked selection task time by rows and method",
+          subtitle = "log-log trend shown") 
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="GroupedRankFilter2_files/figure-markdown_github/present-2.png" width="1152" />
+
+``` r
 ggplot(data = timings, aes(x = rows, y = seconds)) +
   geom_line(data = smooths,
             alpha = 0.7,
@@ -241,13 +283,10 @@ ggplot(data = timings, aes(x = rows, y = seconds)) +
             aes(group = method, color = method)) +
   geom_point(data = timings, aes(color = method)) + 
   geom_smooth(data = timings, aes(color = method),
-              se = FALSE, size = 2) +
+              se = FALSE) +
   scale_x_log10() +
   scale_y_log10() +
-  scale_color_manual(values = 
-                       c("#1b9e77", "#d95f02",
-                         "#7570b3", "#e7298a",
-                         "#66a61e", "#e6ab02")) +
+  scale_color_manual(values = color_map) +
   ggtitle("grouped ranked selection task time by rows and method",
           subtitle = "log-log trend shown") +
   facet_wrap(~method_family, ncol=1, labeller = "label_both")
@@ -255,7 +294,7 @@ ggplot(data = timings, aes(x = rows, y = seconds)) +
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-<img src="GroupedRankFilter2_files/figure-markdown_github/present-1.png" width="1152" />
+<img src="GroupedRankFilter2_files/figure-markdown_github/present-3.png" width="1152" />
 
 ``` r
 means <- timings %.>%
@@ -357,6 +396,7 @@ ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
   scale_y_log10(
     breaks = 2^{0:8},
     minor_breaks = 1:128) + 
+  scale_color_manual(values = as.character(color_map[qc(dplyr, dplyr_b)])) +
   geom_hline(yintercept = 1, color = "darkgray") + 
   ggtitle("ratio of dplyr runtime to data.table runtime",
           subtitle = "grouped rank selection task")
@@ -364,4 +404,4 @@ ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-<img src="GroupedRankFilter2_files/figure-markdown_github/present-2.png" width="1152" />
+<img src="GroupedRankFilter2_files/figure-markdown_github/present-4.png" width="1152" />
