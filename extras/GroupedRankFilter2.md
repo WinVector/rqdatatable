@@ -243,6 +243,8 @@ All runs were performed on an Amazon EC2 `r4.8xlarge` (244 GiB RAM) 64-bit Ubunt
 
 We are not testing [<code>dtplyr</code>](https://CRAN.R-project.org/package=dtplyr) for the simple reason it does not work with the <code>dplyr</code> pipeline as written.
 
+It is important to note the reason base-`R` is: "in the running" is Matt Dowle and Arun Srinivasan of the <code>data.table</code> team generously ported their radix sorting code into base-`R`! Please see `help(sort)` for details. So `data.table` is not only the best data manipulation package in `R`, the team actually works to improve `R` itself. This is what is meant by "`R` community" and what is needed to keep `R` vibrant and alive. So really the 3 fast methods we exhibit (base `R`, `data.table`, and `rqdatatable`) are all in fact just use of `data.table` code.
+
 ``` r
 ds <- mk_data(3)
 
