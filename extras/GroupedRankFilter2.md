@@ -318,7 +318,7 @@ ggplot(data = timings[timings$method %in% qc(dplyr, base_r, dplyr_b,
 
 <img src="GroupedRankFilter2_files/figure-markdown_github/present3-1.png" width="1152" />
 
-Notice in the above graph we have also added <code>data.table</code> results (and left out the earlier <code>Pandas</code> results). At no scale tested does either of the <code>dplyr</code> solutions match the performance of either of base-<code>R</code> or <code>data.table</code>. The ratio of the runtime of the first (or more natual) <code>dplyr</code> solution over the <code>data.table</code> runtime (<code>data.table</code> being by far the best solution) is routinely over 80 to 1.
+Notice in the above graph we have also added <code>data.table</code> results (and left out the earlier <code>Pandas</code> results). At no scale tested does either of the <code>dplyr</code> solutions match the performance of either of base-<code>R</code> or <code>data.table</code>. The ratio of the runtime of the first (or more natural) <code>dplyr</code> solution over the <code>data.table</code> runtime (<code>data.table</code> being by far the best solution) is routinely over 80 to 1.
 
 ``` r
 means <- timings %.>%
@@ -361,6 +361,25 @@ ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
 <img src="GroupedRankFilter2_files/figure-markdown_github/present5-1.png" width="1152" />
 
 We also tested an [<code>rqdatatable</code>](https://CRAN.R-project.org/package=rqdatatable) solution. <code>rqdatatable</code> uses <code>data.table</code> to implement the [<code>rquery</code>](https://CRAN.R-project.org/package=rqdatatable) data manipulation grammar, so it has more overhead than <code>data.table</code>.
+
+A good example to look at is what happens at 5 million rows. At this scale
+
+``` r
+format(t(means[means$rows == 5e+6, , drop = FALSE]), scientific = FALSE, digits=2)
+```
+
+    ##                   21          
+    ## rows              "5000000.00"
+    ## base_r            "      2.04"
+    ## data.table        "      0.98"
+    ## dplyr             "     89.76"
+    ## dplyr_b           "     17.20"
+    ## pandas_reticulate "     27.18"
+    ## rqdatatable       "      3.05"
+    ## ratio_a           "     91.47"
+    ## ratio_b           "     17.53"
+
+At this scale `data.table` takes about 1 second. Base-`R` and `rqdatatable` take about 2 and 3 seconds respectively (longer, but tolerable). `dplyr` takes 90 to 17 seconds (depending on which variation you use) which is 91 to 18 times slower than `data.table`.
 
 Full results are below (and all code and results are [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md)).
 
