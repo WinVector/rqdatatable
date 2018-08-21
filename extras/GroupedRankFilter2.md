@@ -1,7 +1,7 @@
 Grouped Rank Filter
 ================
 
-Amazon EC2 `r4.8xlarge` (244 GiB RAM) run (8-12-2018, 64-bit Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-ba602bc2, R 3.4.4 all packages current).
+This is an experiment comparing the performance of a number of data processing systems available in [<code>R</code>](https://www.r-project.org). Our example problem is finding the top ranking item per group (group defined by three columns: <code>col\_a</code>, <code>col\_b</code>, <code>col\_b</code>; and order defined by a single column <code>col\_x</code>). This is a common often needed task.
 
 ``` r
 # https://cran.r-project.org/web/packages/reticulate/vignettes/r_markdown.html
@@ -36,6 +36,8 @@ library("WVPlots")
 library("cdata")
 library("dplyr")
 ```
+
+    ## Warning: package 'dplyr' was built under R version 3.5.1
 
     ## 
     ## Attaching package: 'dplyr'
@@ -85,36 +87,6 @@ my_check <- function(values) {
   isTRUE(all(sapply(values[-1], function(x) identical(values[[1]], x))))
 }
 ```
-
-``` r
-ds <- mk_data(3)
-
-ds %>%  
-  group_by(col_a, col_b, col_c) %>% 
-  arrange(col_x) %>% 
-  filter(row_number() == 1) %>%
-  ungroup() %>%
-  arrange(col_a, col_b, col_c, col_x)
-```
-
-    ## # A tibble: 3 x 4
-    ##   col_a col_b col_c col_x
-    ##   <chr> <chr> <chr> <dbl>
-    ## 1 sym_1 sym_1 sym_1 0.751
-    ## 2 sym_2 sym_1 sym_1 0.743
-    ## 3 sym_2 sym_2 sym_1 0.542
-
-``` r
-ds %>%  
-  as.data.table() %>%
-  group_by(col_a, col_b, col_c) %>% 
-  arrange(col_x) %>% 
-  filter(row_number() == 1) %>%
-  ungroup() %>%
-  arrange(col_a, col_b, col_c, col_x)
-```
-
-    ## Error in rank(x, ties.method = "first", na.last = "keep"): argument "x" is missing, with no default
 
 ``` r
 base_r <- function(df) {
@@ -199,6 +171,12 @@ if(!file.exists(rds_name)) {
 }
 ```
 
+First let's compare three methods on the same grouped ranking problem.
+
+-   [<code>dplyr</code>](https://CRAN.R-project.org/package=dplyr)
+-   Base <code>R</code> (term defined as <code>R</code> plus just core packages, earlier results [here](http://www.win-vector.com/blog/2018/01/base-r-can-be-fast/)).
+-   The seemingly silly idea of using [<code>reticulate</code>](https://CRAN.R-project.org/package=reticulate) to ship the data to <code>Python</code>, and then using [<code>Pandas</code>](https://pandas.pydata.org) to do the work, and finally bring the result back to <code>R</code>.
+
 ``` r
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
@@ -236,8 +214,9 @@ smooths <- lapply(
   })
 smooths <- do.call(rbind, smooths)
 smooths$method <- factor(smooths$method, levels = levels(timings$method))
+```
 
-
+``` r
 ggplot(data = timings[timings$method %in% qc(dplyr, base_r, pandas_reticulate),], 
        aes(x = rows, y = seconds)) +
   geom_point(aes(color = method)) + 
@@ -247,12 +226,78 @@ ggplot(data = timings[timings$method %in% qc(dplyr, base_r, pandas_reticulate),]
   scale_y_log10() +
   scale_color_manual(values = color_map[qc(dplyr, base_r, "pandas_reticulate")]) +
   ggtitle("grouped ranked selection task time by rows and method",
-          subtitle = "log-log trend shown") 
+          subtitle = "log-log trend shown; comparing dplyr, base-R, Python round-trip") 
 ```
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-<img src="GroupedRankFilter2_files/figure-markdown_github/present-1.png" width="1152" />
+<img src="GroupedRankFilter2_files/figure-markdown_github/present2-1.png" width="1152" />
+
+Notice, contrary to many claims, <code>dplyr</code> is slower (higher up on the graph) than base <code>R</code> for all problem scales tested (1 row through 100,000,000 rows). Height differences on a <code>log-y</code> scaled graph such as this represent ratios of run-times and we can see the ratio of <code>dplyr</code> to base-<code>R</code> runtime is routinely around a multiplicative factor of 50.
+
+Also notice by the time we get the problem size up to 5,000 rows even sending the data to <code>Python</code> and back for <code>Pandas</code> processing is faster than <code>dplyr</code>.
+
+Note: in this article "<code>pandas</code> timing" means the time it would take an <code>R</code> process to use <code>Pandas</code> for data manipulation. This includes the extra overhead of moving the data from <code>R</code> to <code>Python</code>/<code>Pandas</code> and back. This is always going to be slower than <code>Pandas</code> itself as it includes extra overhead. The point is we are not running a test designed to compare (or capable of comparing) <code>Pandas</code> to [<code>data.table</code>](https://CRAN.R-project.org/package=data.table) (you can already find such a study [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping)), but instead performing a one-sided test of how <code>dplyr</code> compares to <code>Pandas</code> *plus* extra transport costs (so it is interesting if <code>Pandas</code> is faster, or even competitive, in this set-up, but not informative if <code>Pandas</code> plus extra costs is slower).
+
+All runs were performed on an Amazon EC2 `r4.8xlarge` (244 GiB RAM) 64-bit Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-ba602bc2. We used R 3.4.4, with all packages current as of 8-20-2018 (the date of the experiment).
+
+We are not testing [<code>dtplyr</code>](https://CRAN.R-project.org/package=dtplyr) for the simple reason it does not work with the <code>dplyr</code> pipeline as written.
+
+``` r
+ds <- mk_data(3)
+
+ds %>%  
+  group_by(col_a, col_b, col_c) %>% 
+  arrange(col_x) %>% 
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  arrange(col_a, col_b, col_c, col_x)
+```
+
+    ## # A tibble: 3 x 4
+    ##   col_a col_b col_c col_x
+    ##   <chr> <chr> <chr> <dbl>
+    ## 1 sym_1 sym_1 sym_1 0.751
+    ## 2 sym_2 sym_1 sym_1 0.743
+    ## 3 sym_2 sym_2 sym_1 0.542
+
+``` r
+ds %>%  
+  as.data.table() %>%
+  group_by(col_a, col_b, col_c) %>% 
+  arrange(col_x) %>% 
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  arrange(col_a, col_b, col_c, col_x)
+```
+
+    ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
+
+For our example we used what I consider the natural <code>dplyr</code> solution to the problem. The code looks like the following.
+
+``` r
+d %>% 
+  group_by(col_a, col_b, col_c) %>% 
+  arrange(col_x) %>% 
+  filter(row_number() == 1) %>%
+  ungroup() %>%
+  arrange(col_a, col_b, col_c, col_x)
+```
+
+<code>dplyr</code> has [known (unfixed) issues with filtering in the presence of grouping](https://github.com/tidyverse/dplyr/issues/3294). Let's try to work around that with the following code (pivoting as many operations out of the grouped data section of the pipeline).
+
+``` r
+d %>% 
+  arrange(col_x) %>% 
+  group_by(col_a, col_b, col_c) %>% 
+  mutate(rn = row_number()) %>%
+  ungroup() %>%
+  filter(rn == 1) %>%
+  select(col_a, col_b, col_c, col_x) %>%
+  arrange(col_a, col_b, col_c, col_x)
+```
+
+We will call the above solution "<code>dplyr\_b</code>". A new comparison including "<code>dplyr\_b</code>" is given below.
 
 ``` r
 ggplot(data = timings[timings$method %in% qc(dplyr, base_r, dplyr_b,
@@ -266,33 +311,14 @@ ggplot(data = timings[timings$method %in% qc(dplyr, base_r, dplyr_b,
   scale_color_manual(values = color_map[qc(dplyr, base_r, dplyr_b,
                                              data.table)]) +
   ggtitle("grouped ranked selection task time by rows and method",
-          subtitle = "log-log trend shown") 
+          subtitle = "log-log trend shown; comparing dplyr, base-R, and data.table") 
 ```
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-<img src="GroupedRankFilter2_files/figure-markdown_github/present-2.png" width="1152" />
+<img src="GroupedRankFilter2_files/figure-markdown_github/present3-1.png" width="1152" />
 
-``` r
-ggplot(data = timings, aes(x = rows, y = seconds)) +
-  geom_line(data = smooths,
-            alpha = 0.7,
-            linetype = 2,
-            aes(group = method, color = method)) +
-  geom_point(data = timings, aes(color = method)) + 
-  geom_smooth(data = timings, aes(color = method),
-              se = FALSE) +
-  scale_x_log10() +
-  scale_y_log10() +
-  scale_color_manual(values = color_map) +
-  ggtitle("grouped ranked selection task time by rows and method",
-          subtitle = "log-log trend shown") +
-  facet_wrap(~method_family, ncol=1, labeller = "label_both")
-```
-
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-
-<img src="GroupedRankFilter2_files/figure-markdown_github/present-3.png" width="1152" />
+Notice in the above graph we have also added <code>data.table</code> results (and left out the earlier <code>Pandas</code> results). At no scale tested does either of the <code>dplyr</code> solutions match the performance of either of base-<code>R</code> or <code>data.table</code>. The ratio of the runtime of the first (or more natual) <code>dplyr</code> solution over the <code>data.table</code> runtime (<code>data.table</code> being by far the best solution) is routinely over 80 to 1.
 
 ``` r
 means <- timings %.>%
@@ -309,6 +335,57 @@ means <- timings %.>%
   orderby(., "rows") %.>%
   as.data.frame(.)
 
+m2 <- means %.>%
+  select_columns(., 
+                 qc(rows, ratio_a, ratio_b)) %.>%
+  unpivot_to_blocks(.,
+                    nameForNewKeyColumn = "comparison",
+                    nameForNewValueColumn = "ratio",
+                    columnsToTakeFrom = qc(ratio_a, ratio_b))
+  
+ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  scale_x_log10() + 
+  scale_y_log10(
+    breaks = 2^{0:8},
+    minor_breaks = 1:128) + 
+  scale_color_manual(values = as.character(color_map[qc(dplyr, dplyr_b)])) +
+  geom_hline(yintercept = 1, color = "darkgray") + 
+  ggtitle("ratio of dplyr runtime to data.table runtime",
+          subtitle = "grouped rank selection task")
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="GroupedRankFilter2_files/figure-markdown_github/present5-1.png" width="1152" />
+
+We also tested an [<code>rqdatatable</code>](https://CRAN.R-project.org/package=rqdatatable) solution. <code>rqdatatable</code> uses <code>data.table</code> to implement the [<code>rquery</code>](https://CRAN.R-project.org/package=rqdatatable) data manipulation grammar, so it has more overhead than <code>data.table</code>.
+
+Full results are below (and all code and results are [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md)).
+
+``` r
+ggplot(data = timings, aes(x = rows, y = seconds)) +
+  geom_line(data = smooths,
+            alpha = 0.7,
+            linetype = 2,
+            aes(group = method, color = method)) +
+  geom_point(data = timings, aes(color = method)) + 
+  geom_smooth(data = timings, aes(color = method),
+              se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10() +
+  scale_color_manual(values = color_map) +
+  ggtitle("grouped ranked selection task time by rows and method",
+          subtitle = "log-log trend shown; showing all results") +
+  facet_wrap(~method_family, ncol=1, labeller = "label_both")
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="GroupedRankFilter2_files/figure-markdown_github/present4-1.png" width="1152" />
+
+``` r
 knitr::kable(means[, 
                    qc(rows, base_r, data.table, 
                       dplyr, dplyr_b, 
@@ -377,29 +454,3 @@ knitr::kable(means[,
 |  2e+07|   4.5928288|   371.9769376|   87.0174476|   80.990813|  18.946373|
 |  5e+07|  10.7915545|   978.9227351|  227.6743024|   90.711929|  21.097452|
 |  1e+08|  27.9374640|  2075.8621812|  573.3556189|   74.303887|  20.522823|
-
-``` r
-m2 <- means %.>%
-  select_columns(., 
-                 qc(rows, ratio_a, ratio_b)) %.>%
-  unpivot_to_blocks(.,
-                    nameForNewKeyColumn = "comparison",
-                    nameForNewValueColumn = "ratio",
-                    columnsToTakeFrom = qc(ratio_a, ratio_b))
-  
-ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
-  geom_point() + 
-  geom_smooth(se = FALSE) +
-  scale_x_log10() + 
-  scale_y_log10(
-    breaks = 2^{0:8},
-    minor_breaks = 1:128) + 
-  scale_color_manual(values = as.character(color_map[qc(dplyr, dplyr_b)])) +
-  geom_hline(yintercept = 1, color = "darkgray") + 
-  ggtitle("ratio of dplyr runtime to data.table runtime",
-          subtitle = "grouped rank selection task")
-```
-
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
-
-<img src="GroupedRankFilter2_files/figure-markdown_github/present-4.png" width="1152" />
