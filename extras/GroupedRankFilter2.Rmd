@@ -216,7 +216,7 @@ ggplot(data = timings, aes(x = rows, y = seconds)) +
                        c("#1b9e77", "#d95f02",
                          "#7570b3", "#e7298a",
                          "#66a61e", "#e6ab02")) +
-  ggtitle("grouped sorting task time by rows and method",
+  ggtitle("grouped ranked selection task time by rows and method",
           subtitle = "log-log trend shown") +
   facet_wrap(~method_family, ncol=1, labeller = "label_both")
 
@@ -229,17 +229,39 @@ means <- timings %.>%
                    columnToTakeValuesFrom = "seconds",
                    rowKeyColumns = "rows") %.>%
   extend_nse(., 
-             ratio = dplyr/data.table) %.>%
-  orderby(., "rows")
+             ratio_a = dplyr/data.table,
+             ratio_b = dplyr_b/data.table) %.>%
+  orderby(., "rows") %.>%
+  as.data.frame(.)
 
-knitr::kable(means)
+knitr::kable(means[, 
+                   qc(rows, base_r, data.table, 
+                      dplyr, dplyr_b, 
+                      pandas_reticulate, rqdatatable)])
+
+knitr::kable(means[, 
+                   qc(rows, data.table, 
+                      dplyr, dplyr_b, 
+                      ratio_a, ratio_b)])
+
+m2 <- means %.>%
+  select_columns(., 
+                 qc(rows, ratio_a, ratio_b)) %.>%
+  unpivot_to_blocks(.,
+                    nameForNewKeyColumn = "comparison",
+                    nameForNewValueColumn = "ratio",
+                    columnsToTakeFrom = qc(ratio_a, ratio_b))
   
-ggplot(data = means, aes(x = rows, y = ratio)) +
+ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
   geom_point() + 
   geom_smooth(se = FALSE) +
   scale_x_log10() + 
+  scale_y_log10(
+    breaks = 2^{0:8},
+    minor_breaks = 1:128) + 
+  geom_hline(yintercept = 1, color = "darkgray") + 
   ggtitle("ratio of dplyr runtime to data.table runtime",
-          subtitle = "grouped sorting/sum task")
+          subtitle = "grouped rank selection task")
 ```
 
 
