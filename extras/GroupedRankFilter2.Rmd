@@ -83,16 +83,16 @@ ds %>%
 ```
 
 ```{r baser}
-shift_col <- function(col) { c(col[1], col[-length(col)]) }
-
 base_r <- function(df) {
   rownames(df) <- NULL
-  df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x), , drop = FALSE]
+  df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x, method = 'radix'), , 
+           drop = FALSE]
   rownames(df) <- NULL
-  first <- (df$col_a != shift_col(df$col_a)) | 
-    (df$col_b != shift_col(df$col_b)) | 
-    (df$col_c != shift_col(df$col_c))
-  first[[1]] <- TRUE
+  n <- length(df$col_a)
+  first <- c(TRUE,
+             (df$col_a[-1] != df$col_a[-n]) | 
+               (df$col_b[-1] != df$col_b[-n]) | 
+               (df$col_c[-1] != df$col_c[-n]))
   df <- df[first, , drop = FALSE]
   rownames(df) <- NULL
   df
@@ -102,7 +102,7 @@ base_r <- function(df) {
 
 
 ```{r time}
-pow <- 8
+pow <- 6
 rds_name <- "GroupedRankFilter2_runs.RDS"
 if(!file.exists(rds_name)) {
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
