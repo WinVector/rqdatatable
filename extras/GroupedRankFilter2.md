@@ -37,6 +37,8 @@ library("cdata")
 library("dplyr")
 ```
 
+    ## Warning: package 'dplyr' was built under R version 3.5.1
+
     ## 
     ## Attaching package: 'dplyr'
 
@@ -114,7 +116,7 @@ ds %>%
   arrange(col_a, col_b, col_c, col_x)
 ```
 
-    ## Error in rank(x, ties.method = "first", na.last = "keep"): argument "x" is missing, with no default
+    ## Error in data.table::is.data.table(data): argument "x" is missing, with no default
 
 ``` r
 shift_col <- function(col) { c(col[1], col[-length(col)]) }
@@ -230,6 +232,7 @@ smooths <- lapply(
     pi
   })
 smooths <- do.call(rbind, smooths)
+smooths$method <- factor(smooths$method, levels = levels(timings$method))
 
 ggplot(data = timings, aes(x = rows, y = seconds)) +
   geom_line(data = smooths,

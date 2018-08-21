@@ -200,6 +200,7 @@ smooths <- lapply(
     pi
   })
 smooths <- do.call(rbind, smooths)
+smooths$method <- factor(smooths$method, levels = levels(timings$method))
 
 ggplot(data = timings, aes(x = rows, y = seconds)) +
   geom_line(data = smooths,
