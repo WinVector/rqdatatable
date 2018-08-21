@@ -381,7 +381,7 @@ format(t(means[means$rows == 5e+6, , drop = FALSE]), scientific = FALSE, digits=
 
 At this scale `data.table` takes about 1 second. Base-`R` and `rqdatatable` take about 2 and 3 seconds respectively (longer, but tolerable). `dplyr` takes 90 to 17 seconds (depending on which variation you use) which is 91 to 18 times slower than `data.table`.
 
-Full results are below (and all code and results are [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md)).
+Full results are below (and all code and results are [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md)). Times reported are in seconds.
 
 ``` r
 ggplot(data = timings, aes(x = rows, y = seconds)) +
