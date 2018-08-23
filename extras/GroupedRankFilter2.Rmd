@@ -1,18 +1,18 @@
 ---
-title: "Grouped Rank Filter"
+title: "Timings of a Grouped Rank Filter Task"
 output: github_document
 ---
 
-This is an experiment comparing the performance of a number of data processing systems available in [<code>R</code>](https://www.r-project.org).  Our example problem is finding the top ranking item per group (group defined by three columns: <code>col_a</code>,
-<code>col_b</code>, <code>col_b</code>; and order defined by a single column <code>col_x</code>).  This is a common often needed task.
+# Intoduction
 
+[This note](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md) shares an experiment comparing the performance of a number of data processing systems available in [<code>R</code>](https://www.r-project.org).  Our notional or example problem is finding the top ranking item per group (group defined by three string columns, and order defined by a single numeric column).  This is a common and often needed task.
 
+# Comparisons
 
-```{r pythonsetup}
+```{r pythonsetup, echo=FALSE, message=FALSE, warning=FALSE}
 # https://cran.r-project.org/web/packages/reticulate/vignettes/r_markdown.html
 library("reticulate")
 use_python("/home/ruser/miniconda3/bin/python3")
-# use_python("/Users/johnmount/anaconda3/bin/python3")
 pandas_handle <- reticulate::import("pandas") # don't use as https://github.com/rstudio/reticulate/issues/319
 
 pandas_fn <- py_run_string("
@@ -29,7 +29,7 @@ do_pandas <- function(d) {
 ```
 
 
-```{r setup}
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 library("rqdatatable")
 library("microbenchmark")
 library("ggplot2")
@@ -52,7 +52,7 @@ mk_data <- function(nrow) {
 ```
 
 
-```{r def}
+```{r def, echo=FALSE}
 # adapted from help(microbenchmark)
 my_check <- function(values) {
   values <- lapply(values,
@@ -67,7 +67,7 @@ my_check <- function(values) {
 
 
 
-```{r baser}
+```{r baser, echo=FALSE}
 base_r <- function(df) {
   rownames(df) <- NULL
   df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x, method = 'radix'), , 
@@ -86,7 +86,7 @@ base_r <- function(df) {
 
 
 
-```{r time}
+```{r time, echo=FALSE}
 pow <- 8
 rds_name <- "GroupedRankFilter2_runs.RDS"
 if(!file.exists(rds_name)) {
@@ -154,11 +154,13 @@ if(!file.exists(rds_name)) {
 
 First let's compare three methods on the same grouped ranking problem.
 
-  * [<code>dplyr</code>](https://CRAN.R-project.org/package=dplyr)
-  * Base <code>R</code> (term defined as <code>R</code> plus just core packages, earlier results [here](http://www.win-vector.com/blog/2018/01/base-r-can-be-fast/)).
+  * "Base-<code>R</code>" (term defined as <code>R</code> plus just core packages, earlier results [here](http://www.win-vector.com/blog/2018/01/base-r-can-be-fast/)). We are using `base::order()` with the option "`method = "auto"`" (as described [here](http://www.win-vector.com/blog/2018/08/r-tip-use-radix-sort/)).
+  * [<code>dplyr</code>](https://CRAN.R-project.org/package=dplyr).
   * The seemingly silly idea of using [<code>reticulate</code>](https://CRAN.R-project.org/package=reticulate) to ship the data to <code>Python</code>, and then using [<code>Pandas</code>](https://pandas.pydata.org) to do the work, and finally bring the result back to <code>R</code>.
+  
+We will plot the run-times (in seconds) of these three solutions to the same task as a function of the number of rows in the problem.  For all tasks shorter run-times (being lower on the graph) is better.  Since we are plotting a large range of values (1 through 100,000,000 rows) we will present the data as a "log-log" plot.
 
-```{r present1, fig.retina=2, fig.width=12, fig.height=8}
+```{r present1, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE}
 timings <- do.call(rbind, runs)
 timings$seconds <- timings$time/1e+9
 timings$method <- factor(timings$expr)
@@ -198,7 +200,7 @@ smooths$method <- factor(smooths$method, levels = levels(timings$method))
 ```
 
 
-```{r present2, fig.retina=2, fig.width=12, fig.height=8}
+```{r present2, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(data = timings[timings$method %in% qc(dplyr, base_r, pandas_reticulate),], 
        aes(x = rows, y = seconds)) +
   geom_point(aes(color = method)) + 
@@ -208,54 +210,41 @@ ggplot(data = timings[timings$method %in% qc(dplyr, base_r, pandas_reticulate),]
   scale_y_log10() +
   scale_color_manual(values = color_map[qc(dplyr, base_r, "pandas_reticulate")]) +
   ggtitle("grouped ranked selection task time by rows and method",
-          subtitle = "log-log trend shown; comparing dplyr, base-R, Python round-trip") 
+          subtitle = "log-log trend shown; comparing dplyr, base-R, and Python round-trip") 
 ```
 
 
-Notice, contrary to many claims, <code>dplyr</code> is slower (higher up on the graph) than base <code>R</code> for all problem scales tested (1 row through 100,000,000 rows).  Height differences on a <code>log-y</code> scaled graph such as this represent ratios of run-times and we can see the ratio of <code>dplyr</code> to base-<code>R</code> runtime is routinely around a multiplicative factor of 50.
+Notice <code>dplyr</code> is slower (higher up on the graph) than base <code>R</code> for all problem scales tested (1 row through 100,000,000 rows).  Height differences on a <code>log-y</code> scaled graph such as this represent ratios of run-times and we can see the ratio of <code>dplyr</code> to base-<code>R</code> runtime is large (often over 40 to 1).
 
 Also notice by the time we get the problem size up to 5,000 rows even sending the data to <code>Python</code> and back for <code>Pandas</code> processing is faster than <code>dplyr</code>.
 
-Note: in this article "<code>pandas</code> timing" means the time it would take an <code>R</code> process to use <code>Pandas</code> for data manipulation.  This includes the extra overhead of moving the data from <code>R</code> to <code>Python</code>/<code>Pandas</code> and back. This is always going to be slower than <code>Pandas</code> itself as it includes extra overhead.  The point is we are not running a test designed to compare (or capable of comparing) <code>Pandas</code> to [<code>data.table</code>](https://CRAN.R-project.org/package=data.table) (you can already find such a study [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping)), but instead performing a one-sided test of how <code>dplyr</code> compares to <code>Pandas</code> *plus* extra transport costs (so it is interesting if <code>Pandas</code> is faster, or even competitive, in this set-up, but not informative if <code>Pandas</code> plus extra costs is slower).
+Note: in this article "<code>pandas</code> timing" means the time it would take an <code>R</code> process to use <code>Pandas</code> for data manipulation.  This includes the extra overhead of moving the data from <code>R</code> to <code>Python</code>/<code>Pandas</code> and back. This is always going to be slower than <code>Pandas</code> itself as it includes extra overhead. We are *not* saying `R` users should round trip their data through `Python` and (as we will discuss later) these performance numbers alone are not a reason for `R` users to switch to `Python`. It *does* indicate that clients may not always be well-served by a pure-`dplyr` or pure-`tidyverse` approach. As an `R` advocate, I like `R` to have its best fair chance in the market, regardless of loyalty or dis-loyalty to any one set of packages.
 
 All runs were performed on an Amazon EC2 `r4.8xlarge` (244 GiB RAM) 64-bit Ubuntu Server 16.04 LTS (HVM), SSD Volume Type - ami-ba602bc2. We used R 3.4.4, with all packages current as of 8-20-2018 (the date of the experiment).
 
-We are not testing [<code>dtplyr</code>](https://CRAN.R-project.org/package=dtplyr) for the simple reason it does not work with the <code>dplyr</code> pipeline as written.
-
-It is important to note the reason base-`R` is: "in the running" is Matt Dowle and Arun Srinivasan of the <code>data.table</code> team generously ported their radix sorting code into base-`R`! Please see `help(sort)` for details.  So `data.table` is not only the best data manipulation package in `R`, the team actually works to improve `R` itself.  This is what is meant by "`R` community" and what is needed to keep `R` vibrant and alive.  So really the 3 fast methods we exhibit (base `R`, `data.table`, and `rqdatatable`) are all in fact just use of `data.table` code.
-
+We are not testing [<code>dtplyr</code>](https://CRAN.R-project.org/package=dtplyr) for the simple reason it did not work with the <code>dplyr</code> pipeline as written.  We demonstrate this issue below.
 
 ```{r dtplyr, error=TRUE}
 ds <- mk_data(3)
 
-ds %>%  
+dplyr_pipeline <- . %>%
   group_by(col_a, col_b, col_c) %>% 
   arrange(col_x) %>% 
   filter(row_number() == 1) %>%
   ungroup() %>%
   arrange(col_a, col_b, col_c, col_x)
 
+ds %>% 
+  dplyr_pipeline
+
 ds %>%  
-  as.data.table() %>%
-  group_by(col_a, col_b, col_c) %>% 
-  arrange(col_x) %>% 
-  filter(row_number() == 1) %>%
-  ungroup() %>%
-  arrange(col_a, col_b, col_c, col_x)
+  as.data.table() %>% 
+  dplyr_pipeline
 ```
 
-For our example we used what I consider the natural <code>dplyr</code> solution to the problem.  The code looks like the following.
+It is important to note the reason base-`R` is in the running is that Matt Dowle and Arun Srinivasan of the <code>data.table</code> team generously ported their radix sorting code into base-`R`. Please see `help(sort)` for details.  This sharing of one of `data.table`'s more important features (fast radix sorting) back into `R` itself is a very big deal.
 
-```{r dplyrc1, eval=FALSE}
-d %>% 
-  group_by(col_a, col_b, col_c) %>% 
-  arrange(col_x) %>% 
-  filter(row_number() == 1) %>%
-  ungroup() %>%
-  arrange(col_a, col_b, col_c, col_x)
-```
-
-<code>dplyr</code> has [known (unfixed) issues with filtering in the presence of grouping](https://github.com/tidyverse/dplyr/issues/3294).  Let's try to work around that with the following code (pivoting as many operations out of the grouped data section of the pipeline). 
+For our example we used what I consider a natural or idiomatic <code>dplyr</code> solution to the problem.  We saw that code or pipeline just above.  That code may not be preferred, as <code>dplyr</code> has [known (unfixed) issues with filtering in the presence of grouping](https://github.com/tidyverse/dplyr/issues/3294).  Let's try to work around that with the following code (pivoting as many operations out of the grouped data section of the pipeline as practical). 
 
 ```{r dplyrc12, eval=FALSE}
 d %>% 
@@ -270,7 +259,7 @@ d %>%
 
 We will call the above solution "<code>dplyr_b</code>".  A new comparison including "<code>dplyr_b</code>" is given below.
 
-```{r present3, fig.retina=2, fig.width=12, fig.height=8}
+```{r present3, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(data = timings[timings$method %in% qc(dplyr, base_r, dplyr_b,
                                              data.table),], 
        aes(x = rows, y = seconds)) +
@@ -285,11 +274,13 @@ ggplot(data = timings[timings$method %in% qc(dplyr, base_r, dplyr_b,
           subtitle = "log-log trend shown; comparing dplyr, base-R, and data.table") 
 ```
 
-Notice in the above graph we have also added <code>data.table</code> results (and left out the earlier <code>Pandas</code> results).  At no scale tested does either of the <code>dplyr</code> solutions match the performance of either of base-<code>R</code> or <code>data.table</code>. The ratio of the runtime of the first (or more natural) <code>dplyr</code> solution over the <code>data.table</code> runtime (<code>data.table</code> being by far the best solution) is routinely over 80 to 1.
+In the above graph we added <code>data.table</code> results and left out the earlier <code>Pandas</code> results.  It is already known that working with <code>data.table</code> in `R` is typically competitive with (and sometimes faster than) working with `Pandas` in `python` (some results are given [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping), [here](https://www.statworx.com/de/blog/pandas-vs-data-table-a-study-of-data-frames/)); so `R` users should *not* be seriously considering round-tripping their data through `Python` to get access to `Pandas`, and (at least with <code>data.table</code>) `R` users should not have data manipulation performance as a reason to abandon `R` for `Python`.
 
+There are at least 2 ways to think about the relation of the `dplyr` and `dplyr_b` solutions. One interpretation is we found a way to speed up our `dplyr` code by a factor of 5.  The other interpretation is that small variations in `dplyr` pipeline specification can easily affect your run-times by a factor of 5. At no scale tested does either of the <code>dplyr</code> solutions match the performance of either of base-<code>R</code> or <code>data.table</code>. The ratio of the runtime of the first (or more natural) <code>dplyr</code> solution over the <code>data.table</code> runtime (<code>data.table</code> being by far the best solution) is routinely over 80 to 1.
 
+We can take a closer look at the ratio of run-times. In our next graph we present the ratio two `dplyr` solution run times to the `data.table` solution run-time.  We will call the ratio of the runtime of the first `dplyr` solution over the `data.table` run time "`ratio_a`"; and call the ratio of the runtime of the second (improved) `dplyr` solution over the `data.table` run time "`ratio_b`".
 
-```{r present5, fig.retina=2, fig.width=12, fig.height=8}
+```{r present5, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE}
 means <- timings %.>%
   project_nse(., 
               groupby = c("method", "rows"), 
@@ -325,21 +316,30 @@ ggplot(data = m2, aes(x = rows, y = ratio, color = comparison)) +
           subtitle = "grouped rank selection task")
 ```
 
+A practical lesson is to look at is what happens at 5 million rows (times in seconds).
 
-
-We also tested an [<code>rqdatatable</code>](https://CRAN.R-project.org/package=rqdatatable) solution.  <code>rqdatatable</code> uses <code>data.table</code> to implement the [<code>rquery</code>](https://CRAN.R-project.org/package=rqdatatable) data manipulation grammar, so it has more overhead than <code>data.table</code>.
-
-A good example to look at is what happens at 5 million rows.  At this scale 
-
-```{r exrow}
-format(t(means[means$rows == 5e+6, , drop = FALSE]), scientific = FALSE, digits=2)
+```{r exrow, echo=FALSE}
+row <- means[means$rows == 5e+6, , drop = FALSE]
+rownames(row) <- NULL
+row <- format(row, scientific = FALSE, digits=3)
+row <- t(row)
+colnames(row) <- ''
+knitr::kable(row)
 ```
 
-At this scale `data.table` takes about 1 second.  Base-`R` and `rqdatatable` take about 2 and 3 seconds respectively (longer, but tolerable).  `dplyr` takes 90 to 17 seconds (depending on which variation you use) which is 91 to 18 times slower than `data.table`.
+At this scale `data.table` takes about 1 second.  Base-`R` takes about 2 seconds (longer, but tolerable).  `dplyr` takes 90 to 17 seconds (depending on which variation you use).  These are significantly different user experiences.  We have also included the timing for [`rqdatatable`](https://github.com/WinVector/rqdatatable), which relies on `data.table` as its implementation *and* has some data-copying overhead (in this case leading to a total runtime of 3 seconds).
 
-Full results are below (and all code and results are [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md)). Times reported are in seconds.
+# Conclusion
 
-```{r present4, fig.retina=2, fig.width=12, fig.height=8}
+In our simple example we have seen very large differences in performance driven by seemingly small code changes.  This emphasizes the need to benchmark one's own tasks and workflows. Choosing tools based on mere preference or anecdote may not be safe.  Also, even if one does not perform such tests, clients often do see and experience overall run times when scheduling jobs and provisioning infrastructure. Even if you do not measure, somebody else may be measuring later.
+
+We must emphasize that performance of these systems will vary from example to example. However, the above results are consistent with what we have seen (informally) in production systems. In comparing performance one should look to primary sources (experiments actually run, such as this) over repeating indirect and unsupported (in the sense of no shared code or data) claims (or at least run such claims down to their primary sources).
+
+# All Results
+
+Full results are below (and all code and results are [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md) and [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.Rmd)). Times below are reported in seconds.
+
+```{r present4, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(data = timings, aes(x = rows, y = seconds)) +
   geom_line(data = smooths,
             alpha = 0.7,
