@@ -1,8 +1,8 @@
 Timings of a Grouped Rank Filter Task
 ================
 
-Intoduction
-===========
+Introduction
+============
 
 [This note](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2.md) shares an experiment comparing the performance of a number of data processing systems available in [<code>R</code>](https://www.r-project.org). Our notional or example problem is finding the top ranking item per group (group defined by three string columns, and order defined by a single numeric column). This is a common and often needed task.
 
