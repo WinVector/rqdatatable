@@ -365,3 +365,7 @@ knitr::kable(means[,
                       dplyr, dplyr_b, 
                       ratio_a, ratio_b)])
 ```
+
+# Appendix
+
+Comments can be found [here](http://www.win-vector.com/blog/2018/08/timings-of-a-grouped-rank-filter-task/), and some follow-up timings [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2b.md).

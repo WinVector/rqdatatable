@@ -5,6 +5,100 @@ Follow-ons to [timining article](http://www.win-vector.com/blog/2018/08/timings-
 
 Run on a Mac mini (Late 2014), mac OS High Sierra Version 10.13.6, 2.8 GHz Intel Core i5, 8 GB 1600 MHz DD3 RAM, R version 3.5.0, all packages CRAN current as of 8-24-2018 (date of the run).
 
+``` r
+base_r <- function(df) {
+  rownames(df) <- NULL
+  df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x, method = 'radix'), , 
+           drop = FALSE]
+  rownames(df) <- NULL
+  n <- length(df$col_a)
+  first <- c(TRUE,
+             (df$col_a[-1] != df$col_a[-n]) | 
+               (df$col_b[-1] != df$col_b[-n]) | 
+               (df$col_c[-1] != df$col_c[-n]))
+  df <- df[first, , drop = FALSE]
+  rownames(df) <- NULL
+  df
+}
+```
+
+``` r
+pow <- 6
+rds_name <- "GroupedRankFilter2b_runs.RDS"
+if(!file.exists(rds_name)) {
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
+  szs <- sort(unique(szs$a * szs$b))
+  szs <- szs[szs<=10^pow]
+  runs <- lapply(
+    rev(szs),
+    function(sz) {
+      gc()
+      d <- mk_data(sz)
+      ti <- microbenchmark(
+        base_r = {
+          base_r(d)
+        },
+        data.table = { 
+          # https://stackoverflow.com/questions/16325641/how-to-extract-the-first-n-rows-per-group
+          d %.>% 
+            as.data.table(.) %.>% 
+            setorder(., col_a, col_b, col_c, col_x) %.>%
+            .[, .SD[1], by=list(col_a, col_b, col_c)] 
+        },
+        dplyr = {
+          d %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            arrange(col_x) %>% 
+            filter(row_number() == 1) %>%
+            ungroup() %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        dplyr_b = {
+          d %>% 
+            arrange(col_x) %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            mutate(rn = row_number()) %>%
+            ungroup() %>%
+            filter(rn == 1) %>%
+            select(col_a, col_b, col_c, col_x) %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        dplyr.a = { d %>%
+            arrange(col_a, col_b, col_c, col_x) %>%
+            group_by(col_a, col_b, col_c) %>%
+            slice(1) %>%
+            ungroup()
+        },
+        
+        dplyr.b = {
+          d %>%
+            arrange(col_a, col_b, col_c, col_x) %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            mutate(rn = row_number()) %>%
+            ungroup() %>%
+            filter(rn == 1) %>%
+            select(-rn)
+        },
+        
+        dplyr.c = {
+          d %>%
+            group_by(col_a, col_b, col_c) %>% 
+            summarise(col_x = min(col_x)) %>%
+            ungroup() %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        times = 3L,
+        check = my_check)
+      ti <- as.data.frame(ti)
+      ti$rows <- sz
+      ti
+    })
+  saveRDS(runs, rds_name)
+} else {
+  runs <- readRDS(rds_name)
+}
+```
+
 <img src="GroupedRankFilter2b_files/figure-markdown_github/present2-1.png" width="1152" />
 
 |   rows|    base\_r|  data.table|       dplyr|    dplyr.a|    dplyr.b|    dplyr.c|   dplyr\_b|
@@ -28,3 +122,5 @@ Run on a Mac mini (Late 2014), mac OS High Sierra Version 10.13.6, 2.8 GHz Intel
 |  2e+05|  0.1138001|   0.0492780|   2.5809338|  0.5841499|  0.4125598|  0.3020178|  0.5090304|
 |  5e+05|  0.2238009|   0.1433038|   6.9091637|  1.5782126|  1.1714595|  0.9569284|  1.4743319|
 |  1e+06|  0.6558543|   0.3023460|  14.8725800|  3.7131609|  2.7017660|  1.8995092|  3.4221893|
+
+Full code [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2b.Rmd).

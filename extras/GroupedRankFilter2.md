@@ -170,3 +170,8 @@ Full results are below (and all code and results are [here](https://github.com/W
 |  2e+07|   4.5928288|   371.9769376|   87.0174476|   80.990813|  18.946373|
 |  5e+07|  10.7915545|   978.9227351|  227.6743024|   90.711929|  21.097452|
 |  1e+08|  27.9374640|  2075.8621812|  573.3556189|   74.303887|  20.522823|
+
+Appendix
+========
+
+Comments can be found [here](http://www.win-vector.com/blog/2018/08/timings-of-a-grouped-rank-filter-task/), and some follow-up timings [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2b.md).

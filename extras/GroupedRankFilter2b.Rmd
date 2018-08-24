@@ -45,7 +45,7 @@ my_check <- function(values) {
 
 
 
-```{r baser, echo=FALSE}
+```{r baser}
 base_r <- function(df) {
   rownames(df) <- NULL
   df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x, method = 'radix'), , 
@@ -64,7 +64,7 @@ base_r <- function(df) {
 
 
 
-```{r time, echo=FALSE}
+```{r time}
 pow <- 6
 rds_name <- "GroupedRankFilter2b_runs.RDS"
 if(!file.exists(rds_name)) {
@@ -178,3 +178,4 @@ means <- timings %.>%
 knitr::kable(means)
 ```
 
+Full code [here](https://github.com/WinVector/rqdatatable/blob/master/extras/GroupedRankFilter2b.Rmd).
