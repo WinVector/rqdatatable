@@ -1,0 +1,180 @@
+---
+title: "Timings of a Grouped Rank Filter Task (extra timings)"
+output: github_document
+---
+
+Follow-ons to [timining article](http://www.win-vector.com/blog/2018/08/timings-of-a-grouped-rank-filter-task/).
+
+Run on a Mac mini (Late 2014), mac OS High Sierra Version 10.13.6, 2.8 GHz Intel Core i5, 8 GB 1600 MHz DD3 RAM, R version 3.5.0, all packages CRAN current as of 8-24-2018 (date of the run).
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+library("rqdatatable")
+library("microbenchmark")
+library("ggplot2")
+library("WVPlots")
+library("cdata")
+library("dplyr")
+library("dtplyr")
+library("data.table")
+
+set.seed(32523)
+
+mk_data <- function(nrow) {
+  alphabet <- paste("sym", seq_len(max(2, floor(nrow^(1/3)))), sep = "_")
+  data.frame(col_a = sample(alphabet, nrow, replace=TRUE),
+             col_b = sample(alphabet, nrow, replace=TRUE),
+             col_c = sample(alphabet, nrow, replace=TRUE),
+             col_x = runif(nrow),
+             stringsAsFactors = FALSE)
+}
+```
+
+
+```{r def, echo=FALSE}
+# adapted from help(microbenchmark)
+my_check <- function(values) {
+  values <- lapply(values,
+                   function(vi) {
+                     vi <- as.data.frame(vi)
+                     rownames(vi) <- NULL
+                     data.frame(vi) # strip attributes
+                   })
+  isTRUE(all(sapply(values[-1], function(x) identical(values[[1]], x))))
+}
+```
+
+
+
+```{r baser, echo=FALSE}
+base_r <- function(df) {
+  rownames(df) <- NULL
+  df <- df[order(df$col_a, df$col_b, df$col_c, df$col_x, method = 'radix'), , 
+           drop = FALSE]
+  rownames(df) <- NULL
+  n <- length(df$col_a)
+  first <- c(TRUE,
+             (df$col_a[-1] != df$col_a[-n]) | 
+               (df$col_b[-1] != df$col_b[-n]) | 
+               (df$col_c[-1] != df$col_c[-n]))
+  df <- df[first, , drop = FALSE]
+  rownames(df) <- NULL
+  df
+}
+```
+
+
+
+```{r time, echo=FALSE}
+pow <- 5
+rds_name <- "GroupedRankFilter2b_runs.RDS"
+if(!file.exists(rds_name)) {
+  szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
+  szs <- sort(unique(szs$a * szs$b))
+  szs <- szs[szs<=10^pow]
+  runs <- lapply(
+    rev(szs),
+    function(sz) {
+      gc()
+      d <- mk_data(sz)
+      ti <- microbenchmark(
+        base_r = {
+          base_r(d)
+        },
+        data.table = { 
+          # https://stackoverflow.com/questions/16325641/how-to-extract-the-first-n-rows-per-group
+          d %.>% 
+            as.data.table(.) %.>% 
+            setorder(., col_a, col_b, col_c, col_x) %.>%
+            .[, .SD[1], by=list(col_a, col_b, col_c)] 
+        },
+        dplyr = {
+          d %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            arrange(col_x) %>% 
+            filter(row_number() == 1) %>%
+            ungroup() %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        dplyr_b = {
+          d %>% 
+            arrange(col_x) %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            mutate(rn = row_number()) %>%
+            ungroup() %>%
+            filter(rn == 1) %>%
+            select(col_a, col_b, col_c, col_x) %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        dplyr.a = { d %>%
+            arrange(col_a, col_b, col_c, col_x) %>%
+            group_by(col_a, col_b, col_c) %>%
+            slice(1) %>%
+            ungroup()
+        },
+        
+        dplyr.b = {
+          d %>%
+            arrange(col_a, col_b, col_c, col_x) %>% 
+            group_by(col_a, col_b, col_c) %>% 
+            mutate(rn = row_number()) %>%
+            ungroup() %>%
+            filter(rn == 1) %>%
+            select(-rn)
+        },
+        
+        dplyr.c = {
+          d %>%
+            group_by(col_a, col_b, col_c) %>% 
+            summarise(col_x = min(col_x)) %>%
+            ungroup() %>%
+            arrange(col_a, col_b, col_c, col_x)
+        },
+        times = 3L,
+        check = my_check)
+      ti <- as.data.frame(ti)
+      ti$rows <- sz
+      ti
+    })
+  saveRDS(runs, rds_name)
+} else {
+  runs <- readRDS(rds_name)
+}
+```
+
+
+```{r present1, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE}
+timings <- do.call(rbind, runs)
+timings$seconds <- timings$time/1e+9
+timings$method <- factor(timings$expr)
+timings$method <- reorder(timings$method, -timings$seconds)
+```
+
+
+```{r present2, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(data = timings, 
+       aes(x = rows, y = seconds)) +
+  geom_point(aes(color = method)) + 
+  geom_smooth(aes(color = method),
+              se = FALSE) +
+  scale_x_log10() +
+  scale_y_log10() +
+  ggtitle("grouped ranked selection task time by rows and method",
+          subtitle = "follow-up suggestions") 
+```
+
+
+```{r present5, fig.retina=2, fig.width=12, fig.height=8, echo=FALSE, message=FALSE, warning=FALSE}
+means <- timings %.>%
+  project_nse(., 
+              groupby = c("method", "rows"), 
+              seconds = mean(seconds)) %.>%
+  pivot_to_rowrecs(., 
+                   columnToTakeKeysFrom = "method",
+                   columnToTakeValuesFrom = "seconds",
+                   rowKeyColumns = "rows") %.>%
+  orderby(., "rows") %.>%
+  as.data.frame(.)
+
+knitr::kable(means)
+```
+
