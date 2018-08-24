@@ -65,7 +65,7 @@ base_r <- function(df) {
 
 
 ```{r time, echo=FALSE}
-pow <- 5
+pow <- 6
 rds_name <- "GroupedRankFilter2b_runs.RDS"
 if(!file.exists(rds_name)) {
   szs <- expand.grid(a = c(1,2,5), b = 10^{0:pow}) 
