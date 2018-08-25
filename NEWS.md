@@ -1,4 +1,8 @@
 
+# rqdatatable 0.1.5 2018/08/24
+
+  * allow no group columns project.
+
 # rqdatatable 0.1.4 2018/08/18
 
   * More tests.

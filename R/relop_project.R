@@ -46,8 +46,6 @@ ex_data_table.relop_project <- function(optree,
   if(length(optree$groupby)>0) {
     pterms <- paste0("\"", optree$groupby, "\"")
     byi <- paste0(" , by = c(", paste(pterms, collapse = ", "), ")")
-  } else {
-    stop("rqdatatable::ex_data_table.relop_project() must have at least one grouping term")
   }
   tmpnam <- ".rquery_ex_extend_tmp"
   tmpenv <- new.env(parent = globalenv())
