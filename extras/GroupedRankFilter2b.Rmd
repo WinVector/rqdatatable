@@ -3,7 +3,7 @@ title: "Timings of a Grouped Rank Filter Task (extra timings)"
 output: github_document
 ---
 
-Follow-ons to [timining article](http://www.win-vector.com/blog/2018/08/timings-of-a-grouped-rank-filter-task/).
+Follow-ons to [timing article](http://www.win-vector.com/blog/2018/08/timings-of-a-grouped-rank-filter-task/).
 
 Run on a Mac mini (Late 2014), mac OS High Sierra Version 10.13.6, 2.8 GHz Intel Core i5, 8 GB 1600 MHz DD3 RAM, R version 3.5.0, all packages CRAN current as of 8-24-2018 (date of the run).
 
