@@ -62,8 +62,12 @@ ex_data_table.relop_extend <- function(optree,
     return(x)
   }
   # if there is an order, order now apply it (pre-pending partition)
-  if(length(optree$orderby)>0) {
-    x <- order_table(x, c(optree$partitionby, optree$orderby), optree$reverse)
+  if((length(optree$orderby)>0) || (length(optree$partitionby)>0) ) {
+    common_terms <- unique(intersect(optree$orderby, optree$partitionby))
+    sort_terms <- c(optree$partitionby[!(optree$partitionby %in% common_terms)],
+                    optree$orderby[optree$orderby %in% common_terms],
+                    optree$orderby[!(optree$orderby %in% common_terms)])
+    x <- order_table(x, sort_terms, optree$reverse)
   }
   # work on partition term
   byi <- ""
