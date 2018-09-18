@@ -29,6 +29,7 @@ ex_data_table.relop_project <- function(optree,
                                         source_usage = NULL,
                                         source_limit = NULL,
                                         env = parent.frame()) {
+  force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_project")
   n <- length(optree$parsed)
   if(n<0) {

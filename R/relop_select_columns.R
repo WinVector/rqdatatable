@@ -20,6 +20,7 @@ ex_data_table.relop_select_columns <- function(optree,
                                                source_usage = NULL,
                                                source_limit = NULL,
                                                env = parent.frame()) {
+  force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_select_columns")
   cols <- optree$columns
   if(is.null(source_usage)) {

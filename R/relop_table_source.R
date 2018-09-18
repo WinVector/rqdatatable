@@ -30,6 +30,7 @@ ex_data_table.relop_table_source <- function(optree,
                                              source_usage = NULL,
                                              source_limit = NULL,
                                              env = parent.frame()) {
+  force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_table_source")
   name <- optree$table_name
   res <- NULL

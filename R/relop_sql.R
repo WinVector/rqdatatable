@@ -56,6 +56,7 @@ ex_data_table.relop_sql <- function(optree,
                                     source_usage = NULL,
                                     source_limit = NULL,
                                     env = parent.frame()) {
+  force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_sql")
   rquery.rquery_db_executor <- getOption("rquery.rquery_db_executor", default = NULL)
   if(is.null(rquery.rquery_db_executor)) {

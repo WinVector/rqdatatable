@@ -23,6 +23,7 @@ ex_data_table.relop_unionall <- function(optree,
                                          source_usage = NULL,
                                          source_limit = NULL,
                                          env = parent.frame()) {
+  force(env)
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }

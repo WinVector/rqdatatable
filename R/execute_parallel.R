@@ -48,6 +48,7 @@ ex_data_table_parallel <- function(optree,
                                    source_limit = NULL,
                                    debug = FALSE,
                                    env = parent.frame()) {
+  force(env)
   if(!requireNamespace("parallel", quietly = TRUE)) {
     stop("rqdatatable::ex_data_table_parallel requires the parallel package be installed.")
   }

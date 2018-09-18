@@ -120,6 +120,7 @@ ex_data_table <- function(optree,
                           source_usage = NULL,
                           source_limit = NULL,
                           env = parent.frame()) {
+  force(env)
   UseMethod("ex_data_table", optree)
 }
 
@@ -135,6 +136,7 @@ ex_data_table.default <- function(optree,
                                   source_usage = NULL,
                                   source_limit = NULL,
                                   env = parent.frame()) {
+  force(env)
   stop(paste("rqdatatable::ex_data_table() does not have an implementation for class: ",
              paste(class(optree), collapse = ", "),
              "yet"))
@@ -146,6 +148,7 @@ as.data.frame.relop <- function(x, row.names = NULL, optional = FALSE,
                                 ...,
                                 stringsAsFactors = FALSE,
                                 env = parent.frame()) {
+  force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.frame.relop")
   if(!is.null(row.names)) {
     stop("rqdatatable::as.data.frame.relop row.names should not be set")
@@ -172,6 +175,7 @@ as.data.table.relop <- function(x, keep.rownames = FALSE,
                                 ...,
                                 stringsAsFactors = FALSE,
                                 env = parent.frame()) {
+  force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.table.relop")
   if(!isTRUE(keep.rownames==FALSE)) {
     stop("rqdatatable::as.data.table.relop keep.rownames should not be set")
