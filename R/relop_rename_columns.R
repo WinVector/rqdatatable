@@ -34,8 +34,7 @@ ex_data_table.relop_rename_columns <- function(optree,
                      source_usage = source_usage,
                      source_limit = source_limit,
                      env = env)
-  data.table::setnames(x, old = as.character(optree$cmap), new = names(optree$cmap))
-  x
+  data.table::setnames(x, old = as.character(optree$cmap), new = names(optree$cmap))[]
 }
 
 

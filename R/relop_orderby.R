@@ -11,8 +11,7 @@ order_table <- function(x, orderby, reverse) {
   if(length(reverse)>0) {
     order[orderby %in% reverse] <- -1L
   }
-  data.table::setorderv(x, cols = orderby, order = order)
-  x[]
+  data.table::setorderv(x, cols = orderby, order = order)[]
 }
 
 #' Reorder rows.
