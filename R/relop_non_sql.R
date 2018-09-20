@@ -264,11 +264,26 @@ ex_data_table.relop_non_sql <- function(optree,
                      source_limit = source_limit,
                      source_usage = source_usage,
                      env = env)
-  f_df <- optree$f_df
-  if(is.null(f_df)) {
-    stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
+  if(!is.data.frame(x)) {
+    stop("rqdatatable::ex_data_table.relop_non_sql sub-expression eval was NULL")
   }
-  res <- f_df(x)
+  res <- NULL
+  f_dt <- optree$f_dt
+  if(!is.null(f_dt)) {
+    # data table specialized impl
+    if(!data.table::is.data.table(x)) {
+      x <- data.table::as.data.table(x)
+    }
+    res <- f_dt(x)
+  } else {
+    # data.frame impl
+    f_df <- optree$f_df
+    if(is.null(f_df)) {
+      stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
+    }
+    x <- as.data.frame(x)
+    res <- f_df(x)
+  }
   if(!is.data.frame(res)) {
     stop("qdataframe::ex_data_table.relop_non_sql f_df did not return a data.frame")
   }
@@ -276,7 +291,7 @@ ex_data_table.relop_non_sql <- function(optree,
     res <- data.table::as.data.table(res)
   }
   if(!isTRUE(all.equal(sort(colnames(res)), sort(optree$columns_produced)))) {
-    stop("qdataframe::ex_data_table.relop_non_sql columns produced did not meet specification")
+    stop("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification")
   }
   res
 }
