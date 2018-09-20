@@ -290,7 +290,7 @@ ex_data_table.relop_non_sql <- function(optree,
   if(!data.table::is.data.table(res)) {
     res <- data.table::as.data.table(res)
   }
-  if(!isTRUE(all.equal(sort(colnames(res)), sort(optree$columns_produced)))) {
+  if(!isTRUE(all.equal(sort(colnames(res)), sort(column_names(optree))))) {
     stop("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification")
   }
   res
