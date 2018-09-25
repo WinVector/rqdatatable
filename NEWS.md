@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.2 2018/09/25
+
+ * force parent.frame.
+
 # rqdatatable 1.1.1 2018/09/20
 
   * alternate data.table implementation path.

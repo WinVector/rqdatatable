@@ -49,6 +49,7 @@ ex_data_table.relop_extend <- function(optree,
                                        source_limit = NULL,
                                        env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_extend")
+  force(env)
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
