@@ -1,7 +1,7 @@
 
-# rqdatatable 1.1.2 2018/09/25
+# rqdatatable 1.1.2 2018/10/21
 
- * force parent.frame.
+ * More of force parent.frame.
 
 # rqdatatable 1.1.1 2018/09/20
 
