@@ -1,5 +1,5 @@
 
-# rqdatatable 1.1.2 2018/11/11
+# rqdatatable 1.1.2 2018/11/15
 
  * Allow more control of ordering in extend.
  * More of force parent.frame.
