@@ -19,7 +19,7 @@ ByteCompile: true
 VignetteBuilder: knitr
 Depends:
   R (>= 3.4.0),
-  rquery (>= 1.2.0)
+  rquery (>= 1.2.1)
 Imports:
   wrapr (>= 1.7.0),
   data.table (>= 1.11.4)
