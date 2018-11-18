@@ -1,8 +1,9 @@
 
-# rqdatatable 1.1.2 2018/11/15
+# rqdatatable 1.1.2 2018/11/18
 
  * Allow more control of ordering in extend.
- * More of force parent.frame.
+ * More of force parent.frame forcing.
+ * Add order_expr.
  * Add power test.
 
 # rqdatatable 1.1.1 2018/09/20

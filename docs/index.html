@@ -105,7 +105,7 @@ dL &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumenta
 
 <span class="co"># example rquery pipeline</span>
 rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(dL) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend_nse">extend_nse</a></span>(.,
+<span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,
              probability <span class="op">:</span><span class="er">=</span>
 <span class="st">               </span><span class="kw">exp</span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span>
 <span class="st">  </span><span class="kw"><a href="http://www.rdocumentation.org/packages/rquery/topics/normalize_cols">normalize_cols</a></span>(.,
