@@ -3,6 +3,7 @@
 
  * Allow more control of ordering in extend.
  * Relax column production check.
+ * Add rq_partial().
  * More of force parent.frame forcing.
  * Add order_expr.
  * Add power test.

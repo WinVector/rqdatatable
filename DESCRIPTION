@@ -21,7 +21,7 @@ Depends:
   R (>= 3.4.0),
   rquery (>= 1.2.1)
 Imports:
-  wrapr (>= 1.7.0),
+  wrapr (>= 1.7.1),
   data.table (>= 1.11.4)
 RoxygenNote: 6.1.0
 Suggests: knitr,

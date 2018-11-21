@@ -1,7 +1,7 @@
 
 
 mk_f_db_default <- function(f, cols) {
-  function(db, incoming_table_name, outgoing_table_name) {
+  function(db, incoming_table_name, outgoing_table_name, nd) {
     colsq <- vapply(cols,
                     function(ci) {
                       rquery::quote_identifier(db, ci)
@@ -9,7 +9,7 @@ mk_f_db_default <- function(f, cols) {
     colstr <- paste(colsq, collapse = ", ")
     q <- paste0("SELECT ", colstr, " FROM ", rquery::quote_identifier(db, incoming_table_name))
     d <- rquery::rq_get_query(db, q)
-    res <- f(d)
+    res <- f(d, nd)
     rquery::rq_copy_to(db, outgoing_table_name, res)
   }
 }
@@ -90,6 +90,7 @@ rq_df_funciton_node <- function(., f,
   non_sql_node(.,
                f_db = f_db,
                f_df = f,
+               f_dt = f,
                incoming_table_name = "incoming_table_name",
                outgoing_table_name = "outgoing_table_name",
                columns_produced = columns_produced,
@@ -193,7 +194,7 @@ rq_df_grouped_funciton_node <- function(., f,
     columns_produced <- c(columns_produced, group_col)
   }
   force(group_col)
-  fg <- function(df) {
+  fg <- function(df, nd) {
     dlist <- split(df, df[[group_col]])
     clist <- lapply(dlist,
                     function(di) {
@@ -215,6 +216,7 @@ rq_df_grouped_funciton_node <- function(., f,
   non_sql_node(.,
                f_db = f_db,
                f_df = fg,
+               f_dt = fg,
                incoming_table_name = "incoming_table_name",
                outgoing_table_name = "outgoing_table_name",
                columns_produced = columns_produced,
@@ -274,7 +276,7 @@ ex_data_table.relop_non_sql <- function(optree,
     if(!data.table::is.data.table(x)) {
       x <- data.table::as.data.table(x)
     }
-    res <- f_dt(x)
+    res <- f_dt(x, optree)
   } else {
     # data.frame impl
     f_df <- optree$f_df
@@ -282,7 +284,10 @@ ex_data_table.relop_non_sql <- function(optree,
       stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
     }
     x <- as.data.frame(x)
-    res <- f_df(x)
+    res <- f_df(x, optree)
+  }
+  if(is.matrix(res)) {
+    res <- data.table::as.data.table(res)
   }
   if(!is.data.frame(res)) {
     stop("qdataframe::ex_data_table.relop_non_sql f_df did not return a data.frame")

@@ -11,7 +11,7 @@ test_that("relop_non_sql works as expected", {
  grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "y") {
    force(group_col)
    formula_str <- paste(yvar, "~", xvar)
-   f <- function(df) {
+   f <- function(df, nd) {
      dlist <- split(df, df[[group_col]])
      clist <- lapply(dlist,
                      function(di) {
@@ -53,7 +53,7 @@ test_that("relop_non_sql works as expected", {
  grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "y") {
    force(group_col)
    formula_str <- paste(yvar, "~", xvar)
-   f <- function(di) {
+   f <- function(di, nd) {
      mi <- lm(as.formula(formula_str), data = di)
      ci <- as.data.frame(summary(mi)$coefficients)
      ci$Variable <- rownames(ci)
