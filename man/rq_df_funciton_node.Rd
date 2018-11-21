@@ -35,7 +35,7 @@ Helper to build data.table capable non-sql nodes.
 grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "y") {
   force(group_col)
   formula_str <- paste(yvar, "~", xvar)
-  f <- function(df) {
+  f <- function(df, nd = NULL) {
     dlist <- split(df, df[[group_col]])
     clist <- lapply(dlist,
                     function(di) {

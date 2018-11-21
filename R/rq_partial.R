@@ -1,5 +1,5 @@
 
-f <- function(d, nd) {
+f_eval_partial_step <- function(d, nd) {
   wrapr::applyto(nd$partial_step, d)
 }
 
@@ -14,6 +14,7 @@ f <- function(d, nd) {
 #' @param arg_name name for remaining argument.
 #' @param args list of function argument values
 #' @param columns_produced columns of this node's result.
+#' @param check_result_details logical, if TRUE enforce result type and columns.
 #' @param env environment to work in.
 #' @return wrapped function
 #'
@@ -26,6 +27,7 @@ rq_partial <- function(source, fn_name = NULL,
                        fn_package = "base",
                        arg_name = '', args = list(),
                        columns_produced,
+                       check_result_details = TRUE,
                        env = parent.frame()) {
   force(columns_produced)
   force(env)
@@ -36,14 +38,15 @@ rq_partial <- function(source, fn_name = NULL,
                                args = args)
   nd <- non_sql_node(source = source,
                f_db = NULL,
-               f_df = f,
-               f_dt = f,
+               f_df = f_eval_partial_step,
+               f_dt = NULL,
                incoming_table_name = "fk_name_1",
                outgoing_table_name = "fk_name_1",
                columns_produced = columns_produced,
                display_form = paste0(fn_package, "::", fn_name),
                orig_columns = FALSE,
                temporary = TRUE,
+               check_result_details = check_result_details,
                env = env)
   nd$partial_step <- step
   nd

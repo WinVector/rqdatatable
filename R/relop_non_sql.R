@@ -1,7 +1,7 @@
 
 
 mk_f_db_default <- function(f, cols) {
-  function(db, incoming_table_name, outgoing_table_name, nd) {
+  function(db, incoming_table_name, outgoing_table_name, nd = NULL) {
     colsq <- vapply(cols,
                     function(ci) {
                       rquery::quote_identifier(db, ci)
@@ -35,7 +35,7 @@ mk_f_db_default <- function(f, cols) {
 #' grouped_regression_node <- function(., group_col = "group", xvar = "x", yvar = "y") {
 #'   force(group_col)
 #'   formula_str <- paste(yvar, "~", xvar)
-#'   f <- function(df) {
+#'   f <- function(df, nd = NULL) {
 #'     dlist <- split(df, df[[group_col]])
 #'     clist <- lapply(dlist,
 #'                     function(di) {
@@ -90,7 +90,7 @@ rq_df_funciton_node <- function(., f,
   non_sql_node(.,
                f_db = f_db,
                f_df = f,
-               f_dt = f,
+               f_dt = NULL,
                incoming_table_name = "incoming_table_name",
                outgoing_table_name = "outgoing_table_name",
                columns_produced = columns_produced,
@@ -216,7 +216,7 @@ rq_df_grouped_funciton_node <- function(., f,
   non_sql_node(.,
                f_db = f_db,
                f_df = fg,
-               f_dt = fg,
+               f_dt = NULL,
                incoming_table_name = "incoming_table_name",
                outgoing_table_name = "outgoing_table_name",
                columns_produced = columns_produced,
@@ -266,39 +266,50 @@ ex_data_table.relop_non_sql <- function(optree,
                      source_limit = source_limit,
                      source_usage = source_usage,
                      env = env)
-  if(!is.data.frame(x)) {
-    stop("rqdatatable::ex_data_table.relop_non_sql sub-expression eval was NULL")
+  if(isTRUE(optree$check_result_details)) {
+    if(!is.data.frame(x)) {
+      stop("rqdatatable::ex_data_table.relop_non_sql sub-expression eval was not a data.frame")
+    }
   }
   res <- NULL
-  f_dt <- optree$f_dt
-  if(!is.null(f_dt)) {
-    # data table specialized impl
-    if(!data.table::is.data.table(x)) {
-      x <- data.table::as.data.table(x)
-    }
-    res <- f_dt(x, optree)
-  } else {
-    # data.frame impl
+  if(is.data.frame(x)) {
+    f_dt <- optree$f_dt
     f_df <- optree$f_df
+    if(!is.null(f_dt)) {
+      # data table specialized impl
+      if(!data.table::is.data.table(x)) {
+        x <- data.table::as.data.table(x)
+      }
+      res <- f_dt(x, optree)
+    } else {
+      # data.frame impl
+      if(is.null(f_df)) {
+        stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
+      }
+      x <- data.frame(x)
+      res <- f_df(x, optree)
+    }
+  } else {
     if(is.null(f_df)) {
       stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
     }
-    x <- as.data.frame(x)
     res <- f_df(x, optree)
   }
-  if(is.matrix(res)) {
-    res <- data.table::as.data.table(res)
-  }
-  if(!is.data.frame(res)) {
-    stop("qdataframe::ex_data_table.relop_non_sql f_df did not return a data.frame")
-  }
-  if(!data.table::is.data.table(res)) {
-    res <- data.table::as.data.table(res)
-  }
-  missing_columns <- setdiff(column_names(optree), colnames(res))
-  if(length(missing_columns)>0) {
-    stop(paste("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification",
-               paste(missing_columns, collapse = ", ")))
+  if(isTRUE(optree$check_result_details)) {
+    if(is.matrix(res)) {
+      res <- data.table::as.data.table(res)
+    }
+    if(!is.data.frame(res)) {
+      stop("qdataframe::ex_data_table.relop_non_sql f_df did not return a data.frame")
+    }
+    if(!data.table::is.data.table(res)) {
+      res <- data.table::as.data.table(res)
+    }
+    missing_columns <- setdiff(column_names(optree), colnames(res))
+    if(length(missing_columns)>0) {
+      stop(paste("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification",
+                 paste(missing_columns, collapse = ", ")))
+    }
   }
   res
 }

@@ -28,7 +28,7 @@
 make_dt_lookup_by_column <- function(pick, result) {
   force(pick)
   force(result)
-  f_dt <- function(d) {
+  f_dt <- function(d, nd = NULL) {
     dt <- as.data.table(d)
     # dt[, RESULT := .SD[[PICK]], by = PICK][] # alternate
     .I <- PICK <- RESULT <- NULL # don't look like unbound symbols

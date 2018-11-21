@@ -6,7 +6,7 @@
 \usage{
 rq_partial(source, fn_name = NULL, ..., fn_package = "base",
   arg_name = "", args = list(), columns_produced,
-  env = parent.frame())
+  check_result_details = TRUE, env = parent.frame())
 }
 \arguments{
 \item{source}{incoming relop pipeline.}
@@ -22,6 +22,8 @@ rq_partial(source, fn_name = NULL, ..., fn_package = "base",
 \item{args}{list of function argument values}
 
 \item{columns_produced}{columns of this node's result.}
+
+\item{check_result_details}{logical, if TRUE enforce result type and columns.}
 
 \item{env}{environment to work in.}
 }
