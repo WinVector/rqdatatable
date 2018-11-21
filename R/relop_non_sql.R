@@ -290,8 +290,10 @@ ex_data_table.relop_non_sql <- function(optree,
   if(!data.table::is.data.table(res)) {
     res <- data.table::as.data.table(res)
   }
-  if(!isTRUE(all.equal(sort(colnames(res)), sort(column_names(optree))))) {
-    stop("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification")
+  missing_columns <- setdiff(column_names(optree), colnames(res))
+  if(length(missing_columns)>0) {
+    stop(paste("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification",
+               paste(missing_columns, collapse = ", ")))
   }
   res
 }
