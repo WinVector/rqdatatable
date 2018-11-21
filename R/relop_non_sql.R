@@ -272,9 +272,9 @@ ex_data_table.relop_non_sql <- function(optree,
     }
   }
   res <- NULL
+  f_df <- optree$f_df
   if(is.data.frame(x)) {
     f_dt <- optree$f_dt
-    f_df <- optree$f_df
     if(!is.null(f_dt)) {
       # data table specialized impl
       if(!data.table::is.data.table(x)) {
