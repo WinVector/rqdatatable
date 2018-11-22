@@ -178,7 +178,7 @@
 <span class='no'>grouped_regression_node</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>.</span>, <span class='no'>group_col</span> <span class='kw'>=</span> <span class='st'>"group"</span>, <span class='no'>xvar</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='no'>yvar</span> <span class='kw'>=</span> <span class='st'>"y"</span>) {
   <span class='fu'>force</span>(<span class='no'>group_col</span>)
   <span class='no'>formula_str</span> <span class='kw'>&lt;-</span> <span class='fu'>paste</span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>)
-  <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>df</span>) {
+  <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>df</span>, <span class='no'>nd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>) {
     <span class='no'>dlist</span> <span class='kw'>&lt;-</span> <span class='fu'>split</span>(<span class='no'>df</span>, <span class='no'>df</span><span class='kw'>[[</span><span class='no'>group_col</span>]])
     <span class='no'>clist</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='no'>dlist</span>,
                     <span class='kw'>function</span>(<span class='no'>di</span>) {

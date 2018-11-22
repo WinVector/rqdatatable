@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • rqdatatable</title>
+<title>Wrap a function name and arguments as an rqdatatable stage. — rq_partial • rqdatatable</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,10 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Wrap a function name and arguments as an rqdatatable stage. — rq_partial" />
+
+<meta property="og:description" content="Wrap a function name and arguments as an rqdatatable stage." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -46,7 +49,7 @@
   </head>
 
   <body>
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -112,106 +115,70 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/WinVector/rqdatatable//blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Wrap a function name and arguments as an rqdatatable stage.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable//blob/master/R/rq_partial.R'><code>R/rq_partial.R</code></a></small>
+    <div class="hidden name"><code>rq_partial.Rd</code></div>
     </div>
 
-    <div id="rqdatatable-1-1-2-20181121" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-1-1-2-20181121" class="anchor"></a>rqdatatable 1.1.2 2018/11/21<small> Unreleased </small>
-</h1>
-<ul>
-<li>Allow more control of ordering in extend.</li>
-<li>Relax column production check.</li>
-<li>Add rq_partial().</li>
-<li>More of force parent.frame forcing.</li>
-<li>Add order_expr.</li>
-<li>Add power test.</li>
-</ul>
-</div>
-    <div id="rqdatatable-1-1-1-20180920" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-1-1-1-20180920" class="anchor"></a>rqdatatable 1.1.1 2018/09/20<small> 2018-09-20 </small>
-</h1>
-<ul>
-<li>alternate data.table implementation path.</li>
-<li>force parent.frame.</li>
-</ul>
-</div>
-    <div id="rqdatatable-1-0-0-20180910" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-1-0-0-20180910" class="anchor"></a>rqdatatable 1.0.0 2018/09/10<small> 2018-09-10 </small>
-</h1>
-<ul>
-<li>allow no group columns project.</li>
-<li>work on ordering in extend.</li>
-</ul>
-</div>
-    <div id="rqdatatable-0-1-4-20180818" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-0-1-4-20180818" class="anchor"></a>rqdatatable 0.1.4 2018/08/18<small> 2018-08-18 </small>
-</h1>
-<ul>
-<li>More tests.</li>
-<li>Work on result print-visibility.</li>
-</ul>
-</div>
-    <div id="rqdatatable-0-1-3-20180728" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-0-1-3-20180728" class="anchor"></a>rqdatatable 0.1.3 2018/07/28<small> 2018-07-29 </small>
-</h1>
-<ul>
-<li>Fix full join print glitch.</li>
-<li>data.table implementation of theta-join.</li>
-<li>Documentation fixes.</li>
-</ul>
-</div>
-    <div id="rqdatatable-0-1-2-20180708" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-0-1-2-20180708" class="anchor"></a>rqdatatable 0.1.2 2018/07/08<small> 2018-07-09 </small>
-</h1>
-<ul>
-<li>Adapt to instant execution path.</li>
-<li>Don’t expect %&gt;&gt;%.</li>
-<li>Documentation improvements.</li>
-</ul>
-</div>
-    <div id="rqdatatable-0-1-1-20180626" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-0-1-1-20180626" class="anchor"></a>rqdatatable 0.1.1 2018/06/26<small> 2018-06-27 </small>
-</h1>
-<ul>
-<li>Don’t use isFALSE() (new to R 3.5.0).</li>
-<li>Update install instructions.</li>
-<li>Improve regexps.</li>
-</ul>
-</div>
-    <div id="rqdatatable-0-1-0-20180618" class="section level1">
-<h1 class="page-header">
-<a href="#rqdatatable-0-1-0-20180618" class="anchor"></a>rqdatatable 0.1.0 2018/06/18<small> 2018-06-19 </small>
-</h1>
-<ul>
-<li>First CRAN release.</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    
+    <p>Wrap a function name and arguments as an rqdatatable stage.</p>
+    
+    </div>
 
+    <pre class="usage"><span class='fu'>rq_partial</span>(<span class='no'>source</span>, <span class='no'>step</span>, <span class='no'>...</span>, <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>check_result_details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'>parent.frame</span>())</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>source</th>
+      <td><p>incoming relop pipeline.</p></td>
+    </tr>
+    <tr>
+      <th>step</th>
+      <td><p>a wrapr::UnaryFn derived S4 instance.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>force later arguments to be taken by name.</p></td>
+    </tr>
+    <tr>
+      <th>columns_produced</th>
+      <td><p>columns of this node's result.</p></td>
+    </tr>
+    <tr>
+      <th>check_result_details</th>
+      <td><p>logical, if TRUE enforce result type and columns.</p></td>
+    </tr>
+    <tr>
+      <th>env</th>
+      <td><p>environment to work in.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>wrapped function</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code>applyto</code></p></div>
+    
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <div id="tocnav">
-      <h2>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-        <li><a href="#rqdatatable-1-1-2-20181121">1.1.2</a></li>
-        <li><a href="#rqdatatable-1-1-1-20180920">1.1.1</a></li>
-        <li><a href="#rqdatatable-1-0-0-20180910">1.0.0</a></li>
-        <li><a href="#rqdatatable-0-1-4-20180818">0.1.4</a></li>
-        <li><a href="#rqdatatable-0-1-3-20180728">0.1.3</a></li>
-        <li><a href="#rqdatatable-0-1-2-20180708">0.1.2</a></li>
-        <li><a href="#rqdatatable-0-1-1-20180626">0.1.1</a></li>
-        <li><a href="#rqdatatable-0-1-0-20180618">0.1.0</a></li>
-      </ul>
-    </div>
-  </div>
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#value">Value</a></li>
 
+      <li><a href="#see-also">See also</a></li>
+          </ul>
+
+  </div>
 </div>
 
       <footer>

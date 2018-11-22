@@ -4,22 +4,15 @@
 \alias{rq_partial}
 \title{Wrap a function name and arguments as an rqdatatable stage.}
 \usage{
-rq_partial(source, fn_name, ..., fn_package = "base", arg_name = "",
-  args = list(), columns_produced = NULL,
+rq_partial(source, step, ..., columns_produced = NULL,
   check_result_details = TRUE, env = parent.frame())
 }
 \arguments{
 \item{source}{incoming relop pipeline.}
 
-\item{fn_name}{character, name of function.}
+\item{step}{a wrapr::UnaryFn derived S4 instance.}
 
 \item{...}{force later arguments to be taken by name.}
-
-\item{fn_package}{character, name of package.}
-
-\item{arg_name}{name for remaining argument.}
-
-\item{args}{list of function argument values}
 
 \item{columns_produced}{columns of this node's result.}
 
