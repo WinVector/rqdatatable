@@ -26,6 +26,3 @@ wrapped function
 \description{
 Wrap a function name and arguments as an rqdatatable stage.
 }
-\seealso{
-\code{\link{applyto}}
-}

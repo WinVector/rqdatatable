@@ -20,7 +20,6 @@ f_eval_partial_step <- function(d, nd) {
 #' @param env environment to work in.
 #' @return wrapped function
 #'
-#' @seealso \code{\link{applyto}}
 #'
 #' @export
 #'
