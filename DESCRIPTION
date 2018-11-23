@@ -23,7 +23,7 @@ Depends:
 Imports:
   wrapr (>= 1.7.1),
   data.table (>= 1.11.4)
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Suggests: knitr,
     rmarkdown,
     DBI,
