@@ -9,7 +9,12 @@ mk_f_db_default <- function(f, cols) {
     colstr <- paste(colsq, collapse = ", ")
     q <- paste0("SELECT ", colstr, " FROM ", rquery::quote_identifier(db, incoming_table_name))
     d <- rquery::rq_get_query(db, q)
-    res <- f(d, nd)
+    if(length(formals(f))>=2) {
+      res <- f(d, nd)
+    } else {
+      # legacy signature
+      res <- f(d)
+    }
     rquery::rq_copy_to(db, outgoing_table_name, res)
   }
 }
@@ -194,7 +199,7 @@ rq_df_grouped_funciton_node <- function(., f,
     columns_produced <- c(columns_produced, group_col)
   }
   force(group_col)
-  fg <- function(df, nd) {
+  fg <- function(df, nd = NULL) {
     dlist <- split(df, df[[group_col]])
     clist <- lapply(dlist,
                     function(di) {
@@ -280,27 +285,42 @@ ex_data_table.relop_non_sql <- function(optree,
       if(!data.table::is.data.table(x)) {
         x <- data.table::as.data.table(x)
       }
-      res <- f_dt(x, optree)
+      if(length(formals(f_dt))>=2) {
+        res <- f_dt(x, optree)
+      } else {
+        # legacy signature
+        res <- f_dt(x)
+      }
     } else {
       # data.frame impl
       if(is.null(f_df)) {
         stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
       }
       x <- data.frame(x)
-      res <- f_df(x, optree)
+      if(length(formals(f_df))>=2) {
+        res <- f_df(x, optree)
+      } else {
+        # legacy signature
+        res <- f_df(x)
+      }
     }
   } else {
     if(is.null(f_df)) {
       stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
     }
-    res <- f_df(x, optree)
+    if(length(formals(f_df))>=2) {
+      res <- f_df(x, optree)
+    } else {
+      # legacy signature
+      res <- f_df(x)
+    }
   }
   if(isTRUE(optree$check_result_details)) {
     if(is.matrix(res)) {
       res <- data.table::as.data.table(res)
     }
     if(!is.data.frame(res)) {
-      stop("qdataframe::ex_data_table.relop_non_sql f_df did not return a data.frame")
+      stop("qdataframe::ex_data_table.relop_non_sql f_df/f_dt did not return a data.frame")
     }
     if(!data.table::is.data.table(res)) {
       res <- data.table::as.data.table(res)

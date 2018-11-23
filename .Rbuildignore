@@ -1,3 +1,5 @@
+^Meta$
+^doc$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^docs$
@@ -6,6 +8,4 @@
 ^.DS_Store$
 ^cran-comments.md$
 ^revdep$
-
-
 
