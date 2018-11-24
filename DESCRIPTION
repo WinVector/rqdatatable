@@ -2,7 +2,7 @@ Package: rqdatatable
 Type: Package
 Title: 'rquery' for 'data.table'
 Version: 1.1.2
-Date: 2018-11-23
+Date: 2018-11-24
 Authors@R: c(
     person("John", "Mount", email = "jmount@win-vector.com", role = c("aut", "cre")),
     person(family = "Win-Vector LLC", role = c("cph"))
