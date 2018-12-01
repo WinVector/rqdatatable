@@ -81,6 +81,11 @@ build_frame(
 
 Initial bench-marking of `rqdatatable` is very favorable (notes [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
+Note `rqdatatable` has an "immediate mode" which allows direct application of pipelines stages without
+pre-assembling the pipeline. "Immediate mode" is a convenience for ad-hoc analyses, and has some negative
+performance impact, so we encourage users to build pipelines for most work.  Some notes on the issue can be found
+[here](https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md).
+
 `rqdatatable` is a fairly complete implementation of `rquery`.  The main differences are the `rqdatatable` implementations of `sql_node()` and `theta_join()` are implemented by round-tripping through a database handle specified by the `rquery.rquery_db_executor` option (so it is not they are not very desirable implementation).
 
 
