@@ -1,8 +1,10 @@
 
 
-#' @importFrom wrapr ApplyTo
+#' @importMethodsFrom wrapr ApplyTo
 #' @importClassesFrom wrapr UnaryFn UnaryFnList PartialNamedFn PartialFunction
 NULL
+
+
 
 f_eval_partial_step <- function(d, nd = NULL) {
   wrapr::ApplyTo(nd$partial_step, d)
