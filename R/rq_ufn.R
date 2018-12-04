@@ -9,6 +9,9 @@ f_eval_partial_step <- function(d, nd = NULL) {
 }
 
 
+#' @importFrom methods is
+NULL
+
 
 #' Wrap a function name and arguments as an rqdatatable stage.
 #'
@@ -23,17 +26,17 @@ f_eval_partial_step <- function(d, nd = NULL) {
 #'
 #' @export
 #'
-rq_partial <- function(source, step,
+rq_ufn <- function(source, step,
                        ...,
                        columns_produced = NULL,
                        check_result_details = TRUE,
                        env = parent.frame()) {
   force(env)
-  UseMethod("rq_partial", source)
+  UseMethod("rq_ufn", source)
 }
 
 #' @export
-rq_partial.relop <- function(source, step,
+rq_ufn.relop <- function(source, step,
                              ...,
                              columns_produced = NULL,
                              check_result_details = TRUE,
@@ -41,7 +44,10 @@ rq_partial.relop <- function(source, step,
   force(columns_produced)
   force(step)
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rq_partial.relop")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rq_ufn.relop")
+  if((!isS4(step)) || (!methods::is(step, "UnaryFn"))) {
+    stop(paste("rquery::rq_ufn.relop step: ", step, " must be an instance of a class derived from wrapr::UnaryFn"))
+  }
   display_form <- format(step)
   nd <- non_sql_node(source = source,
                      f_db = NULL,
@@ -60,16 +66,16 @@ rq_partial.relop <- function(source, step,
 }
 
 #' @export
-rq_partial.data.frame <- function(source, step,
+rq_ufn.data.frame <- function(source, step,
                                   ...,
                                   columns_produced = NULL,
                                   check_result_details = TRUE,
                                   env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rq_partial.data.frame")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rq_ufn.data.frame")
   tmp_name <- wrapr::mk_tmp_name_source()()
   dnode <- mk_td(tmp_name, colnames(source))
-  enode <- rq_partial(dnode,
+  enode <- rq_ufn(dnode,
                       step = step,
                       columns_produced = columns_produced,
                       check_result_details = check_result_details,
