@@ -1,5 +1,5 @@
 
-# rqdatatable 1.1.2 2018/12/04
+# rqdatatable 1.1.2 2018/12/05
 
  * Allow more control of ordering in extend.
  * Relax column production check.
