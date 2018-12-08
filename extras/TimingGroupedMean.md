@@ -42,6 +42,7 @@ d <- data.frame(
   g = rep(levels, 10),
   stringsAsFactors = FALSE)
 d$x = runif(nrow(d))
+db <- as_tibble(d)
 dt <- as.data.table(d)
 ```
 
@@ -56,6 +57,12 @@ packageVersion("dplyr")
 ```
 
     ## [1] '0.7.8'
+
+``` r
+packageVersion("tibble")
+```
+
+    ## [1] '1.4.2'
 
 ``` r
 packageVersion("rqdatatable")
@@ -92,15 +99,27 @@ f_rqdatatable <- function(d) {
 f_data.table <- function(dt) {
   dt[, j = list("x" = mean(x)), by = c("g")]
 }
+
+f_base_tapply <- function(d) {
+  v <- tapply(d$x, d$g, mean)
+  g <- names(v)
+  names(v) <- NULL
+  data.frame(g = g, 
+             x = v, 
+             stringsAsFactors = FALSE)
+}
 ```
 
 ``` r
 timings = microbenchmark(
   dplyr_mean = f_dplyr_mean(d),
   dplyr_sum_n = f_dplyr_sum_n(d),
+  dplyr_mean_tibble = f_dplyr_mean(db),
+  dplyr_sum_n_tibble = f_dplyr_sum_n(db),
+  base_tapply = f_base_tapply(d),
   rqdatatable = f_rqdatatable(d),
   data.table = f_data.table(dt),
-  times = 10L
+  times = 5L
 )
 ```
 
@@ -109,16 +128,22 @@ print(timings)
 ```
 
     ## Unit: milliseconds
-    ##         expr        min         lq       mean     median         uq
-    ##   dplyr_mean  48.666778  49.936418  50.706373  50.533701  51.797656
-    ##  dplyr_sum_n 174.673685 178.183725 183.502817 180.411104 184.421786
-    ##  rqdatatable   4.604693   4.859366   6.713337   5.187235   5.326155
-    ##   data.table   2.451022   2.724500   3.010058   2.794454   3.111439
+    ##                expr        min         lq       mean     median         uq
+    ##          dplyr_mean  48.932870  49.227073  50.665726  50.484648  51.100528
+    ##         dplyr_sum_n 173.009414 173.514495 175.072876 174.828897 176.742608
+    ##   dplyr_mean_tibble  48.824479  48.981305  49.635447  49.756625  49.985612
+    ##  dplyr_sum_n_tibble 176.143386 176.251710 182.980400 176.883140 181.437272
+    ##         base_tapply  45.476848  45.835918  47.258956  46.297190  47.917874
+    ##         rqdatatable   4.620216   5.060160   7.090033   5.156709   6.955843
+    ##          data.table   2.499242   2.911902   4.245470   3.014466   4.916717
     ##         max neval
-    ##   52.715118    10
-    ##  202.182481    10
-    ##   20.082657    10
-    ##    4.568284    10
+    ##   53.583512     5
+    ##  177.268967     5
+    ##   50.629215     5
+    ##  204.186490     5
+    ##   50.766950     5
+    ##   13.657239     5
+    ##    7.885025     5
 
 ``` r
 res <- as.data.frame(timings)
@@ -132,12 +157,15 @@ res %.>%
   knitr::kable(.)
 ```
 
-| method        |  mean\_seconds|
-|:--------------|--------------:|
-| dplyr\_mean   |      0.0507064|
-| dplyr\_sum\_n |      0.1835028|
-| rqdatatable   |      0.0067133|
-| data.table    |      0.0030101|
+| method                |  mean\_seconds|
+|:----------------------|--------------:|
+| dplyr\_sum\_n\_tibble |      0.1829804|
+| dplyr\_mean\_tibble   |      0.0496354|
+| data.table            |      0.0042455|
+| dplyr\_mean           |      0.0506657|
+| rqdatatable           |      0.0070900|
+| dplyr\_sum\_n         |      0.1750729|
+| base\_tapply          |      0.0472590|
 
 ``` r
 WVPlots::ScatterBoxPlotH(
@@ -167,6 +195,7 @@ d <- data.frame(
   g = rep(levels, 10),
   stringsAsFactors = FALSE)
 d$x = runif(nrow(d))
+db <- as_tibble(d)
 dt <- as.data.table(d)
 ```
 
@@ -174,6 +203,9 @@ dt <- as.data.table(d)
 timings2 = microbenchmark(
   dplyr_mean = f_dplyr_mean(d),
   dplyr_sum_n = f_dplyr_sum_n(d),
+  dplyr_mean_tibble = f_dplyr_mean(db),
+  dplyr_sum_n_tibble = f_dplyr_sum_n(db),
+  base_tapply = f_base_tapply(d),
   rqdatatable = f_rqdatatable(d),
   data.table = f_data.table(dt),
   times = 5L
@@ -185,16 +217,22 @@ print(timings2)
 ```
 
     ## Unit: milliseconds
-    ##         expr        min         lq       mean     median         uq
-    ##   dplyr_mean  9843.3586  9908.8161 10251.3212 10245.5254 10586.1296
-    ##  dplyr_sum_n 23797.5394 24024.5731 24571.9004 24885.6025 25062.4381
-    ##  rqdatatable   388.5662   410.4587   582.2213   415.2360   810.9741
-    ##   data.table   365.8645   375.7298   386.4544   395.3369   395.3741
+    ##                expr        min         lq       mean     median         uq
+    ##          dplyr_mean  9562.0286  9810.6131  9835.4673  9828.9203  9900.9517
+    ##         dplyr_sum_n 22937.7190 22958.8940 23932.7198 23102.0781 23550.4927
+    ##   dplyr_mean_tibble  9677.6267  9717.0723  9864.3785  9719.8478  9854.1751
+    ##  dplyr_sum_n_tibble 22644.3902 22720.6433 22805.9298 22753.9136 22805.4785
+    ##         base_tapply  7846.0346  8090.0680  8306.5659  8109.1509  8580.6181
+    ##         rqdatatable   405.1959   493.1057   639.4689   509.9063   546.2061
+    ##          data.table   352.6669   360.4527   429.8064   368.2327   374.3482
     ##         max neval
-    ##  10672.7764     5
-    ##  25089.3491     5
-    ##    885.8714     5
-    ##    399.9668     5
+    ##  10074.8230     5
+    ##  27114.4152     5
+    ##  10353.1704     5
+    ##  23105.2234     5
+    ##   8906.9581     5
+    ##   1242.9306     5
+    ##    693.3315     5
 
 ``` r
 res2 <- as.data.frame(timings2)
@@ -208,12 +246,15 @@ res2 %.>%
   knitr::kable(.)
 ```
 
-| method        |  mean\_seconds|
-|:--------------|--------------:|
-| data.table    |      0.3864544|
-| rqdatatable   |      0.5822213|
-| dplyr\_mean   |     10.2513212|
-| dplyr\_sum\_n |     24.5719004|
+| method                |  mean\_seconds|
+|:----------------------|--------------:|
+| dplyr\_mean\_tibble   |      9.8643785|
+| data.table            |      0.4298064|
+| dplyr\_mean           |      9.8354673|
+| base\_tapply          |      8.3065659|
+| dplyr\_sum\_n         |     23.9327198|
+| rqdatatable           |      0.6394689|
+| dplyr\_sum\_n\_tibble |     22.8059298|
 
 ``` r
 WVPlots::ScatterBoxPlotH(

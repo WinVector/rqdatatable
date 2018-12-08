@@ -46,12 +46,14 @@ d <- data.frame(
   g = rep(levels, 10),
   stringsAsFactors = FALSE)
 d$x = runif(nrow(d))
+db <- as_tibble(d)
 dt <- as.data.table(d)
 ```
 
 ```{r versions}
 R.version.string
 packageVersion("dplyr")
+packageVersion("tibble")
 packageVersion("rqdatatable")
 packageVersion("data.table")
 ```
@@ -80,15 +82,27 @@ f_rqdatatable <- function(d) {
 f_data.table <- function(dt) {
   dt[, j = list("x" = mean(x)), by = c("g")]
 }
+
+f_base_tapply <- function(d) {
+  v <- tapply(d$x, d$g, mean)
+  g <- names(v)
+  names(v) <- NULL
+  data.frame(g = g, 
+             x = v, 
+             stringsAsFactors = FALSE)
+}
 ```
 
 ```{r timing}
 timings = microbenchmark(
   dplyr_mean = f_dplyr_mean(d),
   dplyr_sum_n = f_dplyr_sum_n(d),
+  dplyr_mean_tibble = f_dplyr_mean(db),
+  dplyr_sum_n_tibble = f_dplyr_sum_n(db),
+  base_tapply = f_base_tapply(d),
   rqdatatable = f_rqdatatable(d),
   data.table = f_data.table(dt),
-  times = 10L
+  times = 5L
 )
 ```
 
@@ -129,6 +143,7 @@ d <- data.frame(
   g = rep(levels, 10),
   stringsAsFactors = FALSE)
 d$x = runif(nrow(d))
+db <- as_tibble(d)
 dt <- as.data.table(d)
 ```
 
@@ -136,6 +151,9 @@ dt <- as.data.table(d)
 timings2 = microbenchmark(
   dplyr_mean = f_dplyr_mean(d),
   dplyr_sum_n = f_dplyr_sum_n(d),
+  dplyr_mean_tibble = f_dplyr_mean(db),
+  dplyr_sum_n_tibble = f_dplyr_sum_n(db),
+  base_tapply = f_base_tapply(d),
   rqdatatable = f_rqdatatable(d),
   data.table = f_data.table(dt),
   times = 5L
