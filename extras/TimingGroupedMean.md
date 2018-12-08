@@ -16,13 +16,13 @@ These timings are be of [small task large number of repetition breed](https://cr
 -   The time reported for `dplyr` on the `sum()/n()` examples is over a second to process 10,000 rows. This is unbelievably slow, and we fail to reproduce it in our run.
 -   The time reported for `dplyr` on the `mean()` examples is about 0.01 seconds. This is a plausible time for this task (about 3 times as long as `data.table` would take). But it is much faster than is typical for `dplyr`. We fail to reproduce it in our run, we see `dplyr` taking closer to 0.07 seconds on this task (or about seven times slower).
 
-Let's try to reproduce these timings on a 2014 Mac Mini, and also compare to some other packages: [`data.table`](https://CRAN.R-project.org/package=data.table) and [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable).
+Let's try to reproduce these timings on a 2018 Dell XPS 13 Intel Core i5, 16GB Ram running Ubuntu 18.04, and also compare to some other packages: [`data.table`](https://CRAN.R-project.org/package=data.table) and [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable).
 
 In this reproduction attempt we see:
 
--   The `dplyr` time being around 0.07 seconds. This is about 7 times slower than claimed.
--   The `dplyr` `sum()/n()` time is about 0.24 seconds, about 5 times faster than claimed.
--   The `data.table` time being around 0.0045 seconds. This is twice as fast as the `dplyr` claims, and over ten times as fast as the actual observed `dplyr` behavior.
+-   The `dplyr` time being around 0.05 seconds. This is about 5 times slower than claimed.
+-   The `dplyr` `sum()/n()` time is about 0.2 seconds, about 5 times faster than claimed.
+-   The `data.table` time being around 0.003 seconds. This is about three times as fast as the `dplyr` claims, and over ten times as fast as the actual observed `dplyr` behavior.
 
 All code for this benchmark is available [here](https://github.com/WinVector/rqdatatable/blob/master/extras/TimingGroupedMean.Rmd) and [here](https://github.com/WinVector/rqdatatable/blob/master/extras/TimingGroupedMean.md).
 
@@ -49,7 +49,7 @@ dt <- as.data.table(d)
 R.version.string
 ```
 
-    ## [1] "R version 3.5.0 (2018-04-23)"
+    ## [1] "R version 3.5.1 (2018-07-02)"
 
 ``` r
 packageVersion("dplyr")
@@ -109,16 +109,16 @@ print(timings)
 ```
 
     ## Unit: milliseconds
-    ##         expr        min         lq       mean     median        uq
-    ##   dplyr_mean  67.640873  68.498888  69.995510  69.626779  72.18329
-    ##  dplyr_sum_n 220.584872 221.494582 233.662024 225.848176 227.90039
-    ##  rqdatatable   6.317965   6.412551  10.195935   7.589595  10.08765
-    ##   data.table   3.732272   3.772199   4.380995   4.017843   4.32459
-    ##         max neval cld
-    ##   72.958002    10  b 
-    ##  300.157056    10   c
-    ##   25.943704    10 a  
-    ##    7.132294    10 a
+    ##         expr        min         lq       mean     median         uq
+    ##   dplyr_mean  49.044216  49.255479  50.118332  49.613274  51.134114
+    ##  dplyr_sum_n 176.818689 177.665255 181.987126 179.174948 180.996072
+    ##  rqdatatable   4.542537   4.930214   6.095619   5.016496   5.599747
+    ##   data.table   2.425419   2.489957   3.433191   2.874385   3.147625
+    ##         max neval
+    ##   52.935500    10
+    ##  204.358822    10
+    ##   13.749040    10
+    ##    8.048678    10
 
 ``` r
 res <- as.data.frame(timings)
@@ -134,10 +134,10 @@ res %.>%
 
 | method        |  mean\_seconds|
 |:--------------|--------------:|
-| dplyr\_sum\_n |      0.2336620|
-| rqdatatable   |      0.0101959|
-| data.table    |      0.0043810|
-| dplyr\_mean   |      0.0699955|
+| dplyr\_mean   |      0.0501183|
+| data.table    |      0.0034332|
+| rqdatatable   |      0.0060956|
+| dplyr\_sum\_n |      0.1819871|
 
 ``` r
 WVPlots::ScatterBoxPlotH(
