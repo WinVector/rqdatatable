@@ -110,15 +110,15 @@ print(timings)
 
     ## Unit: milliseconds
     ##         expr        min         lq       mean     median         uq
-    ##   dplyr_mean  49.044216  49.255479  50.118332  49.613274  51.134114
-    ##  dplyr_sum_n 176.818689 177.665255 181.987126 179.174948 180.996072
-    ##  rqdatatable   4.542537   4.930214   6.095619   5.016496   5.599747
-    ##   data.table   2.425419   2.489957   3.433191   2.874385   3.147625
+    ##   dplyr_mean  48.666778  49.936418  50.706373  50.533701  51.797656
+    ##  dplyr_sum_n 174.673685 178.183725 183.502817 180.411104 184.421786
+    ##  rqdatatable   4.604693   4.859366   6.713337   5.187235   5.326155
+    ##   data.table   2.451022   2.724500   3.010058   2.794454   3.111439
     ##         max neval
-    ##   52.935500    10
-    ##  204.358822    10
-    ##   13.749040    10
-    ##    8.048678    10
+    ##   52.715118    10
+    ##  202.182481    10
+    ##   20.082657    10
+    ##    4.568284    10
 
 ``` r
 res <- as.data.frame(timings)
@@ -134,10 +134,10 @@ res %.>%
 
 | method        |  mean\_seconds|
 |:--------------|--------------:|
-| dplyr\_mean   |      0.0501183|
-| data.table    |      0.0034332|
-| rqdatatable   |      0.0060956|
-| dplyr\_sum\_n |      0.1819871|
+| dplyr\_mean   |      0.0507064|
+| dplyr\_sum\_n |      0.1835028|
+| rqdatatable   |      0.0067133|
+| data.table    |      0.0030101|
 
 ``` r
 WVPlots::ScatterBoxPlotH(
@@ -182,7 +182,21 @@ timings2 = microbenchmark(
 
 ``` r
 print(timings2)
+```
 
+    ## Unit: milliseconds
+    ##         expr        min         lq       mean     median         uq
+    ##   dplyr_mean  9843.3586  9908.8161 10251.3212 10245.5254 10586.1296
+    ##  dplyr_sum_n 23797.5394 24024.5731 24571.9004 24885.6025 25062.4381
+    ##  rqdatatable   388.5662   410.4587   582.2213   415.2360   810.9741
+    ##   data.table   365.8645   375.7298   386.4544   395.3369   395.3741
+    ##         max neval
+    ##  10672.7764     5
+    ##  25089.3491     5
+    ##    885.8714     5
+    ##    399.9668     5
+
+``` r
 res2 <- as.data.frame(timings2)
 res2$seconds = res2$time/1e+9
 res2$method = res2$expr
@@ -192,15 +206,30 @@ res2 %.>%
               groupby = "method",
               mean_seconds = mean(seconds)) %.>%
   knitr::kable(.)
+```
 
+| method        |  mean\_seconds|
+|:--------------|--------------:|
+| data.table    |      0.3864544|
+| rqdatatable   |      0.5822213|
+| dplyr\_mean   |     10.2513212|
+| dplyr\_sum\_n |     24.5719004|
+
+``` r
 WVPlots::ScatterBoxPlotH(
   res2, 
   "seconds", "method", 
   "task run time by method (larger example)")
+```
 
+![](TimingGroupedMean_files/figure-markdown_github/present2-1.png)
+
+``` r
 WVPlots::ScatterBoxPlotH(
   res2,  
   "seconds", "method", 
   "task run time by method (larger example)") + 
   scale_y_log10()
 ```
+
+![](TimingGroupedMean_files/figure-markdown_github/present2-2.png)

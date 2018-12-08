@@ -122,7 +122,7 @@ WVPlots::ScatterBoxPlotH(
 Try again at larger data size.
 
 
-```{r data2, eval=FALSE}
+```{r data2}
 levels <- sprintf("l_%06g", 
                   seq_len(1000000))
 d <- data.frame(
@@ -132,7 +132,7 @@ d$x = runif(nrow(d))
 dt <- as.data.table(d)
 ```
 
-```{r timing2, eval=FALSE}
+```{r timing2}
 timings2 = microbenchmark(
   dplyr_mean = f_dplyr_mean(d),
   dplyr_sum_n = f_dplyr_sum_n(d),
@@ -143,7 +143,7 @@ timings2 = microbenchmark(
 ```
 
 
-```{r present2, eval=FALSE}
+```{r present2}
 print(timings2)
 
 res2 <- as.data.frame(timings2)
