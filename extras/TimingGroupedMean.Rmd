@@ -1,0 +1,165 @@
+---
+title: "Timing Grouped Mean"
+output: github_document
+---
+
+Comparing to some of the timings found in the dplyr-0.8.0 [pre-release announcement](https://www.tidyverse.org/articles/2018/12/dplyr-0-8-0-release-candidate/).
+
+
+
+The original published timings were as follows:
+
+[![](timings_summarise_mean_dplyr-0-8-0.jpg)](https://www.tidyverse.org/articles/2018/12/dplyr-0-8-0-release-candidate/)
+
+These timings would be of [small task large number of repetition breed](https://cran.r-project.org/web/packages/data.table/vignettes/datatable-benchmarking.html#avoid-microbenchmark...-times100) that the kind Matt Dowle writes against.  Except, look at the following:
+
+  * The time reported for `dplyr` on the `sum()/n()` examples is over a second to process 10,000 rows.  This is unbelievably slow, and we fail to reproduce it in our run.
+  * The time reported for `dplyr` on the `mean()` examples is about 0.01 seconds.  This is a plausible time for this task (about 3 times as long as `data.table` would take). But it is much faster than is typical for `dplyr`.  We fail to reproduce it in our run, we see `dplyr` taking closer to 0.07 seconds on this task (or about seven times slower).
+
+Let's try to reproduce these timings on a 2014 Mac Mini, and also compare to some other packages: [`data.table`](https://CRAN.R-project.org/package=data.table) and [`rqdatatable`](https://CRAN.R-project.org/package=rqdatatable).
+
+In this reproduction attempt we see:
+
+  * The `dplyr` time being around 0.07 seconds.  This is about 7 times slower than claimed.
+  * The `data.table` time being around 0.005 seconds.  This is twice as fast as the `dplyr` claims, and over ten times as fast as the observed `dplyr` behavior.
+
+
+```{r packages, message=FALSE, warning=FALSE}
+library("dplyr")
+library("rqdatatable")
+library("data.table")
+library("microbenchmark")
+library("WVPlots")
+library("ggplot2")
+```
+
+```{r data}
+levels <- sprintf("l_%06g", 
+                  seq_len(10000))
+d <- data.frame(
+  g = rep(levels, 10),
+  stringsAsFactors = FALSE)
+d$x = runif(nrow(d))
+dt <- as.data.table(d)
+```
+
+```{r versions}
+R.version.string
+packageVersion("dplyr")
+packageVersion("rqdatatable")
+packageVersion("data.table")
+```
+
+
+```{r fns}
+f_dplyr_mean <- function(d) {
+  d %>% 
+    group_by(g) %>%
+    summarize(x = mean(x))
+}
+
+f_dplyr_sum_n <- function(d) {
+  d %>% 
+    group_by(g) %>%
+    summarize(x = sum(x)/n())
+}
+
+f_rqdatatable <- function(d) {
+  d %.>%
+    project_nse(., 
+                groupby = "g", 
+                x = mean(x))
+}
+
+f_data.table <- function(dt) {
+  dt[, j = list("x" = mean(x)), by = c("g")]
+}
+```
+
+```{r timing}
+timings = microbenchmark(
+  dplyr_mean = f_dplyr_mean(d),
+  dplyr_sum_n = f_dplyr_sum_n(d),
+  rqdatatable = f_rqdatatable(d),
+  data.table = f_data.table(dt),
+  times = 10L
+)
+```
+
+
+```{r present}
+print(timings)
+
+res <- as.data.frame(timings)
+res$seconds = res$time/1e+9
+res$method = res$expr
+
+res %.>%
+  project_nse(.,
+              groupby = "method",
+              mean_seconds = mean(seconds)) %.>%
+  knitr::kable(.)
+
+WVPlots::ScatterBoxPlotH(
+  res, 
+  "seconds", "method", 
+  "task run time by method")
+
+WVPlots::ScatterBoxPlotH(
+  res,  
+  "seconds", "method", 
+  "task run time by method") + 
+  scale_y_log10()
+```
+
+
+Try again at larger data size.
+
+
+```{r data2}
+levels <- sprintf("l_%06g", 
+                  seq_len(1000000))
+d <- data.frame(
+  g = rep(levels, 10),
+  stringsAsFactors = FALSE)
+d$x = runif(nrow(d))
+dt <- as.data.table(d)
+```
+
+```{r timing2}
+timings2 = microbenchmark(
+  dplyr_mean = f_dplyr_mean(d),
+  dplyr_sum_n = f_dplyr_sum_n(d),
+  rqdatatable = f_rqdatatable(d),
+  data.table = f_data.table(dt),
+  times = 10L
+)
+```
+
+
+```{r present2}
+print(timings2)
+
+res2 <- as.data.frame(timings2)
+res2$seconds = res2$time/1e+9
+res2$method = res2$expr
+
+res2 %.>%
+  project_nse(.,
+              groupby = "method",
+              mean_seconds = mean(seconds)) %.>%
+  knitr::kable(.)
+
+WVPlots::ScatterBoxPlotH(
+  res2, 
+  "seconds", "method", 
+  "task run time by method (larger example)")
+
+WVPlots::ScatterBoxPlotH(
+  res2,  
+  "seconds", "method", 
+  "task run time by method (larger example)") + 
+  scale_y_log10()
+```
+
+All code for this benchmark is available here.
