@@ -5,7 +5,8 @@
 \title{Wrap a function name and arguments as an rqdatatable stage.}
 \usage{
 rq_ufn(source, step, ..., columns_produced = NULL,
-  check_result_details = TRUE, env = parent.frame())
+  check_result_details = TRUE, use_data_table = FALSE,
+  env = parent.frame())
 }
 \arguments{
 \item{source}{incoming relop pipeline.}
@@ -17,6 +18,8 @@ rq_ufn(source, step, ..., columns_produced = NULL,
 \item{columns_produced}{columns of this node's result.}
 
 \item{check_result_details}{logical, if TRUE enforce result type and columns.}
+
+\item{use_data_table}{logical, if TRUE use data.table code path.}
 
 \item{env}{environment to work in.}
 }

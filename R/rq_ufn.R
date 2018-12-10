@@ -22,6 +22,7 @@ NULL
 #' @param ... force later arguments to be taken by name.
 #' @param columns_produced columns of this node's result.
 #' @param check_result_details logical, if TRUE enforce result type and columns.
+#' @param use_data_table logical, if TRUE use data.table code path.
 #' @param env environment to work in.
 #' @return wrapped function
 #'
@@ -29,20 +30,22 @@ NULL
 #' @export
 #'
 rq_ufn <- function(source, step,
-                       ...,
-                       columns_produced = NULL,
-                       check_result_details = TRUE,
-                       env = parent.frame()) {
+                   ...,
+                   columns_produced = NULL,
+                   check_result_details = TRUE,
+                   use_data_table = FALSE,
+                   env = parent.frame()) {
   force(env)
   UseMethod("rq_ufn", source)
 }
 
 #' @export
 rq_ufn.relop <- function(source, step,
-                             ...,
-                             columns_produced = NULL,
-                             check_result_details = TRUE,
-                             env = parent.frame()) {
+                         ...,
+                         columns_produced = NULL,
+                         check_result_details = TRUE,
+                         use_data_table = FALSE,
+                         env = parent.frame()) {
   force(columns_produced)
   force(step)
   force(env)
@@ -51,36 +54,53 @@ rq_ufn.relop <- function(source, step,
     stop(paste("rquery::rq_ufn.relop step: ", step, " must be an instance of a class derived from wrapr::UnaryFn"))
   }
   display_form <- format(step)
-  nd <- non_sql_node(source = source,
-                     f_db = NULL,
-                     f_df = f_eval_partial_step,
-                     f_dt = NULL,
-                     incoming_table_name = "fk_name_1",
-                     outgoing_table_name = "fk_name_1",
-                     columns_produced = columns_produced,
-                     display_form = display_form,
-                     orig_columns = FALSE,
-                     temporary = TRUE,
-                     check_result_details = check_result_details,
-                     env = env)
+  if(use_data_table) {
+    nd <- non_sql_node(source = source,
+                       f_db = NULL,
+                       f_df = f_eval_partial_step,
+                       f_dt = f_eval_partial_step,
+                       incoming_table_name = "fk_name_1",
+                       outgoing_table_name = "fk_name_1",
+                       columns_produced = columns_produced,
+                       display_form = display_form,
+                       orig_columns = FALSE,
+                       temporary = TRUE,
+                       check_result_details = check_result_details,
+                       env = env)
+  } else {
+    nd <- non_sql_node(source = source,
+                       f_db = NULL,
+                       f_df = f_eval_partial_step,
+                       f_dt = NULL,
+                       incoming_table_name = "fk_name_1",
+                       outgoing_table_name = "fk_name_1",
+                       columns_produced = columns_produced,
+                       display_form = display_form,
+                       orig_columns = FALSE,
+                       temporary = TRUE,
+                       check_result_details = check_result_details,
+                       env = env)
+  }
   nd$partial_step <- step
   nd
 }
 
 #' @export
 rq_ufn.data.frame <- function(source, step,
-                                  ...,
-                                  columns_produced = NULL,
-                                  check_result_details = TRUE,
-                                  env = parent.frame()) {
+                              ...,
+                              columns_produced = NULL,
+                              check_result_details = TRUE,
+                              use_data_table = FALSE,
+                              env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rq_ufn.data.frame")
   tmp_name <- wrapr::mk_tmp_name_source()()
   dnode <- mk_td(tmp_name, colnames(source))
   enode <- rq_ufn(dnode,
-                      step = step,
-                      columns_produced = columns_produced,
-                      check_result_details = check_result_details,
-                      env = env)
+                  step = step,
+                  columns_produced = columns_produced,
+                  check_result_details = check_result_details,
+                  use_data_table = use_data_table,
+                  env = env)
   rquery_apply_to_data_frame(source, enode, env = env)
 }
