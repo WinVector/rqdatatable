@@ -33,7 +33,7 @@ rq_ufn <- function(source, step,
                    ...,
                    columns_produced = NULL,
                    check_result_details = TRUE,
-                   use_data_table = FALSE,
+                   use_data_table = TRUE,
                    env = parent.frame()) {
   force(env)
   UseMethod("rq_ufn", source)
@@ -44,7 +44,7 @@ rq_ufn.relop <- function(source, step,
                          ...,
                          columns_produced = NULL,
                          check_result_details = TRUE,
-                         use_data_table = FALSE,
+                         use_data_table = TRUE,
                          env = parent.frame()) {
   force(columns_produced)
   force(step)
@@ -90,7 +90,7 @@ rq_ufn.data.frame <- function(source, step,
                               ...,
                               columns_produced = NULL,
                               check_result_details = TRUE,
-                              use_data_table = FALSE,
+                              use_data_table = TRUE,
                               env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rq_ufn.data.frame")

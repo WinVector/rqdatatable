@@ -5,7 +5,7 @@
 \title{Wrap a function name and arguments as an rqdatatable stage.}
 \usage{
 rq_ufn(source, step, ..., columns_produced = NULL,
-  check_result_details = TRUE, use_data_table = FALSE,
+  check_result_details = TRUE, use_data_table = TRUE,
   env = parent.frame())
 }
 \arguments{
