@@ -5,7 +5,7 @@
 \title{Wrap a function name and arguments as an rqdatatable stage.}
 \usage{
 rq_ufn(source, step, ..., columns_produced = NULL,
-  check_result_details = TRUE, use_data_table = TRUE,
+  check_result_details = TRUE, use_data_table = TRUE, f_db = NULL,
   env = parent.frame())
 }
 \arguments{
@@ -20,6 +20,8 @@ rq_ufn(source, step, ..., columns_produced = NULL,
 \item{check_result_details}{logical, if TRUE enforce result type and columns.}
 
 \item{use_data_table}{logical, if TRUE use data.table code path.}
+
+\item{f_db}{database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd) (db being a database handle, can't be a nested rquery pipeline)}
 
 \item{env}{environment to work in.}
 }

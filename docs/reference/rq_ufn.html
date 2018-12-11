@@ -129,7 +129,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>rq_ufn</span>(<span class='no'>source</span>, <span class='no'>step</span>, <span class='no'>...</span>, <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>check_result_details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>use_data_table</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>check_result_details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>use_data_table</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>f_db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sys.parent'>parent.frame</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -158,6 +158,10 @@
     <tr>
       <th>use_data_table</th>
       <td><p>logical, if TRUE use data.table code path.</p></td>
+    </tr>
+    <tr>
+      <th>f_db</th>
+      <td><p>database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd) (db being a database handle, can't be a nested rquery pipeline)</p></td>
     </tr>
     <tr>
       <th>env</th>
