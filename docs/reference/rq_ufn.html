@@ -130,7 +130,7 @@
 
     <pre class="usage"><span class='fu'>rq_ufn</span>(<span class='no'>source</span>, <span class='no'>step</span>, <span class='no'>...</span>, <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>check_result_details</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>use_data_table</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>f_db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sys.parent'>parent.frame</a></span>())</pre>
+  <span class='kw'>temp_name_source</span> <span class='kw'>=</span> <span class='kw pkg'>wrapr</span><span class='kw ns'>::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/wrapr/topics/mk_tmp_name_source'>mk_tmp_name_source</a></span>(), <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/sys.parent'>parent.frame</a></span>())</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -161,7 +161,11 @@
     </tr>
     <tr>
       <th>f_db</th>
-      <td><p>database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd) (db being a database handle, can't be a nested rquery pipeline)</p></td>
+      <td><p>database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd) (db being a database handle, can't be a nested rquery pipeline).</p></td>
+    </tr>
+    <tr>
+      <th>temp_name_source</th>
+      <td><p>a wrapr::mk_tmp_name_source().</p></td>
     </tr>
     <tr>
       <th>env</th>
