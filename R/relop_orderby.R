@@ -48,7 +48,14 @@ ex_data_table.relop_orderby <- function(optree,
                      source_usage = source_usage,
                      source_limit = source_limit,
                      env = env)
-  order_table(x, optree$orderby, optree$reverse)
+  x <- order_table(x, optree$orderby, optree$reverse)
+  if(!is.null(optree$limit)) {
+    n <- nrow(x)
+    if(optree$limit < n) {
+      x <- x[seq_len(optree$limit), , drop = FALSE]
+    }
+  }
+  x
 }
 
 
