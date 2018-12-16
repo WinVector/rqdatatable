@@ -45,6 +45,12 @@ ex_data_table.relop_order_expr <- function(optree,
   x <- eval(expr, envir = tmpenv, enclos = tmpenv)
   x <- order_table(x, ".rquery_ex_order_expr_tmp_col", NULL)
   x$.rquery_ex_order_expr_tmp_col <- NULL
+  if(!is.null(optree$limit)) {
+    n <- nrow(x)
+    if(optree$limit < n) {
+      x <- x[seq_len(optree$limit), , drop = FALSE]
+    }
+  }
   x
 }
 
