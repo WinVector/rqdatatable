@@ -66,28 +66,6 @@ cat(format(rquery_pipeline))
 
 ex_data_table(rquery_pipeline)
 
-if (requireNamespace("DBI", quietly = TRUE) &&
-    requireNamespace("RSQLite", quietly = TRUE)) {
-  # example database connection
-  my_db <- DBI::dbConnect(RSQLite::SQLite(),
-                          ":memory:")
-
-  rquery::to_sql(rquery_pipeline, my_db) \%.>\%
-    print(.)
-
-  dR <- rquery::rq_copy_to(my_db,
-                           d = d,
-                           table_name = "d",
-                           overwrite = TRUE,
-                           temporary = TRUE)
-  tbl <- rquery::materialize(my_db, rquery_pipeline,
-                             overwrite = FALSE,
-                             temporary = TRUE)
-  DBI::dbReadTable(my_db, tbl$table_name) \%.>\%
-    print(.)
-
-  DBI::dbDisconnect(my_db)
-}
 
 }
 \seealso{

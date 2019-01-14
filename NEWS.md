@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.3 2019/01/14
+
+ * More tests.
+
 # rqdatatable 1.1.2 2018/12/17
 
  * Allow more control of ordering in extend.
