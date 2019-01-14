@@ -61,7 +61,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.1.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">1.1.3</span>
       </span>
     </div>
 
@@ -221,47 +221,7 @@
 #&gt;  8: -0.008130064 0.06308408 -0.1288766 0.89758099           x     d
 #&gt;  9: -0.012349987 0.06804600 -0.1814947 0.85615030 (Intercept)     e
 #&gt; 10: -0.008883978 0.07675926 -0.1157382 0.90796806           x     e</div><div class='input'>
-<span class='kw'>if</span> (<span class='fu'>requireNamespace</span>(<span class='st'>"DBI"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='kw'>&amp;&amp;</span>
-    <span class='fu'>requireNamespace</span>(<span class='st'>"RSQLite"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
-  <span class='co'># example database connection</span>
-  <span class='no'>my_db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbConnect'>dbConnect</a></span>(<span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/RSQLite/topics/SQLite'>SQLite</a></span>(),
-                          <span class='st'>":memory:"</span>)
 
-  <span class='kw pkg'>rquery</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/to_sql'>to_sql</a></span>(<span class='no'>rquery_pipeline</span>, <span class='no'>my_db</span>) <span class='kw'>%.&gt;%</span>
-    <span class='fu'>print</span>(<span class='no'>.</span>)
-
-  <span class='no'>dR</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>rquery</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/rq_copy_to'>rq_copy_to</a></span>(<span class='no'>my_db</span>,
-                           <span class='kw'>d</span> <span class='kw'>=</span> <span class='no'>d</span>,
-                           <span class='kw'>table_name</span> <span class='kw'>=</span> <span class='st'>"d"</span>,
-                           <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-                           <span class='kw'>temporary</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='no'>tbl</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>rquery</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/rquery/topics/materialize'>materialize</a></span>(<span class='no'>my_db</span>, <span class='no'>rquery_pipeline</span>,
-                             <span class='kw'>overwrite</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-                             <span class='kw'>temporary</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-  <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbReadTable'>dbReadTable</a></span>(<span class='no'>my_db</span>, <span class='no'>tbl</span>$<span class='no'>table_name</span>) <span class='kw'>%.&gt;%</span>
-    <span class='fu'>print</span>(<span class='no'>.</span>)
-
-  <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/DBI/topics/dbDisconnect'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
-}</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] "CREATE TEMPORARY  TABLE `incoming_table_name`  AS  SELECT\n  `x`,\n  `y`,\n  `group`\n FROM\n  `d`\n"
-#&gt; 
-#&gt; [[2]]
-#&gt; [1] "non SQL step:  y~x grouped by group grouped by group"
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] " SELECT\n  `Estimate`,\n  `Std_Error`,\n  `t_value`,\n  `p_value`,\n  `Variable`,\n  `group`\n FROM\n  `outgoing_table_name`\n"
-#&gt; 
-#&gt;        Estimate  Std_Error    t_value    p_value    Variable group
-#&gt; 1   0.090716766 0.07125705  1.2730918 0.20447817 (Intercept)     a
-#&gt; 2  -0.044853006 0.06701987 -0.6692494 0.50411599           x     a
-#&gt; 3   0.063457904 0.06802746  0.9328278 0.35208658 (Intercept)     b
-#&gt; 4   0.058692951 0.06868752  0.8544922 0.39390284           x     b
-#&gt; 5   0.129306526 0.07003884  1.8462116 0.06650366 (Intercept)     c
-#&gt; 6   0.012482453 0.07217097  0.1729567 0.86287979           x     c
-#&gt; 7   0.031991890 0.06543806  0.4888881 0.62544100 (Intercept)     d
-#&gt; 8  -0.008130064 0.06308408 -0.1288766 0.89758099           x     d
-#&gt; 9  -0.012349987 0.06804600 -0.1814947 0.85615030 (Intercept)     e
-#&gt; 10 -0.008883978 0.07675926 -0.1157382 0.90796806           x     e</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
