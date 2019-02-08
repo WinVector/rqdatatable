@@ -1,11 +1,6 @@
 
 
-library("rqdatatable")
-context("relop_table_source")
-
-test_that("relop_table_source works as expected", {
-
-
+test_relop_table_source <- function() {
 
  dL <- build_frame(
      "x", "y" |
@@ -15,5 +10,5 @@ test_that("relop_table_source works as expected", {
  rquery_pipeline <- local_td(dL)
  ex_data_table(rquery_pipeline)[]
 
-
-})
+ invisible(NULL)
+}

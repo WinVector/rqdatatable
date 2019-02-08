@@ -1,6 +1,7 @@
 
-# rqdatatable 1.1.3 2019/01/14
+# rqdatatable 1.1.3 2019/02/07
 
+ * Move to RUnit.
  * More tests.
 
 # rqdatatable 1.1.2 2018/12/17

@@ -1,9 +1,5 @@
 
-library("rqdatatable")
-context("relop_project")
-
-test_that("relop_project works as expected", {
-
+test_relop_project <- function() {
 
  dL <- build_frame(
    "subjectID", "surveyCategory"     , "assessmentTotal" |
@@ -20,4 +16,5 @@ test_that("relop_project works as expected", {
  cat(format(test_p))
  ex_data_table(test_p)[]
 
-})
+ invisible(NULL)
+}

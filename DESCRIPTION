@@ -2,7 +2,7 @@ Package: rqdatatable
 Type: Package
 Title: 'rquery' for 'data.table'
 Version: 1.1.3
-Date: 2019-01-14
+Date: 2019-02-07
 Authors@R: c(
     person("John", "Mount", email = "jmount@win-vector.com", role = c("aut", "cre")),
     person(family = "Win-Vector LLC", role = c("cph"))
@@ -19,9 +19,9 @@ ByteCompile: true
 VignetteBuilder: knitr
 Depends:
   R (>= 3.4.0),
-  rquery (>= 1.2.1)
+  rquery (>= 1.3.0)
 Imports:
-  wrapr (>= 1.8.2),
+  wrapr (>= 1.8.4),
   data.table (>= 1.11.4),
   methods
 RoxygenNote: 6.1.1
@@ -30,4 +30,4 @@ Suggests: knitr,
     DBI,
     RSQLite,
     parallel,
-    testthat
+    RUnit

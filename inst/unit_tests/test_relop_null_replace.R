@@ -1,10 +1,6 @@
 
 
-library("rqdatatable")
-context("relop_null_replace")
-
-test_that("relop_null_replace works as expected", {
-
+test_relop_null_replace <- function() {
 
  dL <- build_frame(
      "x", "y" |
@@ -15,4 +11,5 @@ test_that("relop_null_replace works as expected", {
    null_replace(., c("x", "y"), 0, note_col = "nna")
  ex_data_table(rquery_pipeline)[]
 
-})
+ invisible(NULL)
+}

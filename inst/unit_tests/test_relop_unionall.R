@@ -1,8 +1,5 @@
 
-library("rqdatatable")
-context("relop_union_all")
-
-test_that("relop_union_all works as expected", {
+test_relop_unionall <- function() {
 
  dL <- build_frame(
      "x", "y" |
@@ -12,5 +9,5 @@ test_that("relop_union_all works as expected", {
  rquery_pipeline <- unionall(list(local_td(dL), local_td(dL)))
  ex_data_table(rquery_pipeline)[]
 
-
-})
+ invisible(NULL)
+}

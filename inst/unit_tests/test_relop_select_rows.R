@@ -1,10 +1,6 @@
 
 
-library("rqdatatable")
-context("relop_orderby")
-
-test_that("relop_orderby works as expected", {
-
+test_relop_select_rows <- function () {
 
  dL <- build_frame(
      "x", "y" |
@@ -12,7 +8,8 @@ test_that("relop_orderby works as expected", {
      1L , "a" |
      3L , "c" )
  rquery_pipeline <- local_td(dL) %.>%
-   orderby(., "y")
+   select_rows_nse(., x <= 2)
  ex_data_table(rquery_pipeline)[]
 
-})
+ invisible(NULL)
+}

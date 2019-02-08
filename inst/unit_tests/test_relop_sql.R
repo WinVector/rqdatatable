@@ -1,10 +1,6 @@
 
-library("rqdatatable")
-context("relop_sql")
 
-test_that("relop_sql works as expected", {
-
-
+test_relop_sql <- function() {
 
  # WARNING: example tries to change rquery.rquery_db_executor option to RSQLite and back.
  if (requireNamespace("DBI", quietly = TRUE) &&
@@ -47,5 +43,5 @@ test_that("relop_sql works as expected", {
    DBI::dbDisconnect(my_db)
  }
 
-
-})
+  invisible(NULL)
+}

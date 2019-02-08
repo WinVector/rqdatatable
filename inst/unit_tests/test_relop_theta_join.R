@@ -1,8 +1,5 @@
 
-library("rqdatatable")
-context("relop_theta_join")
-
-test_that("relop_theta_join works as expected", {
+test_relop_theta_join <- function() {
 
   d1 <- data.frame(AUC = 0.6, R2 = 0.2)
   d2 <- data.frame(AUC2 = 0.4, R2 = 0.3)
@@ -11,5 +8,6 @@ test_that("relop_theta_join works as expected", {
 
   res <- ex_data_table(optree, tables = list(d1 = d1, d2 = d2))
 
-})
+  invisible(NULL)
+}
 

@@ -1,7 +1,5 @@
-library("rqdatatable")
-context("relop_materialize")
 
-test_that("relop_materialize works as expected", {
+test_relop_materialize <- function() {
 
   d1 <- data.frame(AUC = 0.6, R2 = 0.2)
 
@@ -31,6 +29,6 @@ test_that("relop_materialize works as expected", {
   r2 <- d1 %.>% optree2
   testthat::expect_equivalent(data.frame(r1), data.frame(r2))
 
-
-})
+  invisible(NULL)
+}
 

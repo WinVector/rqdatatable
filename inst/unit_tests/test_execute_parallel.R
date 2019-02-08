@@ -1,8 +1,5 @@
 
-library("rqdatatable")
-context("ex_data_table_parallel")
-
-test_that("test_execute_parallel works as expected", {
+test_execute_parallel <- function() {
 
   cl <- parallel::makeCluster(2)
 
@@ -67,4 +64,5 @@ test_that("test_execute_parallel works as expected", {
 
   testthat::expect_equivalent(res1, res2)
 
-})
+  invisible(NULL)
+}

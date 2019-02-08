@@ -1,12 +1,5 @@
 
-library("rqdatatable")
-
-
-context("test_set_indicator.R")
-
-
-test_that("test_set_indicator.R: Works As Expected", {
-
+test_set_indicator <- function() {
 
   d <- data.frame(
     id = 1:4,
@@ -23,6 +16,5 @@ test_that("test_set_indicator.R: Works As Expected", {
   res = d %.>% op_tree
   testthat::expect_equivalent(c(1,1,1,0), res$one_two)
 
-
-
-})
+  invisible(NULL)
+}

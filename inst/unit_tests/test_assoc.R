@@ -1,9 +1,5 @@
 
-library("rqdatatable")
-
-context("test_assoc")
-
-test_that("test_assoc.R", {
+test_assoc <- function() {
 
   d <- data.frame(t = 1:2)
 
@@ -13,24 +9,25 @@ test_that("test_assoc.R", {
   # evaluating right-hand-sides as expresions.
 
   r1 <- d %.>% extend(., u = t+1) %.>% extend(., v = u+1) %.>% extend(., w = v+1)
-  testthat::expect_equal(r1, target)
+  RUnit::checkEquals(r1, target)
 
   r2 <- d %.>% extend(., u = t+1) %.>% ( extend(., v = u+1) %.>% extend(., w = v+1) )
-  testthat::expect_equal(r2, target)
+  RUnit::checkEquals(r2, target)
 
   r3 <- d %.>% ( extend(., u = t+1) %.>% extend(., v = u+1) %.>% extend(., w = v+1) )
-  testthat::expect_equal(r3, target)
+  RUnit::checkEquals(r3, target)
 
   r4 <- d %.>% ( extend(., u = t+1) %.>% extend(., v = u+1) ) %.>% extend(., w = v+1)
-  testthat::expect_equal(r4, target)
+  RUnit::checkEquals(r4, target)
 
   r5 <- d %.>% extend(., u = t+1) %.>% { extend(., v = u+1) %.>% extend(., w = v+1) }
-  testthat::expect_equal(r5, target)
+  RUnit::checkEquals(r5, target)
 
   r6 <- d %.>% { extend(., u = t+1) %.>% extend(., v = u+1) %.>% extend(., w = v+1) }
-  testthat::expect_equal(r6, target)
+  RUnit::checkEquals(r6, target)
 
   r7 <- d %.>% { extend(., u = t+1) %.>% extend(., v = u+1) } %.>% extend(., w = v+1)
-  testthat::expect_equal(r7, target)
+  RUnit::checkEquals(r7, target)
 
-})
+  invisible(NULL)
+}

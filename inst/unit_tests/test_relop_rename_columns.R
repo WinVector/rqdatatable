@@ -1,11 +1,5 @@
 
-
-library("rqdatatable")
-context("relop_rename_columns")
-
-test_that("relop_rename_columns works as expected", {
-
-
+test_relop_rename_columns <- function() {
 
  dL <- build_frame(
      "x", "y" |
@@ -16,6 +10,5 @@ test_that("relop_rename_columns works as expected", {
    rename_columns(., c("x" = "y", "y" = "x"))
  ex_data_table(rquery_pipeline)[]
 
-
-
-})
+ invisible(NULL)
+}

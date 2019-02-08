@@ -1,8 +1,5 @@
 
-library("rqdatatable")
-context("relop_extend")
-
-test_that("relop_extend works as expected", {
+test_relop_extend <- function() {
 
   dL <- build_frame(
     "subjectID", "surveyCategory"     , "assessmentTotal", "one" |
@@ -36,6 +33,7 @@ test_that("relop_extend works as expected", {
               partitionby = 'subjectID')  %.>%
    orderby(., c("subjectID", "probability"))
  res <- ex_data_table(rquery_pipeline, tables = list(dL = dL))
- expect_true(data.table::is.data.table(res))
+ RUnit::checkTrue(data.table::is.data.table(res))
 
-})
+ invisible(NULL)
+}

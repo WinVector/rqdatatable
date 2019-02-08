@@ -1,10 +1,5 @@
 
-library("rqdatatable")
-context("relop_natural_join")
-
-test_that("relop_natural_join works as expected", {
-
-
+test_relop_natural_join <- function() {
 
  d1 <- build_frame(
      "key", "val", "val1" |
@@ -21,7 +16,7 @@ test_that("relop_natural_join works as expected", {
  optree <- natural_join(local_td(d1), local_td(d2),
                         jointype = "FULL", by = 'key')
  res1 <- ex_data_table(optree)
- expect_true(data.table::is.data.table(res1))
+ RUnit::checkTrue(data.table::is.data.table(res1))
 
  # full cross-product join
  # (usually with jointype = "FULL", but "LEFT" is more
@@ -30,7 +25,7 @@ test_that("relop_natural_join works as expected", {
                          jointype = "LEFT", by = NULL)
  res2 <- ex_data_table(optree2)[]
  # notice ALL non-"by" fields take coalese to left table.
- expect_true(data.table::is.data.table(res2))
+ RUnit::checkTrue(data.table::is.data.table(res2))
 
-
-})
+ invisible(NULL)
+}
