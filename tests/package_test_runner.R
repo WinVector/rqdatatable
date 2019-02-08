@@ -1,6 +1,6 @@
 
 # package to check
-pkg = "rquery"
+pkg = "rqdatatable"
 
 # This file is distributed without license requirements, feel free to alter/copy.
 if(requireNamespace("RUnit", quietly = TRUE) &&
