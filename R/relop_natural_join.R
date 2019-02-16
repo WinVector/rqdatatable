@@ -25,7 +25,7 @@
 #'
 #' # full cross-product join
 #' # (usually with jointype = "FULL", but "LEFT" is more
-#' # compatible with rquery field merg semantics).
+#' # compatible with rquery field merge semantics).
 #' optree2 <- natural_join(local_td(d1), local_td(d2),
 #'                         jointype = "LEFT", by = NULL)
 #' ex_data_table(optree2)
