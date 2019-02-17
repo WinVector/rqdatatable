@@ -44,6 +44,17 @@
     * package encoding: UTF-8
     * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
     Maintainer: 'John Mount <jmount@win-vector.com>'
+    
+    * using R Under development (unstable) (2019-02-15 r76107)
+    * using platform: x86_64-w64-mingw32 (64-bit)
+    * using session charset: ISO8859-1
+    * checking for file 'rqdatatable/DESCRIPTION' ... OK
+    * checking extension type ... Package
+    * this is package 'rqdatatable' version '1.1.3'
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: 'John Mount <jmount@win-vector.com>'
+    Status: OK
 
 
 ## Reverse dependencies
