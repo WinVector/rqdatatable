@@ -14,7 +14,7 @@ test_set_indicator <- function() {
     set_indicator(., "z", "a", c()) %.>%
     orderby(., "id")
   res = d %.>% op_tree
-  testthat::expect_equivalent(c(1,1,1,0), res$one_two)
+  RUnit::checkEquals(c(1,1,1,0), res$one_two)
 
   invisible(NULL)
 }

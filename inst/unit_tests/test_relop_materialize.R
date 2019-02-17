@@ -12,7 +12,7 @@ test_relop_materialize <- function() {
   #   extend(., z = AUC/R2) %.>%
   #   materialize_node(., table_name = "tmp") %.>%
   #   extend(., q = AUC+R2)
-  # testthat::expect_equivalent(data.frame(r1), data.frame(r2))
+  # RUnit::checkEquals(data.frame(r1), data.frame(r2))
 
 
 
@@ -27,7 +27,7 @@ test_relop_materialize <- function() {
 
   r1 <- d1 %.>% optree1
   r2 <- d1 %.>% optree2
-  testthat::expect_equivalent(data.frame(r1), data.frame(r2))
+  RUnit::checkEquals(data.frame(r1), data.frame(r2))
 
   invisible(NULL)
 }

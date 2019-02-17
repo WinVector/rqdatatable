@@ -29,7 +29,7 @@ test_grouped_running <- function() {
       0  , 0  , 1               |
       0  , 0  , 1               )
 
-  testthat::expect_equivalent(res, expect)
+  RUnit::checkEquals(res, expect)
 
   invisible(NULL)
 }

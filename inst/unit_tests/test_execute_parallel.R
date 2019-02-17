@@ -62,7 +62,7 @@ test_execute_parallel <- function() {
 
   parallel::stopCluster(cl)
 
-  testthat::expect_equivalent(res1, res2)
+  RUnit::checkEquals(res1, res2)
 
   invisible(NULL)
 }
