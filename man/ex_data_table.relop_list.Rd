@@ -2,7 +2,7 @@
 % Please edit documentation in R/ex_relop_list.R
 \name{ex_data_table.relop_list}
 \alias{ex_data_table.relop_list}
-\title{default non-impementation.}
+\title{ex_data_table for relop_list.}
 \usage{
 \method{ex_data_table}{relop_list}(optree, ..., tables = list(),
   source_usage = NULL, source_limit = NULL, env = parent.frame())
@@ -21,5 +21,5 @@
 \item{env}{environment to work in.}
 }
 \description{
-Throw on error if this method is called, signalling that a specific \code{data.table} implemetation is needed for this method.
+Execute storing intermeidate tables in tables variable.
 }

@@ -1,8 +1,8 @@
 
 
-#' default non-impementation.
+#' ex_data_table for relop_list.
 #'
-#' Throw on error if this method is called, signalling that a specific \code{data.table} implemetation is needed for this method.
+#' Execute storing intermeidate tables in tables variable.
 #'
 #' @inheritParams ex_data_table
 #' @export
@@ -13,5 +13,24 @@ ex_data_table.relop_list <- function(optree,
                                      source_limit = NULL,
                                      env = parent.frame()) {
   force(env)
-  stop("ex_data_table.relop_list not implemented yet")
+  if(!(isS4(optree) && methods::is(optree, "relop_list"))) {
+    stop("rquery::materialize_relop_list_local, expected optree to be of S4 class relop_list")
+  }
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_list")
+  narrow = TRUE  # not part of our arguments, default to TRUE
+  res <- NULL
+  stages <- rquery::get_relop_list_stages(optree, narrow = narrow)
+  nstg <- length(stages)
+  for(i in seq_len(nstg)) {
+    stage <- stages[[i]]
+    table_name = stage$materialize_as
+    res <- ex_data_table(stage,
+                         ...,
+                         tables = tables,
+                         source_usage = source_usage,
+                         source_limit = source_limit,
+                         env = env)
+    tables[[table_name]] <- res
+  }
+  res
 }
