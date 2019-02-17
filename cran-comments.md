@@ -19,6 +19,17 @@
 ###  Linux (local machine using --as-cran from the command line)
 
     R CMD check --as-cran rqdatatable_1.1.3.tar.gz
+    * using R version 3.5.2 (2018-12-20)
+    * using platform: x86_64-pc-linux-gnu (64-bit)
+    * using session charset: UTF-8
+    * using option ‘--as-cran’
+    * checking for file ‘rqdatatable/DESCRIPTION’ ... OK
+    * checking extension type ... Package
+    * this is package ‘rqdatatable’ version ‘1.1.3’
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: ‘John Mount <jmount@win-vector.com>’
+    Status: OK
 
 
 ### Windows 
