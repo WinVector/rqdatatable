@@ -35,12 +35,20 @@
 ### Windows 
 
     devtools::build_win()
- 
-    rhub::check_for_cran()
+    * using R version 3.5.2 (2018-12-20)
+    * using platform: x86_64-w64-mingw32 (64-bit)
+    * using session charset: ISO8859-1
+    * checking for file 'rqdatatable/DESCRIPTION' ... OK
+    * checking extension type ... Package
+    * this is package 'rqdatatable' version '1.1.3'
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: 'John Mount <jmount@win-vector.com>'
+
 
 ## Reverse dependencies
 
-    No strong reverse dependencies.
+    No strong reverse dependencies ( https://github.com/WinVector/rqdatatable/blob/master/extras/check_reverse_dependencies.md ).
 
 Note: Codd is spelled correctly.
 
