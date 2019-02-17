@@ -1,8 +1,9 @@
 
-# rqdatatable 1.1.3 2019/02/07
+# rqdatatable 1.1.3 2019/02/17
 
  * Move to RUnit.
  * More tests.
+ * Add ex_data_table.relop_list().
 
 # rqdatatable 1.1.2 2018/12/17
 
