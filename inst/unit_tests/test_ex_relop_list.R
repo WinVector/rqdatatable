@@ -23,6 +23,11 @@ test_ex_relop_list <- function() {
   dr <- ex_data_table(d3)
   RUnit::checkEquals(d, data.frame(dr))
 
+  rd <- d %.>% d1
+  RUnit::checkEquals(d, data.frame(rd))
+  rl <- list(d = d) %.>% d1
+  RUnit::checkEquals(d, data.frame(rl))
+
   tmps <- wrapr::mk_tmp_name_source()
   relop_list <- rquery::make_relop_list(tmps)
   d1_ops <- natural_join(d0, d0,
@@ -38,4 +43,11 @@ test_ex_relop_list <- function() {
     relop_list
   dr2 <- ex_data_table(relop_list)
   RUnit::checkEquals(d, data.frame(dr2))
+
+  # # not allowed to due to a %.>% relop_List is relop_list's collecting pattern.
+  # # (and relop list is primarilly for databases, so don't want to bend it too far for rqdatatable)
+  # rd <- d %.>% relop_list
+  # RUnit::checkEquals(d, data.frame(rd))
+  # rl <- list(d = d) %.>% relop_list
+  # RUnit::checkEquals(d, data.frame(rl))
 }
