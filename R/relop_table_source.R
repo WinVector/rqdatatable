@@ -64,15 +64,15 @@ ex_data_table.relop_table_source <- function(optree,
   }
   if(!data.table::is.data.table(res)) {
     if((!is.null(source_limit)) && (source_limit<nrow(res))) {
-      res <- data.table::as.data.table(res[seq_len(source_limit), cols_want, drop = FALSE])
+      res <- data.table::data.table(res[seq_len(source_limit), cols_want, drop = FALSE]) # try to break out of reference semantics
     } else {
-      res <- data.table::as.data.table(res[, cols_want, drop = FALSE])
+      res <- data.table::data.table(res[, cols_want, drop = FALSE]) # try to break out of reference semantics
     }
   } else {
     if((!is.null(source_limit)) && (source_limit<nrow(res))) {
-      res <- data.table::copy(res[seq_len(source_limit), cols_want, with = FALSE]) # try to break reference semantics
+      res <- data.table::copy(res[seq_len(source_limit), cols_want, with = FALSE]) # try to break out of reference semantics
     } else {
-      res <- data.table::copy(res[, cols_want, with = FALSE]) # try to break reference semantics
+      res <- data.table::copy(res[, cols_want, with = FALSE]) # try to break out ofreference semantics
     }
   }
   res
