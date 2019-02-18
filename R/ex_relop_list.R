@@ -30,7 +30,7 @@ ex_data_table.relop_list <- function(optree,
                          source_usage = source_usage,
                          source_limit = source_limit,
                          env = env)
-    tables[[table_name]] <- res
+    tables[[table_name]] <- data.frame(res) # break away from reference semantics
   }
   res
 }

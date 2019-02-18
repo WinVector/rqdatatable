@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.4 2019/02/17
+
+ * extra copy in ex_data_table.relop_list() (just in case).
+ 
 # rqdatatable 1.1.3 2019/02/17
 
  * Move to RUnit.
