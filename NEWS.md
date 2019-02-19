@@ -1,5 +1,5 @@
 
-# rqdatatable 1.1.4 2019/02/18
+# rqdatatable 1.1.4 2019/02/19
 
  * extra copy in ex_data_table.relop_list() (just in case).
  
