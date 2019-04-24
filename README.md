@@ -102,3 +102,7 @@ Note `rqdatatable` has an "immediate mode" which allows direct application of pi
 `rqdatatable` is a fairly complete implementation of `rquery`. The main differences are the `rqdatatable` implementations of `sql_node()` and `theta_join()` are implemented by round-tripping through a database handle specified by the `rquery.rquery_db_executor` option (so it is not they are not very desirable implementation).
 
 To install `rqdatatable` please use `install.packages("rqdatatable")`.
+
+--
+
+Note `rqdatatable` is intended for "simple column names", in particular as `rqdatatable` often uses `eval()` to work over `data.table` escape characters such as "`\`" and "`\\`" are not reliable in column names.
