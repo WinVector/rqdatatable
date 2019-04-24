@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.5 2019/04/24
+
+ * Re-export basic pivot capability.
+
 # rqdatatable 1.1.4 2019/02/24
 
  * extra copy in ex_data_table.relop_list() (just in case).
