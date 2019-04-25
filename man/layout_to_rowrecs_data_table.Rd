@@ -28,4 +28,19 @@ Map data records from block records (where each record may be more than one row)
 row records (where each record is a single row).  Values specified in rowKeyColumns
 determine which sets of rows build up records and are copied into the result.
 }
+\examples{
+
+(d2 <- wrapr::build_frame(
+  "id"  , "id2", "measure", "value" |
+    1   , "a"  , "AUC"    , 0.7     |
+    2   , "b"  , "AUC"    , 0.8     |
+    1   , "a"  , "R2"     , 0.4     |
+    2   , "b"  , "R2"     , 0.5     ))
+
+(layout_to_rowrecs_data_table(d2,
+                             columnToTakeKeysFrom = "measure",
+                             columnToTakeValuesFrom = "value",
+                             rowKeyColumns = c("id", "id2")))
+
+}
 \keyword{internal}

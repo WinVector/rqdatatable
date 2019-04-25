@@ -15,22 +15,23 @@
 #' @export
 #' @keywords internal
 #'
+#' @examples
+#'
+#' rbindlist_data_table(list(
+#'   data.frame(x = 1, y = 2),
+#'   data.frame(x = c(2, 3), y = c(NA, 4))))
+#'
 rbindlist_data_table <- function(l,
                                  use.names = TRUE,
                                  fill = TRUE,
                                  idcol = NULL) {
-  # l <- lapply(
-  #   l,
-  #   function(li) {
-  #     if(!data.table::is.data.table(li)) {
-  #       li <- as.data.table(li)
-  #       li
-  #     }
-  #   })
-  data.table::rbindlist(l,
-                        use.names = use.names,
-                        fill = fill,
-                        idcol = idcol)
+  res <- data.table::rbindlist(l,
+                               use.names = use.names,
+                               fill = fill,
+                               idcol = idcol)
+  res <- data.frame(res)
+  rownames(res) <- NULL
+  res
 }
 
 
@@ -51,6 +52,20 @@ rbindlist_data_table <- function(l,
 #'
 #' @export
 #' @keywords internal
+#'
+#' @examples
+#'
+#' (d <- wrapr::build_frame(
+#'   "id"  , "id2", "AUC", "R2" |
+#'     1   , "a"  , 0.7  , 0.4  |
+#'     2   , "b"  , 0.8  , 0.5  ))
+#'
+#' (layout_to_blocks_data_table(
+#'   d,
+#'   nameForNewKeyColumn = "measure",
+#'   nameForNewValueColumn = "value",
+#'   columnsToTakeFrom = c("AUC", "R2"),
+#'   columnsToCopy = c("id", "id2")))
 #'
 #'
 layout_to_blocks_data_table <- function(data,
@@ -96,6 +111,20 @@ layout_to_blocks_data_table <- function(data,
 #' @export
 #' @keywords internal
 #'
+#' @examples
+#'
+#' (d2 <- wrapr::build_frame(
+#'   "id"  , "id2", "measure", "value" |
+#'     1   , "a"  , "AUC"    , 0.7     |
+#'     2   , "b"  , "AUC"    , 0.8     |
+#'     1   , "a"  , "R2"     , 0.4     |
+#'     2   , "b"  , "R2"     , 0.5     ))
+#'
+#' (layout_to_rowrecs_data_table(d2,
+#'                              columnToTakeKeysFrom = "measure",
+#'                              columnToTakeValuesFrom = "value",
+#'                              rowKeyColumns = c("id", "id2")))
+#'
 layout_to_rowrecs_data_table <- function(data,
                                          ...,
                                          columnToTakeKeysFrom,
@@ -109,7 +138,16 @@ layout_to_rowrecs_data_table <- function(data,
   if(!data.table::is.data.table(data)) {
     data <- as.data.table(data)
   }
-  stop("rqdatatable::layout_to_rowrecs_data_table not implemented yet")
+  f <- stats::as.formula(paste(paste(rowKeyColumns, collapse = " + "), "~", columnToTakeKeysFrom))
+  res <- data.table::dcast.data.table(
+    data = data,
+    formula = f,
+    fun.aggregate = mean,
+    fill = NA,
+    value.var = columnToTakeValuesFrom)
+  res <- data.frame(res)
+  rownames(res) <- NULL
+  res
 }
 
 

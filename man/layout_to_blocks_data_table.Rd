@@ -29,4 +29,20 @@ Map a data records from row records (records that are exactly single rows) to bl
 (records that may be more than one row).  All columns not named in columnsToTakeFrom are copied to each
 record row in the result.
 }
+\examples{
+
+(d <- wrapr::build_frame(
+  "id"  , "id2", "AUC", "R2" |
+    1   , "a"  , 0.7  , 0.4  |
+    2   , "b"  , 0.8  , 0.5  ))
+
+(layout_to_blocks_data_table(
+  d,
+  nameForNewKeyColumn = "measure",
+  nameForNewValueColumn = "value",
+  columnsToTakeFrom = c("AUC", "R2"),
+  columnsToCopy = c("id", "id2")))
+
+
+}
 \keyword{internal}

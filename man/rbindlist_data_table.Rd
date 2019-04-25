@@ -21,4 +21,11 @@ data.table
 \description{
 Note: different argument defaults than data.table::rbindlist.
 }
+\examples{
+
+rbindlist_data_table(list(
+  data.frame(x = 1, y = 2),
+  data.frame(x = c(2, 3), y = c(NA, 4))))
+
+}
 \keyword{internal}

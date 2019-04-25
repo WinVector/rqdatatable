@@ -19,10 +19,10 @@ ByteCompile: true
 VignetteBuilder: knitr
 Depends:
   R (>= 3.4.0),
-  rquery (>= 1.3.1)
+  rquery (>= 1.3.2)
 Imports:
-  wrapr (>= 1.8.4),
-  data.table (>= 1.11.4),
+  wrapr (>= 1.8.6),
+  data.table (>= 1.12.2),
   methods
 RoxygenNote: 6.1.1
 Suggests: knitr,
