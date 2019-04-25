@@ -5,10 +5,6 @@
 
     R CMD check --as-cran rqdatatable_1.1.5.tar.gz
 
-###  Linux (local machine using --as-cran from the command line)
-
-    R CMD check --as-cran rqdatatable_1.1.5.tar.gz
-
 
 ### Windows 
 
