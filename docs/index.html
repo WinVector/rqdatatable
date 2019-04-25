@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -161,6 +161,8 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://
 <p>Note <code>rqdatatable</code> has an “immediate mode” which allows direct application of pipelines stages without pre-assembling the pipeline. “Immediate mode” is a convenience for ad-hoc analyses, and has some negative performance impact, so we encourage users to build pipelines for most work. Some notes on the issue can be found <a href="https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md">here</a>.</p>
 <p><code>rqdatatable</code> is a fairly complete implementation of <code>rquery</code>. The main differences are the <code>rqdatatable</code> implementations of <code>sql_node()</code> and <code>theta_join()</code> are implemented by round-tripping through a database handle specified by the <code>rquery.rquery_db_executor</code> option (so it is not they are not very desirable implementation).</p>
 <p>To install <code>rqdatatable</code> please use <code><a href="https://www.rdocumentation.org/packages/utils/topics/install.packages">install.packages("rqdatatable")</a></code>.</p>
+<p>–</p>
+<p>Note <code>rqdatatable</code> is intended for “simple column names”, in particular as <code>rqdatatable</code> often uses <code><a href="https://www.rdocumentation.org/packages/base/topics/eval">eval()</a></code> to work over <code>data.table</code> escape characters such as “<code>\</code>” and “<code>\\</code>” are not reliable in column names.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
