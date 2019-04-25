@@ -130,7 +130,7 @@ layout_to_rowrecs_data_table <- function(data,
                                          columnToTakeKeysFrom,
                                          columnToTakeValuesFrom,
                                          rowKeyColumns,
-                                         sep = NULL) {
+                                         sep = "_") {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::layout_to_rowrecs_data_table")
   if(!is.data.frame(data)) {
     stop("rqdatatable::layout_to_rowrecs_data_table data must be a data.frame")
@@ -144,7 +144,8 @@ layout_to_rowrecs_data_table <- function(data,
     formula = f,
     fun.aggregate = mean,
     fill = NA,
-    value.var = columnToTakeValuesFrom)
+    value.var = columnToTakeValuesFrom,
+    sep = sep)
   res <- data.frame(res)
   rownames(res) <- NULL
   res

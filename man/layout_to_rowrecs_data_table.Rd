@@ -5,7 +5,7 @@
 \title{Map data records from block records that have one row per measurement value to row records.}
 \usage{
 layout_to_rowrecs_data_table(data, ..., columnToTakeKeysFrom,
-  columnToTakeValuesFrom, rowKeyColumns, sep = NULL)
+  columnToTakeValuesFrom, rowKeyColumns, sep = "_")
 }
 \arguments{
 \item{data}{data.frame to work with (must be local, for remote please try \code{moveValuesToColumns*}).}
