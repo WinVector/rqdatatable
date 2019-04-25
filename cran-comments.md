@@ -19,6 +19,29 @@
 ### Windows 
 
     devtools::build_win()
+    
+    * using R version 3.5.3 (2019-03-11)
+    * using platform: x86_64-w64-mingw32 (64-bit)
+    * using session charset: ISO8859-1
+    * checking for file 'rqdatatable/DESCRIPTION' ... OK
+    * checking extension type ... Package
+    * this is package 'rqdatatable' version '1.1.5'
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: 'John Mount <jmount@win-vector.com>'
+    Status: OK
+    
+    * using log directory 'd:/RCompile/CRANguest/R-devel/rqdatatable.Rcheck'
+    * using R version 3.6.0 RC (2019-04-21 r76417)
+    * using platform: x86_64-w64-mingw32 (64-bit)
+    * using session charset: ISO8859-1
+    * checking for file 'rqdatatable/DESCRIPTION' ... OK
+    * checking extension type ... Package
+    * this is package 'rqdatatable' version '1.1.5'
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: 'John Mount <jmount@win-vector.com>'
+    Status: OK
 
 ## Reverse dependencies
 
