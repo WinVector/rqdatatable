@@ -1,10 +1,19 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 ![](https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png)
 
-[`rqdatatable`](https://github.com/WinVector/rqdatatable) is an implementation of the [`rquery`](https://github.com/WinVector/rquery) piped Codd-style relational algebra hosted on [`data.table`](http://r-datatable.com). `rquery` allow the expression of complex transformations as a series of relational operators and `rqdatatable` implements the operators using `data.table`.
+[`rqdatatable`](https://github.com/WinVector/rqdatatable) is an
+implementation of the [`rquery`](https://github.com/WinVector/rquery)
+piped Codd-style relational algebra hosted on
+[`data.table`](http://r-datatable.com). `rquery` allow the expression of
+complex transformations as a series of relational operators and
+`rqdatatable` implements the operators using `data.table`.
 
-For example scoring a logistic regression model (which requires grouping, ordering, and ranking) is organized as follows. For more on this example please see ["Let’s Have Some Sympathy For The Part-time R User"](http://www.win-vector.com/blog/2017/08/lets-have-some-sympathy-for-the-part-time-r-user/).
+For example scoring a logistic regression model (which requires
+grouping, ordering, and ranking) is organized as follows. For more on
+this example please see [“Let’s Have Some Sympathy For The Part-time R
+User”](http://www.win-vector.com/blog/2017/08/lets-have-some-sympathy-for-the-part-time-r-user/).
 
 ``` r
 library("rqdatatable")
@@ -95,14 +104,26 @@ build_frame(
     ##    subjectID           diagnosis probability
     ## 1:         7 positive re-framing   0.9722128
 
-Initial bench-marking of `rqdatatable` is very favorable (notes [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
+Initial bench-marking of `rqdatatable` is very favorable (notes
+[here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
-Note `rqdatatable` has an "immediate mode" which allows direct application of pipelines stages without pre-assembling the pipeline. "Immediate mode" is a convenience for ad-hoc analyses, and has some negative performance impact, so we encourage users to build pipelines for most work. Some notes on the issue can be found [here](https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md).
+Note `rqdatatable` has an “immediate mode” which allows direct
+application of pipelines stages without pre-assembling the pipeline.
+“Immediate mode” is a convenience for ad-hoc analyses, and has some
+negative performance impact, so we encourage users to build pipelines
+for most work. Some notes on the issue can be found
+[here](https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md).
 
-`rqdatatable` is a fairly complete implementation of `rquery`. The main differences are the `rqdatatable` implementations of `sql_node()` and `theta_join()` are implemented by round-tripping through a database handle specified by the `rquery.rquery_db_executor` option (so it is not they are not very desirable implementation).
+`rqdatatable` is a fairly complete implementation of `rquery`. The main
+differences are the `rqdatatable` implementations of `sql_node()` and
+`theta_join()` are implemented by round-tripping through a database
+handle specified by the `rquery.rquery_db_executor` option (so it is not
+they are not very desirable implementation).
 
 To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
---
+–
 
-Note `rqdatatable` is intended for "simple column names", in particular as `rqdatatable` often uses `eval()` to work over `data.table` escape characters such as "`\`" and "`\\`" are not reliable in column names.
+Note `rqdatatable` is intended for “simple column names”, in particular
+as `rqdatatable` often uses `eval()` to work over `data.table` escape
+characters such as “`\`” and “`\\`” are not reliable in column names.

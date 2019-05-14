@@ -40,7 +40,7 @@ ex_data_table.relop_order_expr <- function(optree,
                 }, character(1))
   src <- paste0(tmpnam, "[, .rquery_ex_order_expr_tmp_col := ", src, " ]")
   expr <- parse(text = src)
-  tmpenv <- new.env(parent = globalenv())
+  tmpenv <- new.env(parent = env)
   assign(tmpnam, x, envir = tmpenv)
   x <- eval(expr, envir = tmpenv, enclos = tmpenv)
   x <- order_table(x, ".rquery_ex_order_expr_tmp_col", NULL)

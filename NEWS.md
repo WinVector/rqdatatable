@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.6 2019/05/13
+
+ * Fix some global env references.
+
 # rqdatatable 1.1.5 2019/04/24
 
  * Re-export basic pivot capability.

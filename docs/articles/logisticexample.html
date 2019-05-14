@@ -30,7 +30,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.6</span>
       </span>
     </div>
 
@@ -86,7 +86,7 @@
       <h1>Logistic Example</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2019-04-24</h4>
+            <h4 class="date">2019-05-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/logisticexample.Rmd"><code>vignettes/logisticexample.Rmd</code></a></small>
       <div class="hidden name"><code>logisticexample.Rmd</code></div>
@@ -96,40 +96,39 @@
     
     
 <p>We can work an example similar to the <a href="https://winvector.github.io/rquery/"><code>rquery</code></a> <a href="https://winvector.github.io/rquery/index.html">example</a> using a <a href="http://r-datatable.com/"><code>data.table</code></a> back-end.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"rqdatatable"</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"rqdatatable"</span>)</a></code></pre></div>
 <pre><code>## Loading required package: rquery</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"data.table"</span>)</code></pre></div>
-<pre><code>## Warning: package 'data.table' was built under R version 3.5.2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># data example</span>
-dL &lt;-<span class="st"> </span>wrapr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(
-   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span>
-<span class="st">   </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span>
-<span class="st">   </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>                 <span class="op">|</span>
-<span class="st">   </span><span class="dv">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">3</span>                 <span class="op">|</span>
-<span class="st">   </span><span class="dv">2</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">4</span>                 )</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">scale &lt;-<span class="st"> </span><span class="fl">0.237</span>
-
-<span class="co"># example rquery pipeline</span>
-rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(dL) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,
-             <span class="dt">one =</span> <span class="dv">1</span>) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,
-             <span class="dt">probability =</span>
-               <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)<span class="op">/</span>
-<span class="st">               </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)),
-             <span class="dt">count =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(one),
-             <span class="dt">rank =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/data.table/topics/frank">rank</a></span>(probability, surveyCategory),
-             <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,
-             <span class="dt">isdiagnosis =</span> rank <span class="op">==</span><span class="st"> </span>count,
-             <span class="dt">diagnosis =</span> surveyCategory) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/select_rows">select_rows_nse</a></span>(., 
-                  isdiagnosis <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/select_columns">select_columns</a></span>(., 
-                 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'subjectID'</span>, <span class="st">'diagnosis'</span>, <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span>
-<span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/orderby">orderby</a></span>(., <span class="st">'subjectID'</span>)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"data.table"</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># data example</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">dL &lt;-<span class="st"> </span>wrapr<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="st">   </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">   </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>                 <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">   </span><span class="dv">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">3</span>                 <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">   </span><span class="dv">2</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">4</span>                 )</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">scale &lt;-<span class="st"> </span><span class="fl">0.237</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="co"># example rquery pipeline</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(dL) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">             <span class="dt">one =</span> <span class="dv">1</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">             <span class="dt">probability =</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">               <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)<span class="op">/</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="st">               </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Log">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)),</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">             <span class="dt">count =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/sum">sum</a></span>(one),</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">             <span class="dt">rank =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/data.table/topics/frank">rank</a></span>(probability, surveyCategory),</a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">             <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/extend">extend_nse</a></span>(.,</a>
+<a class="sourceLine" id="cb5-15" data-line-number="15">             <span class="dt">isdiagnosis =</span> rank <span class="op">==</span><span class="st"> </span>count,</a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">             <span class="dt">diagnosis =</span> surveyCategory) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/select_rows">select_rows_nse</a></span>(., </a>
+<a class="sourceLine" id="cb5-18" data-line-number="18">                  isdiagnosis <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/select_columns">select_columns</a></span>(., </a>
+<a class="sourceLine" id="cb5-20" data-line-number="20">                 <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">'subjectID'</span>, <span class="st">'diagnosis'</span>, <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/orderby">orderby</a></span>(., <span class="st">'subjectID'</span>)</a></code></pre></div>
 <p>Show expanded form of query tree.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/format">format</a></span>(rquery_pipeline))</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/format">format</a></span>(rquery_pipeline))</a></code></pre></div>
 <pre><code>table(dL; 
   subjectID,
   surveyCategory,
@@ -152,7 +151,7 @@ rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://
    subjectID, diagnosis, probability) %.&gt;%
  orderby(., subjectID)</code></pre>
 <p>Execute the calculation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline)</a></code></pre></div>
 <pre><code>##    subjectID           diagnosis probability
 ## 1:         1 withdrawal behavior   0.6706221
 ## 2:         2 positive re-framing   0.5589742</code></pre>
