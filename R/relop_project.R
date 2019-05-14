@@ -49,7 +49,7 @@ ex_data_table.relop_project <- function(optree,
     byi <- paste0(" , by = c(", paste(pterms, collapse = ", "), ")")
   }
   tmpnam <- ".rquery_ex_extend_tmp"
-  tmpenv <- new.env(parent = env)
+  tmpenv <- patch_global_child_env(env)
   assign(tmpnam, x, envir = tmpenv)
   enames <-
     vapply(seq_len(n),

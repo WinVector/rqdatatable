@@ -67,7 +67,7 @@ ex_data_table.relop_theta_join <- function(optree,
     stop(paste("jointype was", optree$jointype, " but should be one of INNER, LEFT, RIGHT"))
   }
   expr <- parse(text = expr_text)
-  tmpenv <- new.env(parent = env)
+  tmpenv <- patch_global_child_env(env)
   assign("A", A, envir = tmpenv)
   assign("B", B, envir = tmpenv)
   res <- eval(expr, envir = tmpenv, enclos = tmpenv)

@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.7 2019/05/13
+
+ * Undo issues from last global env fix.
+ 
 # rqdatatable 1.1.6 2019/05/13
 
  * Fix some global env references.

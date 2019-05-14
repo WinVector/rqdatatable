@@ -119,7 +119,7 @@ ex_data_table.relop_extend <- function(optree,
                   byi,
                   " ]")
     expr <- parse(text = src)
-    tmpenv <- new.env(parent = env)
+    tmpenv <- patch_global_child_env(env)
     assign(tmpnam, x, envir = tmpenv)
     x <- eval(expr, envir = tmpenv, enclos = tmpenv)
   }
