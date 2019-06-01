@@ -1,4 +1,8 @@
 
+# rqdatatable 1.1.8 2019/06/01
+
+ * Work with non-tame column names more places.
+
 # rqdatatable 1.1.7 2019/05/14
 
  * Undo issues from last global env fix.

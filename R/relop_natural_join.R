@@ -67,13 +67,8 @@ ex_data_table.relop_natural_join <- function(optree,
   if(length(by)<1) {
     # data.table deliberately does not accept empty by
     col_to_zap <- "requery_join_const"
-    wrapr::let(
-      c(ACOL = col_to_zap,
-        BCOL = col_to_zap),
-      {
-        A[, ACOL := 'a']
-        B[, BCOL := 'a']
-      })
+    A[[col_to_zap]] <- 'a'
+    B[[col_to_zap]] <- 'a'
     by <- col_to_zap
   }
   res <- if(optree$jointype=="INNER") {
@@ -89,20 +84,13 @@ ex_data_table.relop_natural_join <- function(optree,
   }
   # fix up common columns with rquery coallesce rules
   for(i in seq_len(length(common_non_key))) {
-    wrapr::let(
-      c(ACOL = common_non_key[[i]],
-        BCOL = new_non_key[[i]]),
-      {
-        res[, ACOL := ifelse(is.na(ACOL), BCOL, ACOL)]
-        res[, BCOL := NULL]
-      })
+    res[[common_non_key[[i]]]] <- ifelse(is.na(res[[common_non_key[[i]]]]),
+                                         res[[new_non_key[[i]]]],
+                                         res[[common_non_key[[i]]]])
+    res[[new_non_key[[i]]]] <- NULL
   }
   if(!is.null(col_to_zap)) {
-    wrapr::let(
-      c(ACOL = col_to_zap),
-      {
-        res[, ACOL := NULL]
-      })
+    res[[col_to_zap]] <- NULL
   }
   res[]
 }
