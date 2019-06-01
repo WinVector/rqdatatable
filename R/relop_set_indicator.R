@@ -36,16 +36,7 @@ ex_data_table.relop_set_indicator <- function(optree,
                      source_usage = source_usage,
                      source_limit = source_limit,
                      env = env)
-  RES_COL <- NULL  # don't look like an unbound ref
-  TEST_COL <- NULL # don't look like an unbound ref
-  wrapr::let(
-    c(RES_COL = optree$rescol,
-      TEST_COL = optree$testcol),
-    {
-      x[ , RES_COL := 0]
-      x[ TEST_COL %in% optree$testvalues, RES_COL := 1 ]
-    }
-  )
-  x[]
+  x[[optree$rescol]] <- ifelse(x[[optree$testcol]] %in% optree$testvalues, 1, 0)
+  x
 }
 

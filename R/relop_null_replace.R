@@ -34,26 +34,15 @@ ex_data_table.relop_null_replace <- function(optree,
                      source_usage = source_usage,
                      source_limit = source_limit,
                      env = env)
-  NOTECOL <- NULL # don't look like an unbound reference
   if(!is.null(optree$note_col)) {
-    wrapr::let(
-      c(NOTECOL = optree$note_col),
-      x <- x[, NOTECOL := 0]
-    )
+    x[[optree$note_col]] <- 0
   }
-  COL <- NULL # don't look like an unbound reference
   for(ci in optree$cols) {
-    wrapr::let(
-      c(COL = ci,
-        NOTECOL = optree$note_col),
-      {
-        if(!is.null(optree$note_col)) {
-          x[ is.na(COL), NOTECOL := NOTECOL + 1 ]
-        }
-        x[ is.na(COL), COL := optree$value ]
-      }
-    )
+    if(!is.null(optree$note_col)) {
+      x[[optree$note_col]] <- x[[optree$note_col]] + ifelse(is.na(x[[ci]]), 1, 0)
+    }
+    x[[ci]] <- ifelse(is.na(x[[ci]]), optree$value, x[[ci]])
   }
-  x[]
+  x
 }
 
