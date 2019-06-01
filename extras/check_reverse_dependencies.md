@@ -5,7 +5,18 @@ check\_reverse\_dependencies
 library("prrd")
 td <- tempdir()
 package = "rqdatatable"
+date()
+```
 
+    ## [1] "Sat Jun  1 08:24:32 2019"
+
+``` r
+packageVersion(package)
+```
+
+    ## [1] '1.1.8'
+
+``` r
 parallelCluster <- NULL
 # # parallel doesn't work due to https://github.com/r-lib/liteq/issues/22
 #ncores <- parallel::detectCores()
@@ -22,7 +33,7 @@ setwd(td)
 print(td)
 ```
 
-    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//Rtmp30XuBt"
+    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//Rtmpnn7TQW"
 
 ``` r
 options(repos = c(CRAN="https://cloud.r-project.org"))
