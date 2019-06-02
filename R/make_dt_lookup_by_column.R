@@ -34,7 +34,8 @@ make_dt_lookup_by_column <- function(pick, result) {
     .I <- PICK <- RESULT <- NULL # don't look like unbound symbols
     wrapr::let(
       c(PICK = pick, RESULT = result),
-      dt[, RESULT := dt[[PICK]][.I], by = PICK]
+      dt[, RESULT := dt[[PICK]][.I], by = PICK],
+      strict = FALSE
     )
     dt[]
   }
