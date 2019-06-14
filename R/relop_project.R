@@ -32,9 +32,6 @@ ex_data_table.relop_project <- function(optree,
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_project")
   n <- length(optree$parsed)
-  if(n<0) {
-    stop("rqdatatable::ex_data_table.relop_project() must have at least one assignment")
-  }
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
@@ -48,25 +45,34 @@ ex_data_table.relop_project <- function(optree,
     pterms <- paste0("\"", optree$groupby, "\"")
     byi <- paste0(" , by = c(", paste(pterms, collapse = ", "), ")")
   }
-  tmpnam <- ".rquery_ex_extend_tmp"
+  tmpnam <- ".rquery_ex_project_tmp"
   tmpenv <- patch_global_child_env(env)
   assign(tmpnam, x, envir = tmpenv)
-  enames <-
-    vapply(seq_len(n),
-           function(i) {
-             paste0("\"", optree$parsed[[i]]$symbols_produced, "\"")
-           }, character(1))
-  eexprs <-
-    vapply(seq_len(n),
-           function(i) {
-             strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
-           }, character(1))
+  if(n>0) {
+    enames <-
+      vapply(seq_len(n),
+             function(i) {
+               paste0("\"", optree$parsed[[i]]$symbols_produced, "\"")
+             }, character(1))
+    eexprs <-
+      vapply(seq_len(n),
+             function(i) {
+               strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
+             }, character(1))
+  } else {
+    enames <- "RQDATATABLE_FAKE_COL"
+    eexprs <- "1"
+  }
   # := notation means add columns to current data.table, j notation would move to summize type calc.
   src <- paste0(tmpnam, "[ ",
                 " , j = list(", paste(paste(enames, "=", eexprs), collapse = ", "), ") ",
                 byi,
                 " ]")
   expr <- parse(text = src)
-  eval(expr, envir = tmpenv, enclos = tmpenv)
+  res <- eval(expr, envir = tmpenv, enclos = tmpenv)
+  if(n<=0) {
+    res$RQDATATABLE_FAKE_COL <- NULL
+  }
+  res
 }
 

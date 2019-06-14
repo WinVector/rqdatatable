@@ -59,7 +59,7 @@ ex_data_table.relop_extend <- function(optree,
                      source_limit = source_limit,
                      env = env)
   n <- length(optree$parsed)
-  if(n<0) {
+  if(n<=0) {
     return(x)
   }
   # if there is an order, order now apply it (pre-pending partition)
