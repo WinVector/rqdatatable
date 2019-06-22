@@ -49,6 +49,7 @@ ex_data_table.relop_project <- function(optree,
   tmpenv <- patch_global_child_env(env)
   assign(tmpnam, x, envir = tmpenv)
   cols_to_remove <- character(0)
+  rqdatatable_temp_one_col <- NULL # don't look like an unbound reference
   if(n>0) {
     prepped <- prepare_prased_exprs_for_data_table(optree$parsed)
     enames <- prepped$enames
