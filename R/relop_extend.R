@@ -13,20 +13,9 @@ data_table_extend_fns <- list(
   rand = list(data.table_version = "runif(.N)", need_one_col = FALSE)
 )
 
-prepare_prased_exprs_for_data_table <- function(parsed) {
-  n <- length(parsed)
-  enames_raw <-
-    vapply(seq_len(n),
-           function(i) {
-             parsed[[i]]$symbols_produced
-           }, character(1))
-  enames <- paste0("\"", enames_raw, "\"")
-  # map some functions to data.table equivs
-  eexprs <-
-    vapply(seq_len(n),
-           function(i) {
-             strip_up_through_first_assignment(as.character(parsed[[i]]$presentation))
-           }, character(1))
+
+remap_parsed_exprs_for_data_table <- function(eexprs) {
+  n <- length(eexprs)
   pure_function_indices <- grep("^[[:alpha:]][[:alnum:]_.]*[[:space:]]*\\([[:space:]]*\\)$",
                                 eexprs)
   need_one_col <- FALSE
@@ -43,7 +32,25 @@ prepare_prased_exprs_for_data_table <- function(parsed) {
       }
     }
   }
-  return(list(enames = enames, eexprs = eexprs, need_one_col = need_one_col))
+  return(list(eexprs = eexprs, need_one_col = need_one_col))
+}
+
+prepare_prased_assignments_for_data_table <- function(parsed) {
+  n <- length(parsed)
+  enames_raw <-
+    vapply(seq_len(n),
+           function(i) {
+             parsed[[i]]$symbols_produced
+           }, character(1))
+  enames <- paste0("\"", enames_raw, "\"")
+  # map some functions to data.table equivs
+  eexprs <-
+    vapply(seq_len(n),
+           function(i) {
+             strip_up_through_first_assignment(as.character(parsed[[i]]$presentation))
+           }, character(1))
+  re_mapped <- remap_parsed_exprs_for_data_table(eexprs)
+  return(list(enames = enames, eexprs = re_mapped$eexprs, need_one_col = re_mapped$need_one_col))
 }
 
 #' Implement extend/assign operator.
@@ -112,7 +119,7 @@ ex_data_table.relop_extend <- function(optree,
   }
   # work on node
 
-  prepped <- prepare_prased_exprs_for_data_table(optree$parsed)
+  prepped <- prepare_prased_assignments_for_data_table(optree$parsed)
   enames <- prepped$enames
   eexprs <- prepped$eexprs
   need_one_col <- prepped$need_one_col

@@ -14,11 +14,10 @@
 #'     2          , "withdrawal behavior", 3                 |
 #'     2          , "positive re-framing", 4                 )
 #' test_p <- local_td(dL) %.>%
-#'   extend_nse(.,
-#'              one %:=% 1) %.>%
 #'   project_nse(.,
 #'               maxscore = max(assessmentTotal),
-#'               groupby = 'subjectID')
+#'               groupby = 'subjectID',
+#'               count = n())
 #' cat(format(test_p))
 #' ex_data_table(test_p)
 #'
@@ -51,7 +50,7 @@ ex_data_table.relop_project <- function(optree,
   cols_to_remove <- character(0)
   rqdatatable_temp_one_col <- NULL # don't look like an unbound reference
   if(n>0) {
-    prepped <- prepare_prased_exprs_for_data_table(optree$parsed)
+    prepped <- prepare_prased_assignments_for_data_table(optree$parsed)
     enames <- prepped$enames
     eexprs <- prepped$eexprs
     if(prepped$need_one_col) {

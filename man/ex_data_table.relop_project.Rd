@@ -32,11 +32,10 @@ dL <- build_frame(
     2          , "withdrawal behavior", 3                 |
     2          , "positive re-framing", 4                 )
 test_p <- local_td(dL) \%.>\%
-  extend_nse(.,
-             one \%:=\% 1) \%.>\%
   project_nse(.,
               maxscore = max(assessmentTotal),
-              groupby = 'subjectID')
+              groupby = 'subjectID',
+              count = n())
 cat(format(test_p))
 ex_data_table(test_p)
 

@@ -38,7 +38,8 @@ ex_data_table.relop_select_rows <- function(optree,
                 function(i) {
                   paste("(", optree$parsed[[i]]$presentation, ")")
                 }, character(1))
-  src <- paste0(tmpnam, "[ ", paste(src, collapse = " & "), " ]")
+  lsrc <- remap_parsed_exprs_for_data_table(src)
+  src <- paste0(tmpnam, "[ ", paste(lsrc$eexprs, collapse = " & "), " ]")
   expr <- parse(text = src)
   tmpenv <- patch_global_child_env(env)
   assign(tmpnam, x, envir = tmpenv)

@@ -46,7 +46,8 @@ ex_data_table.relop_theta_join <- function(optree,
            function(i) {
              strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
            }, character(1))
-  eeterm <- paste(eexprs, collapse = ", ")
+  leexprs <- remap_parsed_exprs_for_data_table(eexprs)
+  eeterm <- paste(leexprs$eexprs, collapse = ", ")
   eeterm <- gsub("&&", ",", eeterm, fixed = TRUE)
   # build column mapping
   cols <- c(as.character(optree$cmap[[1]]), as.character(optree$cmap[[2]]))

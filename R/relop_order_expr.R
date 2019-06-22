@@ -38,7 +38,8 @@ ex_data_table.relop_order_expr <- function(optree,
                 function(i) {
                   paste("(", optree$parsed[[i]]$presentation, ")")
                 }, character(1))
-  src <- paste0(tmpnam, "[, .rquery_ex_order_expr_tmp_col := ", src, " ]")
+  lsrc <- remap_parsed_exprs_for_data_table(src)
+  src <- paste0(tmpnam, "[, .rquery_ex_order_expr_tmp_col := ", lsrc$eexprs, " ]")
   expr <- parse(text = src)
   tmpenv <- patch_global_child_env(env)
   assign(tmpnam, x, envir = tmpenv)
