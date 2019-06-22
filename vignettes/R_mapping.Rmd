@@ -1,0 +1,50 @@
+---
+title: "R mapping"
+author: "John Mount"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{R mapping}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+`rqdatatable` re-maps a number of symbols for `data.table` translation (for `rquery`/`SQL` re-mappings, please see [here](https://winvector.github.io/rquery/articles/R_mapping.html)).  For instance, please take note of the `n()` and `rank()` functions in the following code example.
+
+```{r}
+library("rqdatatable")
+library("wrapr")
+
+dL <- build_frame(
+  "subjectID", "surveyCategory"     , "assessmentTotal", "one" |
+    1          , "withdrawal behavior", 5                , 1     |
+    1          , "positive re-framing", 2                , 1     |
+    2          , "withdrawal behavior", 3                , 1     |
+    2          , "positive re-framing", 4                , 1     |
+    2          , "other"              , 0                , 1    )
+
+scale <- 0.237
+rquery_pipeline <- local_td(dL) %.>%
+  extend_nse(.,
+             probability :=
+               exp(assessmentTotal * scale)/
+               sum(exp(assessmentTotal * scale)),
+             count := n(),
+             rank := rank(),
+             orderby = c("assessmentTotal", "surveyCategory"),
+             reverse = c("assessmentTotal"),
+             partitionby = 'subjectID')  %.>%
+  orderby(., c("subjectID", "probability"))
+res <- ex_data_table(rquery_pipeline, tables = list(dL = dL))
+knitr::kable(res)
+```
+
+The common re-mappings are can be found in the package-private variable `rqdatatable:::data_table_extend_fns`.
+
+```{r}
+rqdatatable:::data_table_extend_fns
+```
+
+The column `rqdatatable_temp_one_col` is introduced (and removed) from intermediate data frames as needed.
+
+
