@@ -1,8 +1,9 @@
 
-# rqdatatable 1.1.9 2019/06/14
+# rqdatatable 1.1.9 2019/06/22
 
  * Use non-strict let().
  * Support no-new column project().
+ * Unify more expression handling.
 
 # rqdatatable 1.1.8 2019/06/01
 

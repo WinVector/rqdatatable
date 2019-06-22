@@ -8,9 +8,43 @@ strip_up_through_first_assignment <- function(s) {
 data_table_extend_fns <- list(
   rank = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
   row_number = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
+  n = list(data.table_version = "sum(rqdatatable_temp_one_col)", need_one_col = TRUE),
   random = list(data.table_version = "runif(.N)", need_one_col = FALSE),
   rand = list(data.table_version = "runif(.N)", need_one_col = FALSE)
 )
+
+prepare_prased_exprs_for_data_table <- function(parsed) {
+  n <- length(parsed)
+  enames_raw <-
+    vapply(seq_len(n),
+           function(i) {
+             parsed[[i]]$symbols_produced
+           }, character(1))
+  enames <- paste0("\"", enames_raw, "\"")
+  # map some functions to data.table equivs
+  eexprs <-
+    vapply(seq_len(n),
+           function(i) {
+             strip_up_through_first_assignment(as.character(parsed[[i]]$presentation))
+           }, character(1))
+  pure_function_indices <- grep("^[[:alpha:]][[:alnum:]_.]*[[:space:]]*\\([[:space:]]*\\)$",
+                                eexprs)
+  need_one_col <- FALSE
+  if(length(pure_function_indices)>0) {
+    fn_names <- rep(NA_character_, length(eexprs))
+    fn_names[pure_function_indices] <- gsub("[[:space:]]*\\(.*$", "", eexprs[pure_function_indices])
+    fn_names[!(fn_names %in% names(data_table_extend_fns))] <- NA_character_
+    translations <- data_table_extend_fns[fn_names]
+    for(i in seq_len(length(translations))) {
+      transi <- translations[[i]]
+      if(!is.null(transi)) {
+        eexprs[[i]] <- transi$data.table_version
+        need_one_col <- need_one_col || transi$need_one_col
+      }
+    }
+  }
+  return(list(enames = enames, eexprs = eexprs, need_one_col = need_one_col))
+}
 
 #' Implement extend/assign operator.
 #'
@@ -77,35 +111,13 @@ ex_data_table.relop_extend <- function(optree,
     byi <- paste0(" , by = c(", paste(pterms, collapse = ", "), ")")
   }
   # work on node
+
+  prepped <- prepare_prased_exprs_for_data_table(optree$parsed)
+  enames <- prepped$enames
+  eexprs <- prepped$eexprs
+  need_one_col <- prepped$need_one_col
+
   tmpnam <- ".rquery_ex_extend_tmp"
-  enames_raw <-
-    vapply(seq_len(n),
-           function(i) {
-             optree$parsed[[i]]$symbols_produced
-           }, character(1))
-  enames <- paste0("\"", enames_raw, "\"")
-  # map some functions to data.table equivilents
-  eexprs <-
-    vapply(seq_len(n),
-           function(i) {
-             strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
-           }, character(1))
-  pure_function_indices <- grep("^[[:alpha:]][[:alnum:]_.]+[[:space:]]*\\([[:space:]]*\\)$",
-                                eexprs)
-  need_one_col <- FALSE
-  if(length(pure_function_indices)>0) {
-    fn_names <- rep(NA_character_, length(eexprs))
-    fn_names[pure_function_indices] <- gsub("[[:space:]]*\\(.*$", "", eexprs[pure_function_indices])
-    fn_names[!(fn_names %in% names(data_table_extend_fns))] <- NA_character_
-    translations <- data_table_extend_fns[fn_names]
-    for(i in seq_len(length(translations))) {
-      transi <- translations[[i]]
-      if(!is.null(transi)) {
-        eexprs[[i]] <- transi$data.table_version
-        need_one_col <- need_one_col || transi$need_one_col
-      }
-    }
-  }
   rqdatatable_temp_one_col <- NULL # don't look like an unbound reference
   if(need_one_col) {
     x[ , rqdatatable_temp_one_col := 1.0]

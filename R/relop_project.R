@@ -48,20 +48,20 @@ ex_data_table.relop_project <- function(optree,
   tmpnam <- ".rquery_ex_project_tmp"
   tmpenv <- patch_global_child_env(env)
   assign(tmpnam, x, envir = tmpenv)
+  cols_to_remove <- character(0)
   if(n>0) {
-    enames <-
-      vapply(seq_len(n),
-             function(i) {
-               paste0("\"", optree$parsed[[i]]$symbols_produced, "\"")
-             }, character(1))
-    eexprs <-
-      vapply(seq_len(n),
-             function(i) {
-               strip_up_through_first_assignment(as.character(optree$parsed[[i]]$presentation))
-             }, character(1))
+    prepped <- prepare_prased_exprs_for_data_table(optree$parsed)
+    enames <- prepped$enames
+    eexprs <- prepped$eexprs
+    if(prepped$need_one_col) {
+      x[ , rqdatatable_temp_one_col := 1.0]
+    }
+    cols_to_remove <- "rqdatatable_temp_one_col"
   } else {
     enames <- "RQDATATABLE_FAKE_COL"
     eexprs <- "1"
+    cols_to_remove <- enames
+    need_one_col <- FALSE
   }
   # := notation means add columns to current data.table, j notation would move to summize type calc.
   src <- paste0(tmpnam, "[ ",
@@ -70,8 +70,10 @@ ex_data_table.relop_project <- function(optree,
                 " ]")
   expr <- parse(text = src)
   res <- eval(expr, envir = tmpenv, enclos = tmpenv)
-  if(n<=0) {
-    res$RQDATATABLE_FAKE_COL <- NULL
+  if(length(cols_to_remove)>0) {
+    for(ci in cols_to_remove) {
+      res[[ci]] <- NULL
+    }
   }
   res
 }

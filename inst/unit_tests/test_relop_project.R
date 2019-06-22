@@ -8,13 +8,25 @@ test_relop_project <- function() {
      2          , "withdrawal behavior", 3                 |
      2          , "positive re-framing", 4                 )
  test_p <- local_td(dL) %.>%
-   extend_nse(.,
-              one %:=% 1) %.>%
    project_nse(.,
                maxscore = max(assessmentTotal),
                groupby = 'subjectID')
- cat(format(test_p))
- ex_data_table(test_p)[]
+ r <- ex_data_table(test_p)
+ expect <- wrapr::build_frame(
+    "subjectID"  , "maxscore" |
+       1          , 5          |
+       2          , 4          )
+ RUnit::checkTrue(wrapr::check_equiv_frames(expect, r))
+
+ test_p2 <- local_td(dL) %.>%
+    project_nse(.,
+                groupby = 'subjectID')
+ r2 <- ex_data_table(test_p2)
+ expect2 <- wrapr::build_frame(
+    "subjectID" |
+       1           |
+       2           )
+ RUnit::checkTrue(wrapr::check_equiv_frames(expect2, r2))
 
  invisible(NULL)
 }
