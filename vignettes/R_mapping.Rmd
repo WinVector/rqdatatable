@@ -42,7 +42,7 @@ knitr::kable(res)
 The common re-mappings are can be found in the package-private variable `rqdatatable:::data_table_extend_fns`.
 
 ```{r}
-rqdatatable:::data_table_extend_fns
+str(rqdatatable:::data_table_extend_fns)
 ```
 
 The column `rqdatatable_temp_one_col` is introduced (and removed) from intermediate data frames as needed.
