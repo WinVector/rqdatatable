@@ -56,6 +56,9 @@
       <a href="../articles/GroupedSampling.html">Grouped Sampling</a>
     </li>
     <li>
+      <a href="../articles/R_mapping.html">R mapping</a>
+    </li>
+    <li>
       <a href="../articles/logisticexample.html">Logistic Example</a>
     </li>
   </ul>
@@ -86,7 +89,7 @@
       <h1>Grouped Sampling</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2019-06-02</h4>
+            <h4 class="date">2019-06-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/GroupedSampling.Rmd"><code>vignettes/GroupedSampling.Rmd</code></a></small>
       <div class="hidden name"><code>GroupedSampling.Rmd</code></div>
@@ -171,12 +174,15 @@ DBI::dbDisconnect(db)</a></code></pre>
 ## 6: a a b 30135 0.25620100          3</code></pre>
 <p>The translations available are listed in the package variable <code>rqdatatable:::data_table_extend_fns</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/utils/topics/str">str</a></span>(rqdatatable<span class="op">:::</span>data_table_extend_fns)</a></code></pre></div>
-<pre><code>## List of 4
+<pre><code>## List of 5
 ##  $ rank      :List of 2
 ##   ..$ data.table_version: chr "cumsum(rqdatatable_temp_one_col)"
 ##   ..$ need_one_col      : logi TRUE
 ##  $ row_number:List of 2
 ##   ..$ data.table_version: chr "cumsum(rqdatatable_temp_one_col)"
+##   ..$ need_one_col      : logi TRUE
+##  $ n         :List of 2
+##   ..$ data.table_version: chr "sum(rqdatatable_temp_one_col)"
 ##   ..$ need_one_col      : logi TRUE
 ##  $ random    :List of 2
 ##   ..$ data.table_version: chr "runif(.N)"
