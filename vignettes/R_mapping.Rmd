@@ -16,12 +16,12 @@ library("rqdatatable")
 library("wrapr")
 
 dL <- build_frame(
-  "subjectID", "surveyCategory"     , "assessmentTotal", "one" |
-    1          , "withdrawal behavior", 5                , 1     |
-    1          , "positive re-framing", 2                , 1     |
-    2          , "withdrawal behavior", 3                , 1     |
-    2          , "positive re-framing", 4                , 1     |
-    2          , "other"              , 0                , 1    )
+  "subjectID", "surveyCategory"     , "assessmentTotal"|
+    1          , "withdrawal behavior", 5              |
+    1          , "positive re-framing", 2              |
+    2          , "withdrawal behavior", 3              |
+    2          , "positive re-framing", 4              |
+    2          , "other"              , 0              )
 
 scale <- 0.237
 rquery_pipeline <- local_td(dL) %.>%
