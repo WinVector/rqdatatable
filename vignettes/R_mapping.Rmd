@@ -47,4 +47,7 @@ str(rqdatatable:::data_table_extend_fns)
 
 The column `rqdatatable_temp_one_col` is introduced (and removed) from intermediate data frames as needed.
 
+These mappings help allow the same operator pipeline to be used in `R` and in a database. For the database mappings please see [here](https://winvector.github.io/rquery/articles/R_mapping.html).
+
+
 
