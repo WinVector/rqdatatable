@@ -1,5 +1,5 @@
 
-# rqdatatable 1.1.9 2019/06/22
+# rqdatatable 1.1.9 2019/06/25
 
  * Use non-strict let().
  * Support no-new column project().
