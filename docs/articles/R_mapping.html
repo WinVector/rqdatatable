@@ -89,7 +89,7 @@
       <h1>R mapping</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2019-06-22</h4>
+            <h4 class="date">2019-06-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/R_mapping.Rmd"><code>vignettes/R_mapping.Rmd</code></a></small>
       <div class="hidden name"><code>R_mapping.Rmd</code></div>
@@ -104,12 +104,12 @@
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"wrapr"</span>)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">dL &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/wrapr/topics/build_frame">build_frame</a></span>(</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span>, <span class="st">"one"</span> <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                , <span class="dv">1</span>     <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>                , <span class="dv">1</span>     <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">3</span>                , <span class="dv">1</span>     <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">4</span>                , <span class="dv">1</span>     <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"other"</span>              , <span class="dv">0</span>                , <span class="dv">1</span>    )</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span><span class="op">|</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">3</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">4</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"other"</span>              , <span class="dv">0</span>              )</a>
 <a class="sourceLine" id="cb3-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb3-11" data-line-number="11">scale &lt;-<span class="st"> </span><span class="fl">0.237</span></a>
 <a class="sourceLine" id="cb3-12" data-line-number="12">rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/local_td">local_td</a></span>(dL) <span class="op">%.&gt;%</span></a>
@@ -130,7 +130,6 @@
 <th align="right">subjectID</th>
 <th align="left">surveyCategory</th>
 <th align="right">assessmentTotal</th>
-<th align="right">one</th>
 <th align="right">probability</th>
 <th align="right">count</th>
 <th align="right">rank</th>
@@ -140,7 +139,6 @@
 <td align="right">1</td>
 <td align="left">positive re-framing</td>
 <td align="right">2</td>
-<td align="right">1</td>
 <td align="right">0.3293779</td>
 <td align="right">2</td>
 <td align="right">2</td>
@@ -149,7 +147,6 @@
 <td align="right">1</td>
 <td align="left">withdrawal behavior</td>
 <td align="right">5</td>
-<td align="right">1</td>
 <td align="right">0.6706221</td>
 <td align="right">2</td>
 <td align="right">1</td>
@@ -158,7 +155,6 @@
 <td align="right">2</td>
 <td align="left">other</td>
 <td align="right">0</td>
-<td align="right">1</td>
 <td align="right">0.1780446</td>
 <td align="right">3</td>
 <td align="right">3</td>
@@ -167,7 +163,6 @@
 <td align="right">2</td>
 <td align="left">withdrawal behavior</td>
 <td align="right">3</td>
-<td align="right">1</td>
 <td align="right">0.3625035</td>
 <td align="right">3</td>
 <td align="right">2</td>
@@ -176,7 +171,6 @@
 <td align="right">2</td>
 <td align="left">positive re-framing</td>
 <td align="right">4</td>
-<td align="right">1</td>
 <td align="right">0.4594519</td>
 <td align="right">3</td>
 <td align="right">1</td>
@@ -202,6 +196,7 @@
 ##   ..$ data.table_version: chr "runif(.N)"
 ##   ..$ need_one_col      : logi FALSE</code></pre>
 <p>The column <code>rqdatatable_temp_one_col</code> is introduced (and removed) from intermediate data frames as needed.</p>
+<p>These mappings help allow the same operator pipeline to be used in <code>R</code> and in a database. For the database mappings please see <a href="https://winvector.github.io/rquery/articles/R_mapping.html">here</a>.</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
