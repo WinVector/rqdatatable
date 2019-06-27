@@ -92,5 +92,5 @@ To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
 --
 
-Note `rqdatatable` is intended for "simple column names", in particular as `rqdatatable` often uses `eval()` to work over `data.table` escape characters such as "`\`" and "`\\`" are not reliable in column names.
+Note `rqdatatable` is intended for "simple column names", in particular as `rqdatatable` often uses `eval()` to work over `data.table` escape characters such as "`\`" and "`\\`" are not reliable in column names.  Also `rqdatatable` does not support tables with no columns.
 
