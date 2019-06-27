@@ -86,8 +86,7 @@ pre-assembling the pipeline. "Immediate mode" is a convenience for ad-hoc analys
 performance impact, so we encourage users to build pipelines for most work.  Some notes on the issue can be found
 [here](https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md).
 
-`rqdatatable` is a fairly complete implementation of `rquery`.  The main differences are the `rqdatatable` implementations of `sql_node()` and `theta_join()` are implemented by round-tripping through a database handle specified by the `rquery.rquery_db_executor` option (so it is not they are not very desirable implementation).
-
+`rqdatatable` implements the `rquery` grammar in the style of a "Turing or Cook reduction" (implementing the result in terms of multiple oracle calls to the related system).  For some related work on translating `dplyr` to `data.table` in the style of "Karp reductions" (implementing the result as a translation into a single problem in the related system) please see [`table.express`](https://github.com/asardaes/table.express) and also [`dtplyr`](https://github.com/tidyverse/dtplyr) (though the `0.0.3` and prior versions of `dtplyr` have severe performance issues due to excess table copying, [ref](https://github.com/WinVector/Examples/blob/master/Time_dtplyr/time_dtplyr.md), [ref](https://github.com/WinVector/Examples/blob/master/Time_dtplyr/time_dtplyr_rq.md)).
 
 To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
