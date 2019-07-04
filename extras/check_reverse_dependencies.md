@@ -8,13 +8,13 @@ package = "rqdatatable"
 date()
 ```
 
-    ## [1] "Sat Jun  1 08:24:32 2019"
+    ## [1] "Thu Jul  4 09:18:53 2019"
 
 ``` r
 packageVersion(package)
 ```
 
-    ## [1] '1.1.8'
+    ## [1] '1.1.9'
 
 ``` r
 parallelCluster <- NULL
@@ -33,7 +33,7 @@ setwd(td)
 print(td)
 ```
 
-    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//Rtmpnn7TQW"
+    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//RtmpsgbbKA"
 
 ``` r
 options(repos = c(CRAN="https://cloud.r-project.org"))
