@@ -1,4 +1,9 @@
 
+# rqdatatable 1.2.0 2019/07/11
+
+ * Move to new f_db signature.
+
+
 # rqdatatable 1.1.9 2019/07/04
 
  * Use non-strict let().

@@ -21,7 +21,7 @@ rq_ufn(source, step, ..., columns_produced = NULL,
 
 \item{use_data_table}{logical, if TRUE use data.table code path.}
 
-\item{f_db}{database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd) (db being a database handle, can't be a nested rquery pipeline).}
+\item{f_db}{database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd, ...) (db being a database handle, can't be a nested rquery pipeline).}
 
 \item{temp_name_source}{a wrapr::mk_tmp_name_source().}
 

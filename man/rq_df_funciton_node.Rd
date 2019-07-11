@@ -14,7 +14,7 @@ rq_df_funciton_node(., f, ..., f_db = NULL, columns_produced,
 
 \item{...}{force later arguments to bind by name.}
 
-\item{f_db}{implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle). NULL defaults to using f.}
+\item{f_db}{implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd, ...) (db being a database handle). NULL defaults to using f.}
 
 \item{columns_produced}{character columns produces by f.}
 

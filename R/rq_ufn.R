@@ -23,7 +23,7 @@ NULL
 #' @param columns_produced columns of this node's result.
 #' @param check_result_details logical, if TRUE enforce result type and columns.
 #' @param use_data_table logical, if TRUE use data.table code path.
-#' @param f_db database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd) (db being a database handle, can't be a nested rquery pipeline).
+#' @param f_db database implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd, ...) (db being a database handle, can't be a nested rquery pipeline).
 #' @param temp_name_source a wrapr::mk_tmp_name_source().
 #' @param env environment to work in.
 #' @return wrapped function
@@ -49,7 +49,7 @@ rq_ufn.relop <- function(source, step,
                          columns_produced = NULL,
                          check_result_details = TRUE,
                          use_data_table = TRUE,
-                         f_db = function(db, incoming_table_name, outgoing_table_name, nd)  { stop("f_db not defined")},
+                         f_db = function(db, incoming_table_name, outgoing_table_name, nd, ...)  { stop("f_db not defined")},
                          temp_name_source = wrapr::mk_tmp_name_source(),
                          env = parent.frame()) {
   force(columns_produced)

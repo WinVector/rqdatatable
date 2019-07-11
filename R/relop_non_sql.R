@@ -1,7 +1,7 @@
 
 
 mk_f_db_default <- function(f, cols) {
-  function(db, incoming_table_name, outgoing_table_name, nd = NULL) {
+  function(db, incoming_table_name, outgoing_table_name, nd = NULL, ...) {
     colsq <- vapply(cols,
                     function(ci) {
                       rquery::quote_identifier(db, ci)
@@ -24,7 +24,7 @@ mk_f_db_default <- function(f, cols) {
 #' @param . or data.frame input.
 #' @param f function that takes a data.table to a data.frame (or data.table).
 #' @param ... force later arguments to bind by name.
-#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name) (db being a database handle). NULL defaults to using f.
+#' @param f_db implementation signature: f_db(db, incoming_table_name, outgoing_table_name, nd, ...) (db being a database handle). NULL defaults to using f.
 #' @param columns_produced character columns produces by f.
 #' @param display_form display form for node.
 #' @param orig_columns orig_columns, if TRUE assume all input columns are present in derived table.
