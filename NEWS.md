@@ -1,8 +1,8 @@
 
-# rqdatatable 1.2.0 2019/07/11
+# rqdatatable 1.2.0 2019/07/23
 
  * Move to new f_db signature.
-
+ * Adjust license.
 
 # rqdatatable 1.1.9 2019/07/04
 
