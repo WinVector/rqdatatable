@@ -8,13 +8,13 @@ package = "rqdatatable"
 date()
 ```
 
-    ## [1] "Thu Jul  4 09:18:53 2019"
+    ## [1] "Mon Aug 19 06:54:16 2019"
 
 ``` r
 packageVersion(package)
 ```
 
-    ## [1] '1.1.9'
+    ## [1] '1.2.0'
 
 ``` r
 parallelCluster <- NULL
@@ -33,16 +33,12 @@ setwd(td)
 print(td)
 ```
 
-    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//RtmpsgbbKA"
+    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//RtmpwpXENB"
 
 ``` r
 options(repos = c(CRAN="https://cloud.r-project.org"))
 jobsdfe <- enqueueJobs(package=package, directory=td)
-```
 
-    ## Error: No dependencies for rqdatatable
-
-``` r
 mk_fn <- function(package, directory) {
   force(package)
   force(directory)
@@ -62,6 +58,8 @@ if(!is.null(parallelCluster)) {
 }
 ```
 
+    ## cdata_1.1.1 started at 2019-08-19 06:54:20 success at 2019-08-19 06:54:55 (1/0/0)
+
     ## [1] id     title  status
     ## <0 rows> (or 0-length row.names)
 
@@ -69,13 +67,17 @@ if(!is.null(parallelCluster)) {
 summariseQueue(package=package, directory=td)
 ```
 
-    ## Test of rqdatatable had 0 successes, 0 failures, and 0 skipped packages.
-
-    ## Warning in min(starttime): no non-missing arguments to min; returning Inf
-
-    ## Warning in max(endtime): no non-missing arguments to max; returning -Inf
-
-    ## Error in as.POSIXct.numeric(time1): 'origin' must be supplied
+    ## Test of rqdatatable had 1 successes, 0 failures, and 0 skipped packages. 
+    ## Ran from 2019-08-19 06:54:20 to 2019-08-19 06:54:55 for 35 secs 
+    ## Average of 35 secs relative to 34.788 secs using 1 runners
+    ## 
+    ## Failed packages:   
+    ## 
+    ## Skipped packages:   
+    ## 
+    ## None still working
+    ## 
+    ## None still scheduled
 
 ``` r
 setwd(orig_dir)
