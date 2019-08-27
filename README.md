@@ -10,6 +10,10 @@ piped Codd-style relational algebra hosted on
 complex transformations as a series of relational operators and
 `rqdatatable` implements the operators using `data.table`.
 
+A `Python` version of `rquery`/`rqdatatable` is under initial
+development as
+[`data_algebra`](https://github.com/WinVector/data_algebra).
+
 For example scoring a logistic regression model (which requires
 grouping, ordering, and ranking) is organized as follows. For more on
 this example please see [“Let’s Have Some Sympathy For The Part-time R
@@ -75,7 +79,7 @@ cat(format(rquery_pipeline))
       o= "probability" DESC, "surveyCategory" DESC) %.>%
      select_rows(.,
        row_number <= 1) %.>%
-     rename(.,
+     rename_columns(.,
       c('diagnosis' = 'surveyCategory')) %.>%
      select_columns(.,
        subjectID, diagnosis, probability) %.>%

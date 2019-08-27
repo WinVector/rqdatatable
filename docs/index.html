@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -93,6 +93,7 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 <p><img src="https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png"></p>
 <p><a href="https://github.com/WinVector/rqdatatable"><code>rqdatatable</code></a> is an implementation of the <a href="https://github.com/WinVector/rquery"><code>rquery</code></a> piped Codd-style relational algebra hosted on <a href="http://r-datatable.com"><code>data.table</code></a>. <code>rquery</code> allow the expression of complex transformations as a series of relational operators and <code>rqdatatable</code> implements the operators using <code>data.table</code>.</p>
+<p>A <code>Python</code> version of <code>rquery</code>/<code>rqdatatable</code> is under initial development as <a href="https://github.com/WinVector/data_algebra"><code>data_algebra</code></a>.</p>
 <p>For example scoring a logistic regression model (which requires grouping, ordering, and ranking) is organized as follows. For more on this example please see <a href="http://www.win-vector.com/blog/2017/08/lets-have-some-sympathy-for-the-part-time-r-user/">“Let’s Have Some Sympathy For The Part-time R User”</a>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(<span class="st">"rqdatatable"</span>)</a></code></pre></div>
 <pre><code>## Loading required package: rquery</code></pre>
@@ -140,7 +141,7 @@
   o= "probability" DESC, "surveyCategory" DESC) %.&gt;%
  select_rows(.,
    row_number &lt;= 1) %.&gt;%
- rename(.,
+ rename_columns(.,
   c('diagnosis' = 'surveyCategory')) %.&gt;%
  select_columns(.,
    subjectID, diagnosis, probability) %.&gt;%

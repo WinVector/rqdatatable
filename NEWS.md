@@ -1,4 +1,8 @@
 
+# rqdatatable 1.2.1 2019/08/26
+
+ * Update docs.
+
 # rqdatatable 1.2.0 2019/08/19
 
  * Move to new f_db signature.
