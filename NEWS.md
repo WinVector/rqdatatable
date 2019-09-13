@@ -1,4 +1,9 @@
 
+# rqdatatable 1.2.2 2019/09/13
+
+ * Fix dotdotdot environment copy issue.
+ * Import more from rquery, and ready executor in more cases.
+
 # rqdatatable 1.2.1 2019/08/26
 
  * Update docs.

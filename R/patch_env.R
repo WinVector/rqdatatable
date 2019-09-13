@@ -7,7 +7,9 @@ patch_global_child_env <- function(env) {
   nms <- ls(envir = env, all.names = TRUE)
   tmpenv <- new.env(parent = globalenv())
   for(ni in nms) {
-    assign(ni, get(ni, envir = env), envir = tmpenv)
+    if (as.character(ni)[[1]]!="...") {
+      assign(ni, get(ni, envir = env), envir = tmpenv)
+    }
   }
   tmpenv
 }

@@ -79,7 +79,7 @@ cat(format(rquery_pipeline))
       o= "probability" DESC, "surveyCategory" DESC) %.>%
      select_rows(.,
        row_number <= 1) %.>%
-     rename_columns(.,
+     rename(.,
       c('diagnosis' = 'surveyCategory')) %.>%
      select_columns(.,
        subjectID, diagnosis, probability) %.>%

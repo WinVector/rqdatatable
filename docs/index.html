@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
@@ -141,7 +141,7 @@
   o= "probability" DESC, "surveyCategory" DESC) %.&gt;%
  select_rows(.,
    row_number &lt;= 1) %.&gt;%
- rename_columns(.,
+ rename(.,
   c('diagnosis' = 'surveyCategory')) %.&gt;%
  select_columns(.,
    subjectID, diagnosis, probability) %.&gt;%
@@ -194,6 +194,7 @@
 <li><a href="authors.html">All authors...</a></li>
 </ul>
 </div>
+
 
       </div>
 
