@@ -22,8 +22,17 @@
 ### Windows 
 
     rhub::check_for_cran()
-
-    devtools::check_win_devel()
+    509#> * using R Under development (unstable) (2019-08-30 r77101)
+    510#> * using platform: x86_64-w64-mingw32 (64-bit)
+    511#> * using session charset: ISO8859-1
+    512#> * using option '--as-cran'
+    513#> * checking for file 'rqdatatable/DESCRIPTION' ... OK
+    514#> * checking extension type ... Package
+    515#> * this is package 'rqdatatable' version '1.2.2'
+    516#> * package encoding: UTF-8
+    517#> * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    518#> Maintainer: 'John Mount '
+    574#> Status: OK
  
 ## Reverse dependencies
 
