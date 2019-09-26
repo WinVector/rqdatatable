@@ -178,12 +178,12 @@
               <span class='kw'>maxscore</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/Extremes'>max</a></span>(<span class='no'>assessmentTotal</span>),
               <span class='kw'>groupby</span> <span class='kw'>=</span> <span class='st'>'subjectID'</span>,
               <span class='kw'>count</span> <span class='kw'>=</span> <span class='fu'>n</span>())
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/format'>format</a></span>(<span class='no'>test_p</span>))</div><div class='output co'>#&gt; table(dL; 
-#&gt;   subjectID,
-#&gt;   surveyCategory,
-#&gt;   assessmentTotal) %.&gt;%
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/format'>format</a></span>(<span class='no'>test_p</span>))</div><div class='output co'>#&gt; mk_td("dL", c(
+#&gt;   "subjectID",
+#&gt;   "surveyCategory",
+#&gt;   "assessmentTotal")) %.&gt;%
 #&gt;  project(., maxscore := max(assessmentTotal), count := n(),
-#&gt;   g= subjectID)</div><div class='input'><span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>test_p</span>)</div><div class='output co'>#&gt;    subjectID maxscore count
+#&gt;   groupby = c('subjectID'))</div><div class='input'><span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>test_p</span>)</div><div class='output co'>#&gt;    subjectID maxscore count
 #&gt; 1:         1        5     2
 #&gt; 2:         2        4     2</div><div class='input'>
 </div></pre>

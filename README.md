@@ -64,26 +64,32 @@ We can show the expanded form of query tree.
 cat(format(rquery_pipeline))
 ```
 
-    table(dL; 
-      subjectID,
-      surveyCategory,
-      assessmentTotal) %.>%
+    mk_td("dL", c(
+      "subjectID",
+      "surveyCategory",
+      "assessmentTotal")) %.>%
      extend(.,
       probability := exp(assessmentTotal * 0.237)) %.>%
      extend(.,
       probability := probability / sum(probability),
-      p= subjectID) %.>%
+      partitionby = c('subjectID'),
+      orderby = c(),
+      reverse = c()) %.>%
      extend(.,
       row_number := row_number(),
-      p= subjectID,
-      o= "probability" DESC, "surveyCategory" DESC) %.>%
+      partitionby = c('subjectID'),
+      orderby = c('probability', 'surveyCategory'),
+      reverse = c('probability', 'surveyCategory')) %.>%
      select_rows(.,
        row_number <= 1) %.>%
-     rename(.,
+     rename_columns(.,
       c('diagnosis' = 'surveyCategory')) %.>%
-     select_columns(.,
-       subjectID, diagnosis, probability) %.>%
-     orderby(., subjectID)
+     select_columns(., c(
+       "subjectID", "diagnosis", "probability")) %.>%
+     order_rows(.,
+      c('subjectID'),
+      reverse = c(),
+      limit = NULL)
 
 And execute it using `data.table`.
 

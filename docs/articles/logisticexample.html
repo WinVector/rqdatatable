@@ -89,7 +89,7 @@
       <h1>Logistic Example</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2019-09-13</h4>
+            <h4 class="date">2019-09-26</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/logisticexample.Rmd"><code>vignettes/logisticexample.Rmd</code></a></small>
       <div class="hidden name"><code>logisticexample.Rmd</code></div>
@@ -132,27 +132,34 @@
 <a class="sourceLine" id="cb5-21" data-line-number="21"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rquery/topics/orderby">orderby</a></span>(., <span class="st">'subjectID'</span>)</a></code></pre></div>
 <p>Show expanded form of query tree.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/cat">cat</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/format">format</a></span>(rquery_pipeline))</a></code></pre></div>
-<pre><code>table(dL; 
-  subjectID,
-  surveyCategory,
-  assessmentTotal) %.&gt;%
+<pre><code>mk_td("dL", c(
+  "subjectID",
+  "surveyCategory",
+  "assessmentTotal")) %.&gt;%
  extend(.,
   one := 1) %.&gt;%
  extend(.,
   probability := exp(assessmentTotal * 0.237) / sum(exp(assessmentTotal * 0.237)),
   count := sum(one),
-  p= subjectID) %.&gt;%
+  partitionby = c('subjectID'),
+  orderby = c(),
+  reverse = c()) %.&gt;%
  extend(.,
   rank := rank(probability, surveyCategory),
-  p= subjectID) %.&gt;%
+  partitionby = c('subjectID'),
+  orderby = c(),
+  reverse = c()) %.&gt;%
  extend(.,
   isdiagnosis := rank == count,
   diagnosis := surveyCategory) %.&gt;%
  select_rows(.,
    isdiagnosis == TRUE) %.&gt;%
- select_columns(.,
-   subjectID, diagnosis, probability) %.&gt;%
- orderby(., subjectID)</code></pre>
+ select_columns(., c(
+   "subjectID", "diagnosis", "probability")) %.&gt;%
+ order_rows(.,
+  c('subjectID'),
+  reverse = c(),
+  limit = NULL)</code></pre>
 <p>Execute the calculation.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline)</a></code></pre></div>
 <pre><code>##    subjectID           diagnosis probability

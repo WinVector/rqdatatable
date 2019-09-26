@@ -212,10 +212,10 @@
 <span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/rquery/topics/local_td'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
   <span class='fu'>grouped_regression_node</span>(<span class='no'>.</span>)
 
-<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/format'>format</a></span>(<span class='no'>rquery_pipeline</span>))</div><div class='output co'>#&gt; table(d; 
-#&gt;   x,
-#&gt;   y,
-#&gt;   group) %.&gt;%
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/cat'>cat</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/format'>format</a></span>(<span class='no'>rquery_pipeline</span>))</div><div class='output co'>#&gt; mk_td("d", c(
+#&gt;   "x",
+#&gt;   "y",
+#&gt;   "group")) %.&gt;%
 #&gt;  non_sql_node(., y~x grouped by group)</div><div class='input'>
 <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='no'>rquery_pipeline</span>)</div><div class='output co'>#&gt;        Estimate Std. Error    t value   Pr(&gt;|t|)    Variable group
 #&gt;  1:  0.05921097 0.06246165  0.9479572 0.34421552 (Intercept)     a
