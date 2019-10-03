@@ -1,4 +1,8 @@
 
+# rqdatatable 1.2.3 2019/10/03
+
+ * Work on data.table "odd copy" issue.
+
 # rqdatatable 1.2.2 2019/09/13
 
  * Fix dotdotdot environment copy issue.

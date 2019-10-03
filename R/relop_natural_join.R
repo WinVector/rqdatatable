@@ -87,10 +87,10 @@ ex_data_table.relop_natural_join <- function(optree,
     res[[common_non_key[[i]]]] <- ifelse(is.na(res[[common_non_key[[i]]]]),
                                          res[[new_non_key[[i]]]],
                                          res[[common_non_key[[i]]]])
-    res[[new_non_key[[i]]]] <- NULL
+    res[, (new_non_key[[i]]) := NULL]
   }
   if(!is.null(col_to_zap)) {
-    res[[col_to_zap]] <- NULL
+    res[, (col_to_zap) := NULL]
   }
   res[]
 }

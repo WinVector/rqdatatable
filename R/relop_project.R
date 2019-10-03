@@ -71,9 +71,8 @@ ex_data_table.relop_project <- function(optree,
   expr <- parse(text = src)
   res <- eval(expr, envir = tmpenv, enclos = tmpenv)
   if(length(cols_to_remove)>0) {
-    for(ci in cols_to_remove) {
-      res[[ci]] <- NULL
-    }
+    # https://stackoverflow.com/a/9202485/6901725
+    res[, (cols_to_remove) := NULL]
   }
   res
 }
