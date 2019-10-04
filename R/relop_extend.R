@@ -144,7 +144,7 @@ ex_data_table.relop_extend <- function(optree,
   }
   # fast ranking (seems more compatible with this workflow than data.table::frank())
   # could also try a grouped cumsum()
-  if(need_one_col) {
+  if('rqdatatable_temp_one_col' %in% colnames(x)) {
     x[ , rqdatatable_temp_one_col := NULL]
   }
   x[]

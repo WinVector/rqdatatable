@@ -1,7 +1,7 @@
 
-# rqdatatable 1.2.3 2019/10/03
+# rqdatatable 1.2.3 2019/10/04
 
- * Work on data.table "odd copy" issue.
+ * Correct how we remove columns to use proper data.table notation.
 
 # rqdatatable 1.2.2 2019/09/13
 

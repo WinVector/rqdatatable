@@ -70,6 +70,7 @@ ex_data_table.relop_project <- function(optree,
                 " ]")
   expr <- parse(text = src)
   res <- eval(expr, envir = tmpenv, enclos = tmpenv)
+  cols_to_remove <- intersect(cols_to_remove, colnames(res))
   if(length(cols_to_remove)>0) {
     # https://stackoverflow.com/a/9202485/6901725
     res[, (cols_to_remove) := NULL]
