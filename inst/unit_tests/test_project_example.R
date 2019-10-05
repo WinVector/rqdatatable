@@ -30,5 +30,20 @@ test_project_example <- function() {
 
   RUnit::checkEquals(res, expect)
 
+  ops2 <- local_td(prepared_stratified) %.>%
+    project(.,
+            sum %:=% sum(y),
+            mean %:=% mean(y),
+            size %:=% n(),
+            groupby=c())
+  res2 <- prepared_stratified %.>% ops2
+  res2 <- as.data.frame(res2)
+
+  expect2 <- wrapr::build_frame(
+    "sum"  , "mean", "size" |
+      2    , 0.333333333333, 6      )
+
+  RUnit::checkEquals(res2, expect2)
+
   invisible(NULL)
 }
