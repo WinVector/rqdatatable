@@ -1,5 +1,5 @@
 
-# rqdatatable 1.2.3 2019/10/04
+# rqdatatable 1.2.3 2019/10/05
 
  * Correct how we remove columns to use proper data.table notation.
 
