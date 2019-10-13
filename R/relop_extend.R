@@ -6,6 +6,7 @@ strip_up_through_first_assignment <- function(s) {
 }
 
 data_table_extend_fns <- list(
+  ngroup = list(data.table_version = ".GRP", need_one_col = TRUE),
   rank = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
   row_number = list(data.table_version = "cumsum(rqdatatable_temp_one_col)", need_one_col = TRUE),
   n = list(data.table_version = "sum(rqdatatable_temp_one_col)", need_one_col = TRUE),
