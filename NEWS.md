@@ -1,8 +1,9 @@
 
-# rqdatatable 1.2.3 2019/10/15
+# rqdatatable 1.2.3 2019/10/18
 
  * Correct how we remove columns to use proper data.table notation.
  * Add group id command: ngroup().
+ * Add wrap/ex pattern.
 
 # rqdatatable 1.2.2 2019/09/13
 
