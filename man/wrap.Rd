@@ -27,7 +27,7 @@ immediate pipelines.  Used with \code{ex()}.
  d <- data.frame(x = 1:3, y = 4:6)
  d \%.>\%
    wrap(.) \%.>\%
-   extend(., z = x + y) \%.>\%
+   extend(., z := x + y) \%.>\%
    ex(.)
 
 }

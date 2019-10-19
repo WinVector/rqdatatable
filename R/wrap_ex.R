@@ -15,7 +15,7 @@
 #'  d <- data.frame(x = 1:3, y = 4:6)
 #'  d %.>%
 #'    wrap(.) %.>%
-#'    extend(., z = x + y) %.>%
+#'    extend(., z := x + y) %.>%
 #'    ex(.)
 #'
 #' @export
@@ -66,7 +66,7 @@ r_find_table_values <- function(ops, tables = list()) {
 #'  d <- data.frame(x = 1:3, y = 4:6)
 #'  d %.>%
 #'    wrap(.) %.>%
-#'    extend(., z = x + y) %.>%
+#'    extend(., z := x + y) %.>%
 #'    ex(.)
 #'
 #' @export
