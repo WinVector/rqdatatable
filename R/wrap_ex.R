@@ -153,18 +153,17 @@ lapply_bquote_to_langauge_list <- function(ll, env) {
 select_rows.wrapped_relop <- function(source, expr,
                                       env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rqdatatable::select_rows.wrapped_relop")
-  # TODO: confirm this path
   exprq <- substitute(expr)
   exprq <- lapply_bquote_to_langauge_list(list(exprq), env)[[1]]
-  underlying = select_rows_se(source, exprq,
+  exprs <- paste(format(exprq), collapse = "\n")
+  underlying = select_rows_se(source$underlying, exprs,
                               env = env)
   res <- list(underlying = underlying,
               data_map = source$data_map)
   class(res) <- 'wrapped_relop'
   return(res)
 }
+
 
 
 #' @importFrom rquery select_rows_se
@@ -174,9 +173,7 @@ select_rows.wrapped_relop <- function(source, expr,
 select_rows_se.wrapped_relop <- function(source, expr,
                                          env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rqdatatable::select_rows_se.wrapped_relop")
-  underlying = select_rows_se(source, expr,
+  underlying = select_rows_se(source$underlying, expr,
                               env = env)
   res <- list(underlying = underlying,
               data_map = source$data_map)
@@ -196,7 +193,7 @@ drop_columns.wrapped_relop <- function(source, drops,
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
                           "rqdatatable:drop_columns.wrapped_relo")
-  underlying = drop_columns(source, drops,
+  underlying = drop_columns(source$underlying, drops,
                             strict = strict,
                             env = env)
   res <- list(underlying = underlying,
@@ -212,9 +209,7 @@ drop_columns.wrapped_relop <- function(source, drops,
 #'
 select_columns.wrapped_relop <- function(source, columns, env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rqdatatable::select_columns.wrapped_relop")
-  underlying = select_columns(source, columns,
+  underlying = select_columns(source$underlying, columns,
                               env = env)
   res <- list(underlying = underlying,
               data_map = source$data_map)
@@ -230,9 +225,7 @@ select_columns.wrapped_relop <- function(source, columns, env = parent.frame()) 
 rename_columns.wrapped_relop <- function(source, cmap,
                                          env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rqdatatable::rename_columns.wrapped_relop")
-  underlying = rename_columns(source, cmap,
+  underlying = rename_columns(source$underlying, cmap,
                               env = env)
   res <- list(underlying = underlying,
               data_map = source$data_map)
@@ -254,7 +247,7 @@ order_rows.wrapped_relop <- function(source,
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
                           "rqdatatable::order_rows.wrapped_relop")
-  underlying = order_rows(source,
+  underlying = order_rows(source$underlying,
                           cols = cols,
                           reverse = reverse,
                           limit = limit,
