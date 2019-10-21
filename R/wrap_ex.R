@@ -5,7 +5,6 @@
 # "project",
 # "natural_join",
 # "select_rows",
-# TODO: wrap other common relop pipe stages
 # "drop_columns",
 # "select_columns",
 # "rename_columns",
@@ -52,7 +51,7 @@ extend_se.wrapped_relop <- function(source, assignments,
                                     env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rquery::extend_se.wrapped_relop")
+                          "rqdatatable::extend_se.wrapped_relop")
   underlying = extend_se(source, assignments,
                          partitionby = partitionby,
                          orderby = orderby,
@@ -98,7 +97,7 @@ project_se.wrapped_relop <- function(source,
                                      env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rquery::project_se.wrapped_relop")
+                          "rqdatatable::project_se.wrapped_relop")
   underlying = project_se(source, assignments,
                           groupby = groupby,
                           env = env)
@@ -120,7 +119,7 @@ natural_join.wrapped_relop <- function(a, b,
                                        env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rquery::natural_join.wrapped_relop")
+                          "rqdatatable::natural_join.wrapped_relop")
   data_map <- source$data_map
   if('wrapped_relop' %in% class(b)) {
     for(k in names(b$data_map)) {
@@ -156,7 +155,7 @@ select_rows.wrapped_relop <- function(source, expr,
                                       env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rquery::project_se.wrapped_relop")
+                          "rqdatatable::select_rows.wrapped_relop")
   # TODO: confirm this path
   exprq <- substitute(expr)
   exprq <- lapply_bquote_to_langauge_list(list(exprq), env)[[1]]
@@ -177,9 +176,90 @@ select_rows_se.wrapped_relop <- function(source, expr,
                                          env = parent.frame()) {
   force(env)
   wrapr::stop_if_dot_args(substitute(list(...)),
-                          "rquery::project_se.wrapped_relop")
+                          "rqdatatable::select_rows_se.wrapped_relop")
   underlying = select_rows_se(source, expr,
                               env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+#' @importFrom rquery drop_columns
+#' @export
+#' @keywords internal
+#'
+drop_columns.wrapped_relop <- function(source, drops,
+                                       ...,
+                                       strict = TRUE,
+                                       env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rqdatatable:drop_columns.wrapped_relo")
+  underlying = drop_columns(source, drops,
+                            strict = strict,
+                            env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+#' @importFrom rquery select_columns
+#' @export
+#' @keywords internal
+#'
+select_columns.wrapped_relop <- function(source, columns, env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rqdatatable::select_columns.wrapped_relop")
+  underlying = select_columns(source, columns,
+                              env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+#' @importFrom rquery rename_columns
+#' @export
+#' @keywords internal
+#'
+rename_columns.wrapped_relop <- function(source, cmap,
+                                         env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rqdatatable::rename_columns.wrapped_relop")
+  underlying = rename_columns(source, cmap,
+                              env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+#' @importFrom rquery order_rows
+#' @export
+#' @keywords internal
+#'
+order_rows.wrapped_relop <- function(source,
+                                     cols = NULL,
+                                     ...,
+                                     reverse = NULL,
+                                     limit = NULL,
+                                     env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rqdatatable::order_rows.wrapped_relop")
+  underlying = order_rows(source,
+                          cols = cols,
+                          reverse = reverse,
+                          limit = limit,
+                          env = env)
   res <- list(underlying = underlying,
               data_map = source$data_map)
   class(res) <- 'wrapped_relop'
