@@ -1,4 +1,18 @@
 
+
+# Common ops.
+# "extend",
+# "project",
+# TODO: wrap other common relop pipe stages
+# "natural_join",
+# "select_rows",
+# "drop_columns",
+# "select_columns",
+# "rename_columns",
+# "order_rows",
+# "convert_records", # TODO: rename back to rquery notation
+
+
 #' @importFrom rquery extend
 #' @export
 #' @keywords internal
@@ -23,6 +37,7 @@ extend.wrapped_relop <- function(source,
   class(res) <- 'wrapped_relop'
   return(res)
 }
+
 
 #' @importFrom rquery extend_se
 #' @export
@@ -49,6 +64,54 @@ extend_se.wrapped_relop <- function(source, assignments,
   class(res) <- 'wrapped_relop'
   return(res)
 }
+
+
+
+#' @importFrom rquery project
+#' @export
+#' @keywords internal
+#'
+project.wrapped_relop <- function(source,
+                                  ...,
+                                  groupby = c(),
+                                  env = parent.frame()) {
+  force(env)
+  underlying = project(source$underlying,
+                       ...,
+                       groupby = groupby,
+                       env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+#' @importFrom rquery project_se
+#' @export
+#' @keywords internal
+#'
+project_se.wrapped_relop <- function(source,
+                                     assignments,
+                                     ...,
+                                     groupby=c(),
+                                     env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rquery::project_se.wrapped_relop")
+  underlying = project_se(source, assignments,
+                          groupby = groupby,
+                          env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+
+
+
+
 
 #' Wrap a data frame for later execution.
 #'
@@ -122,7 +185,6 @@ ex <- function(ops,
   ex_data_table(ops$underlying, tables = tables, env=env)
 }
 
-# TODO: wrap other common relop pipe stages
 
 
 
