@@ -120,13 +120,13 @@ natural_join.wrapped_relop <- function(a, b,
   wrapr::stop_if_dot_args(substitute(list(...)),
                           "rqdatatable::natural_join.wrapped_relop")
   data_map <- source$data_map
-  if('wrapped_relop' %in% class(b)) {
-    for(k in names(b$data_map)) {
-      data_map[[k]] <- b$data_map[[k]]
-    }
-    b = b$underlying
+  if(!('wrapped_relop' %in% class(b))) {
+    stop("rqdatatable::natural_join.wrapped_relop expected b to be a wrapped_relop")
   }
-  underlying = natural_join(a, b,
+  for(k in names(b$data_map)) {
+    data_map[[k]] <- b$data_map[[k]]
+  }
+  underlying = natural_join(a, b$underlying,
                             by = by,
                             jointype = jointype,
                             env = env)
@@ -300,6 +300,9 @@ wrap <- function(d,
                  env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::wrap")
   force(env)
+  if(!('data.frame' %in% class(d))) {
+    stop("rqdatatable::wrap expected d to be a data.frame")
+  }
   if(length(table_name)<=0) {
     table_name <- as.character(substitute(d))
     if(length(table_name)!=1) {
