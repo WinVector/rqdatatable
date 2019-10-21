@@ -154,10 +154,22 @@ select_rows.wrapped_relop <- function(source, expr,
                                       env = parent.frame()) {
   force(env)
   exprq <- substitute(expr)
-  exprq <- lapply_bquote_to_langauge_list(list(exprq), env)[[1]]
-  exprs <- paste(format(exprq), collapse = "\n")
-  underlying = select_rows_se(source$underlying, exprs,
-                              env = env)
+  # # value oriented solution1: parse and pass on, a bit brutal
+  # exprq <- lapply_bquote_to_langauge_list(list(exprq), env)[[1]]
+  # exprs <- paste(format(exprq), collapse = "\n")
+  # underlying = select_rows_se(source$underlying, exprs,
+  #                             env = env)
+  # # value oriented solution2: substitute and apss on
+  # exprs <- format(exprq)
+  # underlying = select_rows_se(source$underlying, exprs,
+  #                             env = env)
+  # # substitute/do.call based solution
+  underlying = do.call(
+    select_rows,
+    list(source$underlying,
+         exprq,
+         env = env),
+    envir = env)
   res <- list(underlying = underlying,
               data_map = source$data_map)
   class(res) <- 'wrapped_relop'
@@ -273,7 +285,7 @@ order_rows.wrapped_relop <- function(source,
 #'
 #' @param d data.frame
 #' @param ... not used, force later argument to be referred by name
-#' @param name character, name of table
+#' @param table_name character, name of table
 #' @param env environment to work in.
 #' @return a table description, with data attached
 #'
@@ -327,7 +339,7 @@ wrap <- function(d,
 #'  d %.>%
 #'    wrap(.) %.>%
 #'    extend(., z := x + y) %.>%
-#'    do(.)
+#'    ex(.)
 #'
 #' @export
 #'

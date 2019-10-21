@@ -11,9 +11,9 @@ wrap(d, ..., table_name = NULL, env = parent.frame())
 
 \item{...}{not used, force later argument to be referred by name}
 
-\item{env}{environment to work in.}
+\item{table_name}{character, name of table}
 
-\item{name}{character, name of table}
+\item{env}{environment to work in.}
 }
 \value{
 a table description, with data attached

@@ -25,6 +25,6 @@ Execute a ops-dag using `code{wrap()}` data as values.
  d \%.>\%
    wrap(.) \%.>\%
    extend(., z := x + y) \%.>\%
-   do(.)
+   ex(.)
 
 }
