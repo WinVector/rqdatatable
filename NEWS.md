@@ -4,6 +4,7 @@
  * Correct how we remove columns to use proper data.table notation.
  * Add group id command: ngroup().
  * Add wrap/ex pattern.
+ * Work on decorator execution (in favor of monad solution, or annotation solution).
 
 # rqdatatable 1.2.2 2019/09/13
 

@@ -3,9 +3,9 @@
 # Common ops.
 # "extend",
 # "project",
-# TODO: wrap other common relop pipe stages
 # "natural_join",
 # "select_rows",
+# TODO: wrap other common relop pipe stages
 # "drop_columns",
 # "select_columns",
 # "rename_columns",
@@ -86,6 +86,7 @@ project.wrapped_relop <- function(source,
   return(res)
 }
 
+
 #' @importFrom rquery project_se
 #' @export
 #' @keywords internal
@@ -106,6 +107,86 @@ project_se.wrapped_relop <- function(source,
   class(res) <- 'wrapped_relop'
   return(res)
 }
+
+
+#' @importFrom rquery natural_join
+#' @export
+#' @keywords internal
+#'
+natural_join.wrapped_relop <- function(a, b,
+                                       ...,
+                                       by,
+                                       jointype = 'INNER',
+                                       env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rquery::natural_join.wrapped_relop")
+  data_map <- source$data_map
+  if('wrapped_relop' %in% class(b)) {
+    for(k in names(b$data_map)) {
+      data_map[[k]] <- b$data_map[[k]]
+    }
+    b = b$underlying
+  }
+  underlying = natural_join(a, b,
+                            by = by,
+                            jointype = jointype,
+                            env = env)
+  res <- list(underlying = underlying,
+              data_map = data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+lapply_bquote_to_langauge_list <- function(ll, env) {
+  force(env)
+  lapply(ll,
+         function(li) {
+           do.call(bquote, list(expr = li, where = env), envir = env)
+         })
+}
+
+
+#' @importFrom rquery select_rows
+#' @export
+#' @keywords internal
+#'
+select_rows.wrapped_relop <- function(source, expr,
+                                      env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rquery::project_se.wrapped_relop")
+  # TODO: confirm this path
+  exprq <- substitute(expr)
+  exprq <- lapply_bquote_to_langauge_list(list(exprq), env)[[1]]
+  underlying = select_rows_se(source, exprq,
+                              env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
+#' @importFrom rquery select_rows_se
+#' @export
+#' @keywords internal
+#'
+select_rows_se.wrapped_relop <- function(source, expr,
+                                         env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rquery::project_se.wrapped_relop")
+  underlying = select_rows_se(source, expr,
+                              env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
 
 
 
