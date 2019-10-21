@@ -4,16 +4,16 @@
 \alias{wrap}
 \title{Wrap a data frame for later execution.}
 \usage{
-wrap(d, ..., name = NULL, env = parent.frame())
+wrap(d, ..., table_name = NULL, env = parent.frame())
 }
 \arguments{
 \item{d}{data.frame}
 
 \item{...}{not used, force later argument to be referred by name}
 
-\item{name}{character, name of table}
-
 \item{env}{environment to work in.}
+
+\item{name}{character, name of table}
 }
 \value{
 a table description, with data attached

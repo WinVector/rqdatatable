@@ -296,15 +296,17 @@ order_rows.wrapped_relop <- function(source,
 #'
 wrap <- function(d,
                  ...,
-                 name = NULL,
+                 table_name = NULL,
                  env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::wrap")
   force(env)
-  table_name <- as.character(substitute(d))
-  if(length(table_name)!=1) {
-    table_name <- 'd'
+  if(length(table_name)<=0) {
+    table_name <- as.character(substitute(d))
+    if(length(table_name)!=1) {
+      table_name <- 'd'
+    }
   }
-  underlying <- local_td(d, name = name, env = env)
+  underlying <- local_td(d, name = table_name, env = env)
   data_map = list(d)
   names(data_map) = table_name
   res <- list(underlying = underlying,
@@ -329,7 +331,7 @@ wrap <- function(d,
 #'  d %.>%
 #'    wrap(.) %.>%
 #'    extend(., z := x + y) %.>%
-#'    ex(.)
+#'    do(.)
 #'
 #' @export
 #'
@@ -345,7 +347,16 @@ ex <- function(ops,
   ex_data_table(ops$underlying, tables = tables, env=env)
 }
 
+#' @export
+format.wrapped_relop <- function(x, ...) {
+  paste0("[",
+         format(x$underlying),
+         "](\n ",
+         paste(names(x$data_map), collapse = ', '),
+         ")")
+}
 
-
-
-
+#' @export
+print.wrapped_relop <- function (x, ...) {
+  cat(format(x, ...))
+}
