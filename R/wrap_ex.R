@@ -10,7 +10,7 @@
 # "select_columns",
 # "rename_columns",
 # "order_rows",
-# "convert_records", # TODO: rename back to rquery notation
+# "convert_records", # may not be able to wrapr the rquery equivlent here, but must do it in cdata
 
 
 #' @importFrom rquery extend
