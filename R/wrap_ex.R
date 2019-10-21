@@ -9,8 +9,7 @@
 # "select_columns",
 # "rename_columns",
 # "order_rows",
-# "convert_records", # may not be able to wrapr the rquery equivlent here, but must do it in cdata
-
+# "convert_records", # exported form cdata as: build_pivot_control.wrapped_relop, blocks_to_rowrecs.wrapped_relop, unpivot_to_blocks.wrapped_relop
 
 #' @importFrom rquery extend
 #' @export
