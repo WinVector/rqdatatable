@@ -1,4 +1,30 @@
 
+#' @importFrom rquery extend
+#' @export
+#' @keywords internal
+#'
+extend.wrapped_relop <- function(source,
+                                 ...,
+                                 partitionby = NULL,
+                                 orderby = NULL,
+                                 reverse = NULL,
+                                 display_form = NULL,
+                                 env = parent.frame()) {
+  force(env)
+  underlying = extend(source$underlying,
+                      ...,
+                      partitionby = partitionby,
+                      orderby = orderby,
+                      reverse = reverse,
+                      display_form = display_form,
+                      env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
+
+
 #' Wrap a data frame for later execution.
 #'
 #' Create a table description that includes the actual data.  Prevents wastefull table copies in
@@ -30,25 +56,13 @@ wrap <- function(d,
   if(length(table_name)!=1) {
     table_name <- 'd'
   }
-  res <- local_td(d, name = name, env = env)
-  res$data <- d
+  underlying <- local_td(d, name = name, env = env)
+  data_map = list(d)
+  names(data_map) = table_name
+  res <- list(underlying = underlying,
+              data_map = data_map)
+  class(res) <- 'wrapped_relop'
   return(res)
-}
-
-
-r_find_table_values <- function(ops, tables = list()) {
-  if("relop_table_source" %in% class(ops)) {
-    dat = ops$data
-    if(!is.null(dat)) {
-      tables[[ops$table_name]] <- dat
-    }
-
-  } else {
-    for(si in ops$source) {
-      tables <- r_find_table_values(si, tables = tables)
-    }
-  }
-  return(tables)
 }
 
 
@@ -75,11 +89,15 @@ ex <- function(ops,
                ...,
                env = parent.frame()) {
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex")
+  if(!('wrapped_relop' %in% class(ops))) {
+    stop("rqdatatable::ex expected ops to be of class wrapped_relop")
+  }
   force(env)
-  tables <- r_find_table_values(ops)
-  ex_data_table(ops, tables = tables, env=env)
+  tables <- ops$data_map
+  ex_data_table(ops$underlying, tables = tables, env=env)
 }
 
+# TODO: wrap other common relop pipe stages
 
 
 
