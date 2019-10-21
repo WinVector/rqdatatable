@@ -24,6 +24,31 @@ extend.wrapped_relop <- function(source,
   return(res)
 }
 
+#' @importFrom rquery extend_se
+#' @export
+#' @keywords internal
+#'
+extend_se.wrapped_relop <- function(source, assignments,
+                                    ...,
+                                    partitionby = NULL,
+                                    orderby = NULL,
+                                    reverse = NULL,
+                                    display_form = NULL,
+                                    env = parent.frame()) {
+  force(env)
+  wrapr::stop_if_dot_args(substitute(list(...)),
+                          "rquery::extend_se.wrapped_relop")
+  underlying = extend_se(source, assignments,
+                         partitionby = partitionby,
+                         orderby = orderby,
+                         reverse = reverse,
+                         display_form = display_form,
+                         env = env)
+  res <- list(underlying = underlying,
+              data_map = source$data_map)
+  class(res) <- 'wrapped_relop'
+  return(res)
+}
 
 #' Wrap a data frame for later execution.
 #'
