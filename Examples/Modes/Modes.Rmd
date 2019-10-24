@@ -1,0 +1,10 @@
+---
+title: "Modes"
+output: html_document
+---
+
+[`rqdatatable`](https://github.com/WinVector/rqdatatable)/[`rquery`](https://github.com/WinVector/rquery) is designed to have a number of different modes of use.  The primary intended one the slow intentinoal mode of building up a pipelines from a description of the tables to be acted on.
+
+```{r}
+
+```
