@@ -1,10 +1,226 @@
 ---
-title: "Modes"
-output: html_document
+title: "rquery Modes"
+output: github_document
 ---
 
-[`rqdatatable`](https://github.com/WinVector/rqdatatable)/[`rquery`](https://github.com/WinVector/rquery) is designed to have a number of different modes of use.  The primary intended one the slow intentinoal mode of building up a pipelines from a description of the tables to be acted on.
+[`rqdatatable`](https://github.com/WinVector/rqdatatable)/[`rquery`](https://github.com/WinVector/rquery) is designed to have a number of different modes of use.  The primary intended one the considered mode of building up a pipelines from a description of the tables to be acted on.
+
+As our example, lets start with the following example data.
 
 ```{r}
+d <- data.frame(
+  x = c(1, 2, 3, 4, 5, 6),
+  y = c(2, 2, 2, 3, 7, 10),
+  g = c('a', 'a', 'a', 'b', 'b' ,'b'),
+  stringsAsFactors = FALSE
+)
 
+knitr::kable(d)
 ```
+
+For our task: let's find a row with the larget ratio of 'y' to 'x', per group 'g'.
+
+The `rquery` concept is to break this into small sub-goals and steps:
+
+ * Find the ratio of 'y' to 'x'.
+ * Rank the rows by this ratio.
+ * Mark our chosen rows.
+
+In the standard `rquery` practice we build up our processing pipeline to follow our above plan.  The translation invovles some familiarity with the `rquery` steps, including the row-numbering command [`row_number()`](https://github.com/WinVector/rquery/blob/master/Examples/WindowFunctions/WindowFunctions.md).
+
+```{r}
+library(rquery)
+
+ops <- local_td(d) %.>%  # Describe table for later operations
+  extend(.,       # add a new column
+         ratio := y / x) %.>%
+  extend(.,       # rank the rows by group and order
+         simple_rank := row_number(),
+         partitionby = 'g',
+         orderby = 'ratio',
+         reverse = 'ratio') %.>%
+  extend(.,       # mark the rows we want
+         choice := simple_rank == 1)
+```
+
+The `ops` operator pipelne can than be used to process data.
+
+```{r}
+d %.>%
+  ops %.>%
+  knitr::kable(.)
+```
+
+
+Another way to use `rquery`/`rqdatatable` is in "immediate mode", where we send the data from pipeline stage to pipeline state.
+
+```{r}
+d %.>%
+  extend(.,       # add a new column
+         ratio := y / x) %.>%
+  extend(.,       # rank the rows by group and order
+         simple_rank := row_number(),
+         partitionby = 'g',
+         orderby = 'ratio',
+         reverse = 'ratio') %.>%
+  extend(.,       # mark the rows we want
+         choice := simple_rank == 1) %.>%
+  knitr::kable(.)
+```
+
+Immediate mode skips the `local_td()` step of building a specification for the data to later come, and runs directly on the data.  The advantage of this mode is: it is quick for the user. A disadvantage of this mode is: the pipeline is not left for re-use, and there are possibly expensive data conversions (from `data.frame` to `data.table`) at each operator stage.
+
+```{r}
+d %.>%
+  wrap %.>%       # wrap data in a description
+  extend(.,       # add a new column
+         ratio := y / x) %.>%
+  extend(.,       # rank the rows by group and order
+         simple_rank := row_number(),
+         partitionby = 'g',
+         orderby = 'ratio',
+         reverse = 'ratio') %.>%
+  extend(.,       # mark the rows we want
+         choice := simple_rank == 1) %.>%
+  ex %.>%         # signal construction done, and execute
+  knitr::kable(.)
+```
+
+The difference is: we use the `wrap` to data, and then later `ex` to say we are done specifying steps and to execute the data.
+
+```{r}
+library(microbenchmark)
+
+n_rows <- 1000000
+d_large <- data.frame(
+  x = rnorm(n = n_rows),
+  y = rnorm(n = n_rows),
+  g = sample(paste0('v_', seq_len(n_rows/10)), 
+             size = n_rows, 
+             replace = TRUE),
+  stringsAsFactors = FALSE
+)
+
+f_compiled <- function() {
+  d_large %.>% ops  # use pre-compiled pipeline
+}
+
+f_immediate <- function() {
+  d_large %.>%
+    extend(.,       # add a new column
+           ratio := y / x) %.>%
+    extend(.,       # rank the rows by group and order
+           simple_rank := row_number(),
+           partitionby = 'g',
+           orderby = 'ratio',
+           reverse = 'ratio') %.>%
+    extend(.,       # mark the rows we want
+           choice := simple_rank == 1)
+}
+
+f_wrapped <- function() {
+  d_large %.>%
+    wrap %.>%       # wrap data in a description
+    extend(.,       # add a new column
+           ratio := y / x) %.>%
+    extend(.,       # rank the rows by group and order
+           simple_rank := row_number(),
+           partitionby = 'g',
+           orderby = 'ratio',
+           reverse = 'ratio') %.>%
+    extend(.,       # mark the rows we want
+           choice := simple_rank == 1) %.>%
+    ex              # signal construction done, and execute
+}
+
+f_dplyr <- function() {
+  d_large %.>%
+    mutate(.,       # add a new column
+           ratio := y / x) %.>%
+    group_by(.,     # rank the rows by group and order
+             g) %.>%
+    arrange(.,
+            -ratio) %.>%
+    mutate(.,      
+           simple_rank := row_number()) %.>%
+    mutate(.,       # mark the rows we want
+           choice := simple_rank == 1)
+}
+
+timings <- microbenchmark(
+  f_compiled = f_compiled(),
+  f_immediate = f_immediate(),
+  f_wrapped = f_wrapped(),
+  times = 10L
+)
+
+print(timings)
+```
+
+Notice, the speed differences are usually not that large.  Then intent is: pipeline construction and data conversion steps should be cheap compared to the actual processing steps.
+
+Let's re-run the timings with similar `dplyr` and `dtplyr` pipelines.  We are using the most current `CRAN` versions of each (`dtplyr` is currently being re-enginneered to try to also cut down the number conversions).
+
+```{r}
+library(dplyr)
+packageVersion('dplyr')
+library(data.table)
+library(dtplyr)
+packageVersion('dtplyr')
+
+dt_large <- data.table(d_large)
+
+f_dplyr <- function() {
+  d_large %.>%
+    mutate(.,       # add a new column
+           ratio := y / x) %.>%
+    group_by(.,     # rank the rows by group and order
+             g) %.>%
+    arrange(.,
+            -ratio) %.>%
+    mutate(.,      
+           simple_rank := row_number()) %.>%
+    ungroup(.) %.>% # end of rank block
+    mutate(.,       # mark the rows we want
+           choice := simple_rank == 1)
+}
+```
+
+Above we see a key difference between `rquery` and `dplyr`: `rquery` grouped and window functions are single operators in `rquery`, but are driven by annotations between steps in `dplyr`.
+
+`dtplyr` seems to error-out on this problem, so we won't try to time it.
+
+```{r, error=TRUE}
+f_dtplyr <- function() {
+  dt_large %.>%
+    mutate(.,       # add a new column
+           ratio = y / x) %.>%
+    group_by(.,     # rank the rows by group and order
+             g) %.>%
+    arrange(.,
+            -ratio) %.>%
+    mutate(.,      
+           simple_rank = row_number()) %.>%
+    ungroup(.) %.>% # end of rank block
+    mutate(.,       # mark the rows we want
+           choice = simple_rank == 1)
+}
+
+f_dtplyr()
+```
+
+
+```{r}
+timings <- microbenchmark(
+  compiled = f_compiled(),
+  immediate = f_immediate(),
+  wrapped = f_wrapped(),
+  dplyr = f_dplyr(),
+  #  dtplyr = f_dtplyr(),
+  times = 10L
+)
+
+print(timings)
+```
+
+
