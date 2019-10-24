@@ -18,7 +18,7 @@ d <- data.frame(
 knitr::kable(d)
 ```
 
-For our task: let's find a row with the larget ratio of 'y' to 'x', per group 'g'.
+For our task: let's find a row with the largest ratio of 'y' to 'x', per group 'g'.
 
 The `rquery` concept is to break this into small sub-goals and steps:
 
@@ -26,7 +26,7 @@ The `rquery` concept is to break this into small sub-goals and steps:
  * Rank the rows by this ratio.
  * Mark our chosen rows.
 
-In the standard `rquery` practice we build up our processing pipeline to follow our above plan.  The translation invovles some familiarity with the `rquery` steps, including the row-numbering command [`row_number()`](https://github.com/WinVector/rquery/blob/master/Examples/WindowFunctions/WindowFunctions.md).
+In the standard `rquery` practice we build up our processing pipeline to follow our above plan.  The translation involves some familiarity with the `rquery` steps, including the row-numbering command [`row_number()`](https://github.com/WinVector/rquery/blob/master/Examples/WindowFunctions/WindowFunctions.md).
 
 ```{r}
 library(rquery)
@@ -43,7 +43,7 @@ ops <- local_td(d) %.>%  # Describe table for later operations
          choice := simple_rank == 1)
 ```
 
-The `ops` operator pipelne can than be used to process data.
+The `ops` operator pipeline can than be used to process data.
 
 ```{r}
 d %.>%
@@ -91,6 +91,7 @@ The difference is: we use the `wrap` to data, and then later `ex` to say we are 
 ```{r}
 library(microbenchmark)
 
+set.seed(2019)
 n_rows <- 1000000
 d_large <- data.frame(
   x = rnorm(n = n_rows),
@@ -101,12 +102,12 @@ d_large <- data.frame(
   stringsAsFactors = FALSE
 )
 
-f_compiled <- function() {
-  d_large %.>% ops  # use pre-compiled pipeline
+f_compiled <- function(dat) {
+  dat %.>% ops  # use pre-compiled pipeline
 }
 
-f_immediate <- function() {
-  d_large %.>%
+f_immediate <- function(dat) {
+  dat %.>%
     extend(.,       # add a new column
            ratio := y / x) %.>%
     extend(.,       # rank the rows by group and order
@@ -118,8 +119,8 @@ f_immediate <- function() {
            choice := simple_rank == 1)
 }
 
-f_wrapped <- function() {
-  d_large %.>%
+f_wrapped <- function(dat) {
+  dat %.>%
     wrap %.>%       # wrap data in a description
     extend(.,       # add a new column
            ratio := y / x) %.>%
@@ -132,95 +133,37 @@ f_wrapped <- function() {
            choice := simple_rank == 1) %.>%
     ex              # signal construction done, and execute
 }
-
-f_dplyr <- function() {
-  d_large %.>%
-    mutate(.,       # add a new column
-           ratio := y / x) %.>%
-    group_by(.,     # rank the rows by group and order
-             g) %.>%
-    arrange(.,
-            -ratio) %.>%
-    mutate(.,      
-           simple_rank := row_number()) %.>%
-    mutate(.,       # mark the rows we want
-           choice := simple_rank == 1)
-}
-
-timings <- microbenchmark(
-  f_compiled = f_compiled(),
-  f_immediate = f_immediate(),
-  f_wrapped = f_wrapped(),
-  times = 10L
-)
-
-print(timings)
 ```
 
-Notice, the speed differences are usually not that large.  Then intent is: pipeline construction and data conversion steps should be cheap compared to the actual processing steps.
 
-Let's re-run the timings with similar `dplyr` and `dtplyr` pipelines.  We are using the most current `CRAN` versions of each (`dtplyr` is currently being re-enginneered to try to also cut down the number conversions).
+And we can also time `data.table` itself (without the translation overhead, though we are adding in the time to convert the `data.frame`).
 
 ```{r}
-library(dplyr)
-packageVersion('dplyr')
 library(data.table)
-library(dtplyr)
-packageVersion('dtplyr')
 
-dt_large <- data.table(d_large)
-
-f_dplyr <- function() {
-  d_large %.>%
-    mutate(.,       # add a new column
-           ratio := y / x) %.>%
-    group_by(.,     # rank the rows by group and order
-             g) %.>%
-    arrange(.,
-            -ratio) %.>%
-    mutate(.,      
-           simple_rank := row_number()) %.>%
-    ungroup(.) %.>% # end of rank block
-    mutate(.,       # mark the rows we want
-           choice := simple_rank == 1)
+f_data_table = function(dat) {
+  dat <- data.table(dat)
+  dat[ , ratio := y / x
+       ][order(-ratio) , simple_rank := 1:.N, by = list(g)
+          ][ , choice := simple_rank == 1]
 }
-```
-
-Above we see a key difference between `rquery` and `dplyr`: `rquery` grouped and window functions are single operators in `rquery`, but are driven by annotations between steps in `dplyr`.
-
-`dtplyr` seems to error-out on this problem, so we won't try to time it.
-
-```{r, error=TRUE}
-f_dtplyr <- function() {
-  dt_large %.>%
-    mutate(.,       # add a new column
-           ratio = y / x) %.>%
-    group_by(.,     # rank the rows by group and order
-             g) %.>%
-    arrange(.,
-            -ratio) %.>%
-    mutate(.,      
-           simple_rank = row_number()) %.>%
-    ungroup(.) %.>% # end of rank block
-    mutate(.,       # mark the rows we want
-           choice = simple_rank == 1)
-}
-
-f_dtplyr()
 ```
 
 
 ```{r}
 timings <- microbenchmark(
-  compiled = f_compiled(),
-  immediate = f_immediate(),
-  wrapped = f_wrapped(),
-  dplyr = f_dplyr(),
-  #  dtplyr = f_dtplyr(),
+  rquery_compiled = f_compiled(d_large),
+  rquery_immediate = f_immediate(d_large),
+  rquery_wrapped = f_wrapped(d_large),
+  data.table = f_data_table(d_large),
   times = 10L
 )
 
 print(timings)
 ```
+
+Notice, the speed differences are usually not that large for short pipelines.  Then intent is: pipeline construction and data conversion steps should be cheap compared to the actual processing steps. 
+
+We have an attempt to add `dplyr` and `dtplyr` to the comparisons [here](https://github.com/WinVector/rqdatatable/blob/master/Examples/Modes/Modes.md).
 
 
