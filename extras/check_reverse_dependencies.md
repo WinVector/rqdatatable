@@ -8,7 +8,7 @@ package = "rqdatatable"
 date()
 ```
 
-    ## [1] "Fri Oct  4 08:44:48 2019"
+    ## [1] "Wed Oct 23 23:14:48 2019"
 
 ``` r
 packageVersion(package)
@@ -33,7 +33,7 @@ setwd(td)
 print(td)
 ```
 
-    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//RtmpNuIJJK"
+    ## [1] "/var/folders/6t/x_r4km317f3gdmnvlcwb349w0000gn/T//Rtmp3fv7j6"
 
 ``` r
 options(repos = c(CRAN="https://cloud.r-project.org"))
@@ -44,6 +44,7 @@ mk_fn <- function(package, directory) {
   force(directory)
   function(i) {
     library("prrd")
+    options(repos = c(CRAN="https://cloud.r-project.org"))
     setwd(directory)
     Sys.sleep(1*i)
     dequeueJobs(package=package, directory=directory)
@@ -58,8 +59,8 @@ if(!is.null(parallelCluster)) {
 }
 ```
 
-    ## cdata_1.1.2 started at 2019-10-04 08:44:50 success at 2019-10-04 08:45:24 (1/0/0) 
-    ## WVPlots_1.2.0 started at 2019-10-04 08:45:24 success at 2019-10-04 08:46:49 (2/0/0)
+    ## cdata_1.1.2 started at 2019-10-23 23:14:52 success at 2019-10-23 23:16:08 (1/0/0) 
+    ## WVPlots_1.2.1 started at 2019-10-23 23:16:08 success at 2019-10-23 23:18:30 (2/0/0)
 
     ## [1] id     title  status
     ## <0 rows> (or 0-length row.names)
@@ -69,8 +70,8 @@ summariseQueue(package=package, directory=td)
 ```
 
     ## Test of rqdatatable had 2 successes, 0 failures, and 0 skipped packages. 
-    ## Ran from 2019-10-04 08:44:50 to 2019-10-04 08:46:49 for 1.983 mins 
-    ## Average of 59.5 secs relative to 59.679 secs using 1 runners
+    ## Ran from 2019-10-23 23:14:52 to 2019-10-23 23:18:30 for 3.633 mins 
+    ## Average of 109 secs relative to 109.291 secs using 1 runners
     ## 
     ## Failed packages:   
     ## 

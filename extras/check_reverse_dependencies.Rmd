@@ -28,6 +28,7 @@ mk_fn <- function(package, directory) {
   force(directory)
   function(i) {
     library("prrd")
+    options(repos = c(CRAN="https://cloud.r-project.org"))
     setwd(directory)
     Sys.sleep(1*i)
     dequeueJobs(package=package, directory=directory)
