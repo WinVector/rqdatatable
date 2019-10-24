@@ -47,6 +47,13 @@ ops <- local_td(d_large) %.>%  # Describe table for later operations
          reverse = 'ratio') %.>%
   extend(.,       # mark the rows we want
          choice := simple_rank == 1)
+
+d_large %.>%
+  ops %.>%
+  order_rows(., 'g') %.>%
+  select_rows(., choice) %.>% 
+  head(.) %.>%
+  knitr::kable(.)
 ```
 
 
@@ -125,13 +132,19 @@ f_dtplyr <- function(dat) {
              g) %>%
     arrange( -ratio) %>%
     mutate(     
-           simple_rank = .I) %>%
+           simple_rank = 1:.N) %>%
     ungroup() %>%  # end of rank block
     mutate(        # mark the rows we want
            choice = simple_rank == 1)
 }
 
-head(f_dtplyr(d_large))
+res_dtplyr <- f_dtplyr(d_large)
+
+res_dtplyr %.>%
+  order_rows(., 'g') %.>%
+  select_rows(., choice) %.>% 
+  head(.) %.>%
+  knitr::kable(.)
 ```
 
 And we can also time `data.table` itself (without the translation overhead, though we are adding in the time to convert the `data.frame`).
@@ -143,6 +156,14 @@ f_data_table = function(dat) {
        ][order(-ratio) , simple_rank := 1:.N, by = list(g)
           ][ , choice := simple_rank == 1]
 }
+
+res_dt <- f_data_table(d_large)
+
+res_dt %.>%
+  order_rows(., 'g') %.>%
+  select_rows(., choice) %.>% 
+  head(.) %.>%
+  knitr::kable(.)
 ```
 
 

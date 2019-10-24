@@ -202,7 +202,19 @@ f_data_table = function(dat) {
        ][order(-ratio) , simple_rank := 1:.N, by = list(g)
           ][ , choice := simple_rank == 1]
 }
+
+f_data_table(d) %.>%
+  knitr::kable(.)
 ```
+
+| x |  y | g |     ratio | simple\_rank | choice |
+| -: | -: | :- | --------: | -----------: | :----- |
+| 1 |  2 | a | 2.0000000 |            1 | TRUE   |
+| 2 |  2 | a | 1.0000000 |            2 | FALSE  |
+| 3 |  2 | a | 0.6666667 |            3 | FALSE  |
+| 4 |  3 | b | 0.7500000 |            3 | FALSE  |
+| 5 |  7 | b | 1.4000000 |            2 | FALSE  |
+| 6 | 10 | b | 1.6666667 |            1 | TRUE   |
 
 ``` r
 timings <- microbenchmark(
@@ -217,16 +229,16 @@ print(timings)
 ```
 
     ## Unit: milliseconds
-    ##              expr      min       lq      mean    median        uq
-    ##   rquery_compiled 633.6622 650.0457  719.3338  751.8094  756.8682
-    ##  rquery_immediate 827.6549 984.8910 1078.4037 1005.4246 1153.9471
-    ##    rquery_wrapped 695.4244 738.1480  787.9664  765.0884  861.6540
-    ##        data.table 504.8573 548.7947  640.0024  589.4774  699.1614
-    ##        max neval
-    ##   818.0530    10
-    ##  1523.7683    10
-    ##   932.1775    10
-    ##   962.9058    10
+    ##              expr      min       lq      mean   median        uq       max
+    ##   rquery_compiled 621.8146 647.7665  695.2635 681.8875  762.2798  782.3350
+    ##  rquery_immediate 927.1678 967.7020 1057.1413 983.0873 1097.6350 1499.1020
+    ##    rquery_wrapped 655.0536 702.2498  759.0995 750.1097  835.2301  900.5357
+    ##        data.table 497.4235 537.2049  546.8706 546.7018  570.7808  579.2339
+    ##  neval
+    ##     10
+    ##     10
+    ##     10
+    ##     10
 
 Notice, the speed differences are usually not that large for short
 pipelines. Then intent is: pipeline construction and data conversion

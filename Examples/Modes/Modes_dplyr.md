@@ -88,7 +88,23 @@ ops <- local_td(d_large) %.>%  # Describe table for later operations
          reverse = 'ratio') %.>%
   extend(.,       # mark the rows we want
          choice := simple_rank == 1)
+
+d_large %.>%
+  ops %.>%
+  order_rows(., 'g') %.>%
+  select_rows(., choice) %.>% 
+  head(.) %.>%
+  knitr::kable(.)
 ```
+
+|           x |           y | g         |     ratio | simple\_rank | choice |
+| ----------: | ----------: | :-------- | --------: | -----------: | :----- |
+|   0.2773596 |   3.1546090 | v\_1      | 11.373713 |            1 | TRUE   |
+|   0.3373741 |   0.3947169 | v\_10     |  1.169968 |            1 | TRUE   |
+| \-0.4033178 | \-1.2618623 | v\_100    |  3.128705 |            1 | TRUE   |
+|   0.1218793 |   2.6972358 | v\_1000   | 22.130387 |            1 | TRUE   |
+|   0.0029194 |   0.1780082 | v\_10000  | 60.974286 |            1 | TRUE   |
+| \-0.2867625 | \-1.6812063 | v\_100000 |  5.862713 |            1 | TRUE   |
 
 ``` r
 f_compiled <- function(dat) {
@@ -173,26 +189,29 @@ f_dtplyr <- function(dat) {
              g) %>%
     arrange( -ratio) %>%
     mutate(     
-           simple_rank = .I) %>%
+           simple_rank = 1:.N) %>%
     ungroup() %>%  # end of rank block
     mutate(        # mark the rows we want
            choice = simple_rank == 1)
 }
 
-head(f_dtplyr(d_large))
+res_dtplyr <- f_dtplyr(d_large)
+
+res_dtplyr %.>%
+  order_rows(., 'g') %.>%
+  select_rows(., choice) %.>% 
+  head(.) %.>%
+  knitr::kable(.)
 ```
 
-    ## Source: local data table [6 x 6]
-    ## 
-    ## # A tibble: 6 x 6
-    ##        x      y g      ratio simple_rank choice
-    ##    <dbl>  <dbl> <chr>  <dbl>       <int> <lgl> 
-    ## 1  0.277  3.15  v_1   11.4             1 TRUE  
-    ## 2 -0.502 -1.38  v_1    2.74            2 FALSE 
-    ## 3 -1.18  -2.08  v_1    1.75            3 FALSE 
-    ## 4  1.02   1.56  v_1    1.54            4 FALSE 
-    ## 5 -1.48  -1.93  v_1    1.31            5 FALSE 
-    ## 6 -1.03  -0.901 v_1    0.872           6 FALSE
+|           x |           y | g         |     ratio | simple\_rank | choice |
+| ----------: | ----------: | :-------- | --------: | -----------: | :----- |
+|   0.2773596 |   3.1546090 | v\_1      | 11.373713 |            1 | TRUE   |
+|   0.3373741 |   0.3947169 | v\_10     |  1.169968 |            1 | TRUE   |
+| \-0.4033178 | \-1.2618623 | v\_100    |  3.128705 |            1 | TRUE   |
+|   0.1218793 |   2.6972358 | v\_1000   | 22.130387 |            1 | TRUE   |
+|   0.0029194 |   0.1780082 | v\_10000  | 60.974286 |            1 | TRUE   |
+| \-0.2867625 | \-1.6812063 | v\_100000 |  5.862713 |            1 | TRUE   |
 
 And we can also time `data.table` itself (without the translation
 overhead, though we are adding in the time to convert the `data.frame`).
@@ -204,7 +223,24 @@ f_data_table = function(dat) {
        ][order(-ratio) , simple_rank := 1:.N, by = list(g)
           ][ , choice := simple_rank == 1]
 }
+
+res_dt <- f_data_table(d_large)
+
+res_dt %.>%
+  order_rows(., 'g') %.>%
+  select_rows(., choice) %.>% 
+  head(.) %.>%
+  knitr::kable(.)
 ```
+
+|           x |           y | g         |     ratio | simple\_rank | choice |
+| ----------: | ----------: | :-------- | --------: | -----------: | :----- |
+|   0.2773596 |   3.1546090 | v\_1      | 11.373713 |            1 | TRUE   |
+|   0.3373741 |   0.3947169 | v\_10     |  1.169968 |            1 | TRUE   |
+| \-0.4033178 | \-1.2618623 | v\_100    |  3.128705 |            1 | TRUE   |
+|   0.1218793 |   2.6972358 | v\_1000   | 22.130387 |            1 | TRUE   |
+|   0.0029194 |   0.1780082 | v\_10000  | 60.974286 |            1 | TRUE   |
+| \-0.2867625 | \-1.6812063 | v\_100000 |  5.862713 |            1 | TRUE   |
 
 ``` r
 timings <- microbenchmark(
@@ -222,19 +258,19 @@ print(timings)
 
     ## Unit: milliseconds
     ##              expr       min        lq      mean    median        uq
-    ##   rquery_compiled  623.5139  688.6973  811.8352  800.6101  857.8718
-    ##  rquery_immediate  935.4277 1038.1815 1140.6284 1075.4822 1235.3507
-    ##    rquery_wrapped  704.7512  727.7314  840.8779  853.2034  913.8645
-    ##             dplyr 7977.7499 8438.8750 8853.3462 8878.5247 9222.8179
-    ##            dtplyr  838.4266 1075.9857 1163.8247 1183.0681 1255.6366
-    ##        data.table  536.2818  575.5401  667.0928  657.4243  772.9167
+    ##   rquery_compiled  622.7957  658.8947  686.7348  677.8611  685.2826
+    ##  rquery_immediate  779.0562  843.1967  896.2168  851.3933  988.0829
+    ##    rquery_wrapped  665.9337  705.3427  790.4567  772.1591  844.0691
+    ##             dplyr 7751.4788 7931.7369 8229.6599 8254.8785 8392.5296
+    ##            dtplyr  782.4301  881.4511  961.5546  931.8426 1011.3056
+    ##        data.table  487.0091  503.2039  592.4115  543.4839  729.2733
     ##        max neval
-    ##  1185.2507    10
-    ##  1519.1752    10
-    ##  1001.3966    10
-    ##  9684.5956    10
-    ##  1517.9664    10
-    ##   834.3378    10
+    ##   800.3783    10
+    ##  1042.6305    10
+    ##  1036.7086    10
+    ##  8845.9042    10
+    ##  1342.3543    10
+    ##   799.2439    10
 
 For these short pipelines the extra copying in `rquery` immediate mode
 and `dtplyr` are not causing big problems compared to the overall

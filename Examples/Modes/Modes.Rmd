@@ -147,6 +147,9 @@ f_data_table = function(dat) {
        ][order(-ratio) , simple_rank := 1:.N, by = list(g)
           ][ , choice := simple_rank == 1]
 }
+
+f_data_table(d) %.>%
+  knitr::kable(.)
 ```
 
 
