@@ -1,4 +1,8 @@
 
+# rqdatatable 1.2.4 2019/10/24
+
+ * Remove unused methods import.
+ 
 # rqdatatable 1.2.3 2019/10/23
 
  * Correct how we remove columns to use proper data.table notation.
