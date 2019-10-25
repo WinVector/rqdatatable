@@ -74,6 +74,42 @@ d %.>%
 | 5 |  7 | b | 1.4000000 |            2 | FALSE  |
 | 4 |  3 | b | 0.7500000 |            3 | FALSE  |
 
+Another point is: this form documents checkable (and enforcible) pre and
+post conditions on the calculation. For example such a calculation
+documents what columns are required by the calculation, and which ones
+are produced.
+
+``` r
+# columns produced
+column_names(ops)
+```
+
+    ## [1] "x"           "y"           "g"           "ratio"       "simple_rank"
+    ## [6] "choice"
+
+``` r
+# columns used
+columns_used(ops)
+```
+
+    ## $d
+    ## [1] "x" "y" "g"
+
+We can in fact make these conditions the explicit basis of [an
+interpretation of these data transforms as category theory
+arrows](https://github.com/WinVector/rquery/blob/master/Examples/Arrow/Arrow.md).
+
+``` r
+arrow(ops)
+```
+
+    ## [
+    ##  'd':
+    ##  c('x', 'y', 'g')
+    ##    ->
+    ##  c('x', 'y', 'g', 'ratio', 'simple_rank', 'choice')
+    ## ]
+
 Another way to use `rquery`/`rqdatatable` is in “immediate mode”, where
 we send the data from pipeline stage to pipeline state.
 
@@ -229,16 +265,16 @@ print(timings)
 ```
 
     ## Unit: milliseconds
-    ##              expr      min       lq      mean   median        uq       max
-    ##   rquery_compiled 621.8146 647.7665  695.2635 681.8875  762.2798  782.3350
-    ##  rquery_immediate 927.1678 967.7020 1057.1413 983.0873 1097.6350 1499.1020
-    ##    rquery_wrapped 655.0536 702.2498  759.0995 750.1097  835.2301  900.5357
-    ##        data.table 497.4235 537.2049  546.8706 546.7018  570.7808  579.2339
-    ##  neval
-    ##     10
-    ##     10
-    ##     10
-    ##     10
+    ##              expr      min        lq      mean    median        uq
+    ##   rquery_compiled 632.1073  707.7512  884.3015  827.1509  917.1359
+    ##  rquery_immediate 990.0378 1081.7552 1229.7190 1170.1596 1264.2860
+    ##    rquery_wrapped 792.0468  812.7829 1037.3257  957.5072 1097.9530
+    ##        data.table 477.6514  549.4865  657.3342  587.6717  741.8927
+    ##       max neval
+    ##  1356.415    10
+    ##  1630.984    10
+    ##  1945.456    10
+    ##   918.636    10
 
 Notice, the speed differences are usually not that large for short
 pipelines. Then intent is: pipeline construction and data conversion

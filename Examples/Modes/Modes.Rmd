@@ -51,6 +51,21 @@ d %.>%
   knitr::kable(.)
 ```
 
+Another point is: this form documents checkable (and enforcible) pre and post conditions on the calculation.  For example such a calculation documents what columns are required by the calculation, and which ones are produced.
+
+```{r}
+# columns produced
+column_names(ops)
+
+# columns used
+columns_used(ops)
+```
+
+We can in fact make these conditions the explicit basis of [an interpretation of these data transforms as category theory arrows](https://github.com/WinVector/rquery/blob/master/Examples/Arrow/Arrow.md).
+
+```{r}
+arrow(ops)
+```
 
 Another way to use `rquery`/`rqdatatable` is in "immediate mode", where we send the data from pipeline stage to pipeline state.
 
