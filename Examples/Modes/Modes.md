@@ -74,8 +74,8 @@ d %.>%
 | 5 |  7 | b | 1.4000000 |            2 | FALSE  |
 | 4 |  3 | b | 0.7500000 |            3 | FALSE  |
 
-Another point is: this form documents checkable (and enforcible) pre and
-post conditions on the calculation. For example such a calculation
+Another point is: this form documents check-able (and enforceable) pre
+and post conditions on the calculation. For example such a calculation
 documents what columns are required by the calculation, and which ones
 are produced.
 
@@ -169,7 +169,67 @@ d %.>%
 | 4 |  3 | b | 0.7500000 |            3 | FALSE  |
 
 The difference is: we use the `wrap` to data, and then later `ex` to say
-we are done specifying steps and to execute the data.
+we are done specifying steps and to execute the data. Prior to the `ex`
+step the operator pipeline is available as a field called `underlying`
+and the set of wrapped `data.frame`s is available as a field called
+`data_map`.
+
+The wrapping of data as a different kind of `rquery` pipeline is an
+example of using the [“decorator
+pattern”](https://en.wikipedia.org/wiki/Decorator_pattern) (which can
+be considered as an object oriented variation of the functional monad
+pattern,
+[ref](https://en.wikipedia.org/wiki/Monad_\(functional_programming\))).
+However, these are technical considerations that are the package
+developer’s problem- not problems for the package users. Think of these
+terms as examples of things developers worry about so users don’t have
+to worry about them.
+
+`rquery` operator are designed to check pre and post-conditions early.
+This can be specialized into [interpreting `rquery` pipelines as
+category theory
+arrows](https://github.com/WinVector/rquery/blob/master/Examples/Arrow/Arrow.md).
+More commonly a less controlled form of operator abstraction/composition
+based on
+[lambda-abstraction](https://en.wikipedia.org/wiki/Lambda_calculus),
+[lazy evaluation](https://en.wikipedia.org/wiki/Lazy_evaluation) is used
+in `R` packages.
+
+That would look something like the following.
+
+``` r
+library(wrapr)
+
+f <- locum() %.>% # locum stands in for data to to supplied later
+  extend(.,       # add a new column
+         ratio := y / x) %.>%
+  extend(.,       # rank the rows by group and order
+         simple_rank := row_number(),
+         partitionby = 'g',
+         orderby = 'ratio',
+         reverse = 'ratio') %.>%
+  extend(.,       # mark the rows we want
+         choice := simple_rank == 1) 
+
+d %.>%
+  f %.>%
+  knitr::kable(.)
+```
+
+| x |  y | g |     ratio | simple\_rank | choice |
+| -: | -: | :- | --------: | -----------: | :----- |
+| 1 |  2 | a | 2.0000000 |            1 | TRUE   |
+| 2 |  2 | a | 1.0000000 |            2 | FALSE  |
+| 3 |  2 | a | 0.6666667 |            3 | FALSE  |
+| 6 | 10 | b | 1.6666667 |            1 | TRUE   |
+| 5 |  7 | b | 1.4000000 |            2 | FALSE  |
+| 4 |  3 | b | 0.7500000 |            3 | FALSE  |
+
+The above works. However it isn’t desirable when we have other tools
+available, as very little is checked early. Our theory is:
+lambda-abstraction/lazy-evaluation tools are common as they are less
+work for package developers. That is unfortunate as such abstractions do
+a lot less for the end-user.
 
 ``` r
 library(microbenchmark)
@@ -231,6 +291,13 @@ library(data.table)
 
     ## Warning: package 'data.table' was built under R version 3.5.2
 
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following object is masked from 'package:wrapr':
+    ## 
+    ##     :=
+
 ``` r
 f_data_table = function(dat) {
   dat <- data.table(dat)
@@ -265,16 +332,16 @@ print(timings)
 ```
 
     ## Unit: milliseconds
-    ##              expr      min        lq      mean    median        uq
-    ##   rquery_compiled 632.1073  707.7512  884.3015  827.1509  917.1359
-    ##  rquery_immediate 990.0378 1081.7552 1229.7190 1170.1596 1264.2860
-    ##    rquery_wrapped 792.0468  812.7829 1037.3257  957.5072 1097.9530
-    ##        data.table 477.6514  549.4865  657.3342  587.6717  741.8927
-    ##       max neval
-    ##  1356.415    10
-    ##  1630.984    10
-    ##  1945.456    10
-    ##   918.636    10
+    ##              expr      min       lq      mean    median        uq
+    ##   rquery_compiled 617.1310 640.2715  669.9845  661.4965  687.8184
+    ##  rquery_immediate 917.5509 968.2669 1072.2172 1023.7053 1101.7400
+    ##    rquery_wrapped 639.8564 662.8602  773.9643  804.2442  854.3127
+    ##        data.table 450.2642 500.7107  531.3275  518.1001  582.4760
+    ##        max neval
+    ##   745.2787    10
+    ##  1529.5927    10
+    ##   873.6003    10
+    ##   669.2086    10
 
 Notice, the speed differences are usually not that large for short
 pipelines. Then intent is: pipeline construction and data conversion
