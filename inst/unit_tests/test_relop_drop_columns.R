@@ -6,6 +6,7 @@ test_relop_drop_columns <- function() {
    drop_columns(., "y")
  res <- ex_data_table(rquery_pipeline)
  RUnit::checkTrue(data.table::is.data.table(res))
+ RUnit::checkTrue(!('y' %in% colnames(res)))
 
  invisible(NULL)
 }
