@@ -1,9 +1,10 @@
 
  
-# rqdatatable 1.2.4 2019/11/03
+# rqdatatable 1.2.4 2019/11/04
 
  * Remove unused methods import.
  * More tests on drop_columns.
+ * Catch degenerate project.
  
 # rqdatatable 1.2.3 2019/10/23
 

@@ -1,4 +1,15 @@
 
+
+is_keyed_by_columns <- function(d, keys) {
+  if(length(keys)<1) {
+    return(nrow(d)<=1)
+  }
+  dt <- as.data.table(d)
+  dt <- dt[ , j = list(RQDATATABLE_TMP = 1), by = keys ]
+  return(nrow(dt)==nrow(d))
+}
+
+
 #' Implement projection operator.
 #'
 #' \code{data.table} based implementation.
@@ -74,6 +85,10 @@ ex_data_table.relop_project <- function(optree,
   if(length(cols_to_remove)>0) {
     # https://stackoverflow.com/a/9202485/6901725
     res[, (cols_to_remove) := NULL]
+  }
+  # check keying is correct, catches use of non-aggregated columns
+  if(!is_keyed_by_columns(res, optree$groupby)) {
+    stop("project: result was not keyed by groubpy columns, likely unaggregated columns in calculation")
   }
   res
 }
