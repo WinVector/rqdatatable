@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.4</span>
       </span>
     </div>
 
@@ -201,8 +201,8 @@
 #&gt;   "x",
 #&gt;   "y",
 #&gt;   "z")) %.&gt;%
-#&gt;  select_columns(., c(
-#&gt;    "x", "y")) %.&gt;%
+#&gt;  select_columns(., 
+#&gt;     c('x', 'y')) %.&gt;%
 #&gt;  select_rows(.,
 #&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'>ex_data_table</span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
 #&gt; 1: 1 20</div><div class='input'>
