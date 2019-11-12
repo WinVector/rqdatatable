@@ -14,16 +14,25 @@
     * checking extension type ... Package
     * this is package ‘rqdatatable’ version ‘1.2.4’
     * package encoding: UTF-8
-    * checking CRAN incoming feasibility ... NOTE
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
     Maintainer: ‘John Mount <jmount@win-vector.com>’
-    Number of updates in past 6 months: 7
-    Status: 1 NOTE
+    Status: OK
+
 
 ### Linux
 
     rhub::check_for_cran()
-
-    The note is a property of the test environment, not the package.
+     498#> * using R Under development (unstable) (2019-11-08 r77393)
+     499#> * using platform: x86_64-w64-mingw32 (64-bit)
+     500#> * using session charset: ISO8859-1
+     501#> * using option '--as-cran'
+     502#> * checking for file 'rqdatatable/DESCRIPTION' ... OK
+     503#> * checking extension type ... Package
+     504#> * this is package 'rqdatatable' version '1.2.4'
+     505#> * package encoding: UTF-8
+     506#> * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+     507#> Maintainer: 'John Mount '
+     563#> Status: OK
  
 ## Reverse dependencies
 
