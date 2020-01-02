@@ -1,0 +1,121 @@
+---
+title: "grouped_performance"
+output: github_document
+---
+
+Make example data.
+
+```{r setup}
+set.seed(2020)
+n <- 1000000
+
+mk_data <- function(n) {
+  d <- data.frame(x = rnorm(n))
+  d$g <- sprintf("level_%09g", sample.int(n, size = n, replace = TRUE))
+  return(d)
+}
+
+d <- mk_data(n)
+write.csv(d, file = gzfile("d.csv.gz"), quote = FALSE, row.names = FALSE)
+```
+
+Example processing, `rqdatatable`.
+
+```{r rqdatatable}
+library(rqdatatable)
+packageVersion("rquery")
+packageVersion("rqdatatable")
+
+ops_rqdatatable <- local_td(d, name = 'd') %.>%
+  extend(.,
+         rn %:=% row_number(),
+         cs %:=% cumsum(x),
+         partitionby = 'g',
+         orderby = 'x') %.>%
+  order_rows(.,
+             c('g', 'x'))
+
+res_rqdatatable <- d %.>% ops_rqdatatable
+
+knitr::kable(head(res_rqdatatable))
+
+print(nrow(res_rqdatatable) == n)
+print(max(res_rqdatatable$rn))
+write.csv(res_rqdatatable, file = gzfile("res.csv.gz"), quote = FALSE, row.names = FALSE)
+```
+
+(Note, we could use `:=` for assignment if we imported `rquery` or `wrapr`, but we
+are avoiding that to avoid colliding with `data.table`'s or `dplyr`'s use of the symbol.)
+
+Example processing `data.table`.
+
+```{r data.table}
+library(data.table)
+packageVersion("data.table")
+
+f_data.table <- function(d) {
+  dt <- data.table(d)
+  res_data.table <- setorderv(dt, c('g', 'x'))[, `:=`(rn = seq_len(.N), cs = cumsum(x)), by = g]
+  return(res_data.table)
+}
+
+res_data.table <- f_data.table(d)
+knitr::kable(head(res_data.table))
+
+stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_data.table)))
+```
+
+
+Example processing, `dplyr`.
+
+```{r dplyr}
+library(dplyr)
+packageVersion("dplyr")
+
+ops_dplyr <- . %>%
+  arrange(g, x) %>%
+  group_by(g) %>%
+  mutate(
+    rn = row_number(),
+    cs = cumsum(x)) %>%
+  ungroup()
+
+res_dplyr <- d %>% ops_dplyr
+
+knitr::kable(head(res_dplyr))
+stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_dplyr)))
+```
+
+Example processing, `dtplyr`.
+
+```{r dtplyr}
+library(dtplyr)
+packageVersion("dtplyr")
+
+f_dtplyr <- function(d) {
+  res_dtplyr <- lazy_dt(d) %>%
+    arrange(g, x) %>%
+    group_by(g) %>%
+    mutate(
+      rn = row_number(),
+      cs = cumsum(x)) %>%
+    ungroup()
+  return(as_tibble(res_dtplyr))
+}
+
+res_dtplyr <- f_dtplyr(d)
+stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_dtplyr)))
+```
+
+```{r microbenchmark}
+library(microbenchmark)
+
+microbenchmark(
+  data.table = f_data.table(d),
+  dplyr = d %>% ops_dplyr,
+  dtplyr = f_dtplyr(d),
+  rqdatatable = d %.>% ops_rqdatatable,
+  times = 5L)
+```
+
+
