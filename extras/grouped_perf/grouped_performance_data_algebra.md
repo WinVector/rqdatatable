@@ -14,19 +14,7 @@ d
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -139,19 +127,7 @@ res
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -261,19 +237,7 @@ expect
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -379,27 +343,15 @@ expect
 time(ops.transform(d))
 ```
 
-    CPU times: user 17.8 s, sys: 1.01 s, total: 18.8 s
-    Wall time: 14.7 s
+    CPU times: user 14 s, sys: 847 ms, total: 14.8 s
+    Wall time: 14.3 s
 
 
 
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -508,7 +460,7 @@ timeit.timeit(f, number=5)
 
 
 
-    78.67936244500001
+    73.305209192
 
 
 
@@ -527,17 +479,17 @@ dbmodel = data_algebra.SQLite.SQLiteModel()
 print(ops.to_sql(dbmodel, pretty=True))
 ```
 
-    SELECT "cs",
-           "rn",
+    SELECT "x",
+           "cs",
            "g",
-           "x"
+           "rn"
     FROM
-      (SELECT SUM("x") OVER (PARTITION BY "g"
+      (SELECT "x",
+              SUM("x") OVER (PARTITION BY "g"
                              ORDER BY "x") AS "cs",
+                            "g",
                             ROW_NUMBER() OVER (PARTITION BY "g"
-                                               ORDER BY "x") AS "rn",
-                                              "g",
-                                              "x"
+                                               ORDER BY "x") AS "rn"
        FROM "d") "extend_1"
     ORDER BY "g",
              "x"
@@ -570,72 +522,60 @@ def f_db():
 time(f_db())
 ```
 
-    CPU times: user 8.59 s, sys: 641 ms, total: 9.23 s
-    Wall time: 8.74 s
+    CPU times: user 8.12 s, sys: 611 ms, total: 8.73 s
+    Wall time: 8.67 s
 
 
 
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>cs</th>
-      <th>rn</th>
-      <th>g</th>
       <th>x</th>
+      <th>cs</th>
+      <th>g</th>
+      <th>rn</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
       <td>-0.920397</td>
-      <td>1</td>
-      <td>level_000000002</td>
       <td>-0.920397</td>
+      <td>level_000000002</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>1</th>
       <td>0.537211</td>
-      <td>1</td>
-      <td>level_000000003</td>
       <td>0.537211</td>
+      <td>level_000000003</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>2</th>
       <td>0.734919</td>
-      <td>1</td>
-      <td>level_000000004</td>
       <td>0.734919</td>
+      <td>level_000000004</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>3</th>
       <td>-0.890755</td>
-      <td>1</td>
-      <td>level_000000005</td>
       <td>-0.890755</td>
+      <td>level_000000005</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>4</th>
       <td>1.702935</td>
-      <td>1</td>
-      <td>level_000000008</td>
       <td>1.702935</td>
+      <td>level_000000008</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>...</th>
@@ -646,38 +586,38 @@ time(f_db())
     </tr>
     <tr>
       <th>999995</th>
-      <td>1.569817</td>
-      <td>4</td>
-      <td>level_000999990</td>
       <td>1.435739</td>
+      <td>1.569817</td>
+      <td>level_000999990</td>
+      <td>4</td>
     </tr>
     <tr>
       <th>999996</th>
       <td>0.262819</td>
-      <td>1</td>
-      <td>level_000999993</td>
       <td>0.262819</td>
+      <td>level_000999993</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>999997</th>
       <td>0.081815</td>
-      <td>1</td>
-      <td>level_000999995</td>
       <td>0.081815</td>
+      <td>level_000999995</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>999998</th>
       <td>1.553806</td>
-      <td>1</td>
-      <td>level_000999997</td>
       <td>1.553806</td>
+      <td>level_000999997</td>
+      <td>1</td>
     </tr>
     <tr>
       <th>999999</th>
       <td>-0.669694</td>
-      <td>1</td>
-      <td>level_000999998</td>
       <td>-0.669694</td>
+      <td>level_000999998</td>
+      <td>1</td>
     </tr>
   </tbody>
 </table>
@@ -688,13 +628,13 @@ time(f_db())
 
 
 ```python
-timeit.timeit(f, number=5)
+timeit.timeit(f_db, number=5)
 ```
 
 
 
 
-    71.53672851200001
+    47.82512383599999
 
 
 
@@ -708,3 +648,4 @@ conn.close()
 ```python
 
 ```
+
