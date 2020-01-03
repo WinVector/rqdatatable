@@ -1,0 +1,115 @@
+---
+title: "grouped_performance_db"
+output: github_document
+---
+
+Read example data and expected result.
+
+```{r setup}
+set.seed(2020)
+
+d <- read.csv(file = gzfile("d.csv.gz"), 
+              stringsAsFactors = FALSE, 
+              strip.white = TRUE)
+expect <- read.csv(file = gzfile("res.csv.gz"), 
+              stringsAsFactors = FALSE, 
+              strip.white = TRUE)
+```
+
+Example processing, `rquery`.
+
+```{r rquery1}
+library(rquery)
+packageVersion("rquery")
+
+ops_rquery <- local_td(d, name = 'd') %.>%
+  extend(.,
+         rn %:=% row_number(),
+         cs %:=% cumsum(x),
+         partitionby = 'g',
+         orderby = 'x') %.>%
+  order_rows(.,
+             c('g', 'x'))
+
+cat(format(ops_rquery))
+```
+
+(Note, we could use `:=` for assignment if we imported `rquery` or `wrapr`, but we
+are avoiding that to avoid colliding with `data.table`'s or `dplyr`'s use of the symbol.)
+
+```{r rquery2}
+raw_connection <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+RSQLite::initExtension(raw_connection)
+db <- rquery_db_info(
+  connection = raw_connection,
+  is_dbi = TRUE,
+  connection_options = rq_connection_tests(raw_connection))
+
+cat(to_sql(ops_rquery, db))
+```
+
+
+```{r rquery3}
+f_rquery <- function(d) {
+  rquery::rq_copy_to(db, "d", d, 
+                     temporary = TRUE, overwrite = TRUE)
+  res <- execute(db, ops_rquery)
+  return(res)
+}
+
+
+res_rquery <- f_rquery(d)
+
+knitr::kable(head(res_rquery))
+stopifnot(all.equal(data.frame(res_rquery), data.frame(expect)))
+```
+
+
+Example processing, `dbplyr`.
+
+```{r dbplyr}
+library(dplyr)
+library(dbplyr)
+packageVersion("dplyr")
+packageVersion("dbplyr")
+
+ops_dbplyr <- tbl(raw_connection, "d") %>%
+  arrange(g, x) %>%
+  group_by(g) %>%
+  mutate(
+    rn = row_number(),
+    cs = cumsum(x)) %>%
+  ungroup()
+
+show_query(ops_dbplyr)
+```
+
+```{r dbplyr2}
+f_dbplyr <- function(d) {
+  dplyr::copy_to(raw_connection, df=d, name="d", 
+                     temporary = TRUE, overwrite = TRUE)
+  res <- compute(ops_dbplyr)
+  return(res)
+}
+
+res_dbplyr <- f_dbplyr(d)
+
+knitr::kable(head(res_dbplyr))
+stopifnot(all.equal(data.frame(res_dbplyr), data.frame(expect)))
+```
+
+
+```{r microbenchmark}
+library(microbenchmark)
+
+microbenchmark(
+  dbplyr = f_dbplyr(d),
+  rquery = f_rquery(d),
+  times = 5L)
+```
+
+```{r}
+DBI::dbDisconnect(raw_connection)
+```
+
+
