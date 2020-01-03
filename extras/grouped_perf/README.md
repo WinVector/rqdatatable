@@ -4,6 +4,7 @@ Details for a small performance comparison run on 2020-01-02.
 Article is here: http://www.win-vector.com/blog/2020/01/new-timings-for-a-grouped-in-place-aggregation-task/
 
 R results: https://github.com/WinVector/rqdatatable/blob/master/extras/grouped_perf/grouped_performance.md
+R DB results: https://github.com/WinVector/rqdatatable/blob/master/extras/grouped_perf/grouped_performance_db.md
 Python results: https://github.com/WinVector/rqdatatable/blob/master/extras/grouped_perf/grouped_performance_data_algebra.md
 
 
