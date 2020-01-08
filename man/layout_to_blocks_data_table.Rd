@@ -4,9 +4,14 @@
 \alias{layout_to_blocks_data_table}
 \title{Map a data records from row records to block records with one record row per columnsToTakeFrom value.}
 \usage{
-layout_to_blocks_data_table(data, ..., nameForNewKeyColumn,
-  nameForNewValueColumn, columnsToTakeFrom,
-  columnsToCopy = setdiff(colnames(data), columnsToTakeFrom))
+layout_to_blocks_data_table(
+  data,
+  ...,
+  nameForNewKeyColumn,
+  nameForNewValueColumn,
+  columnsToTakeFrom,
+  columnsToCopy = setdiff(colnames(data), columnsToTakeFrom)
+)
 }
 \arguments{
 \item{data}{data.frame to work with.}

@@ -4,8 +4,15 @@
 \alias{rq_df_funciton_node}
 \title{Helper to build data.table capable non-sql nodes.}
 \usage{
-rq_df_funciton_node(., f, ..., f_db = NULL, columns_produced,
-  display_form, orig_columns = FALSE)
+rq_df_funciton_node(
+  .,
+  f,
+  ...,
+  f_db = NULL,
+  columns_produced,
+  display_form,
+  orig_columns = FALSE
+)
 }
 \arguments{
 \item{.}{or data.frame input.}

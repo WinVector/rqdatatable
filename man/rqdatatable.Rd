@@ -3,7 +3,6 @@
 \docType{package}
 \name{rqdatatable}
 \alias{rqdatatable}
-\alias{rqdatatable-package}
 \title{\code{rqdatatable}: Relational Query Generator for Data Manipulation Implemented by data.table}
 \description{
 Implements the \code{rquery} piped query algebra using \code{data.table}.  This allows

@@ -4,8 +4,15 @@
 \alias{rq_df_grouped_funciton_node}
 \title{Helper to build data.table capable non-sql nodes.}
 \usage{
-rq_df_grouped_funciton_node(., f, ..., f_db = NULL, columns_produced,
-  group_col, display_form)
+rq_df_grouped_funciton_node(
+  .,
+  f,
+  ...,
+  f_db = NULL,
+  columns_produced,
+  group_col,
+  display_form
+)
 }
 \arguments{
 \item{.}{or data.frame input.}

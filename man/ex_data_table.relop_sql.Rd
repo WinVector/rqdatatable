@@ -4,8 +4,14 @@
 \alias{ex_data_table.relop_sql}
 \title{Direct sql node.}
 \usage{
-\method{ex_data_table}{relop_sql}(optree, ..., tables = list(),
-  source_usage = NULL, source_limit = NULL, env = parent.frame())
+\method{ex_data_table}{relop_sql}(
+  optree,
+  ...,
+  tables = list(),
+  source_usage = NULL,
+  source_limit = NULL,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{optree}{relop operations tree.}

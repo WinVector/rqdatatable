@@ -4,8 +4,14 @@
 \alias{ex_data_table.relop_theta_join}
 \title{Theta join (database implementation).}
 \usage{
-\method{ex_data_table}{relop_theta_join}(optree, ..., tables = list(),
-  source_usage = NULL, source_limit = NULL, env = parent.frame())
+\method{ex_data_table}{relop_theta_join}(
+  optree,
+  ...,
+  tables = list(),
+  source_usage = NULL,
+  source_limit = NULL,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{optree}{relop operations tree.}

@@ -4,9 +4,16 @@
 \alias{ex_data_table_parallel}
 \title{Execute an \code{rquery} pipeline with \code{data.table} in parallel.}
 \usage{
-ex_data_table_parallel(optree, partition_column, cl = NULL, ...,
-  tables = list(), source_limit = NULL, debug = FALSE,
-  env = parent.frame())
+ex_data_table_parallel(
+  optree,
+  partition_column,
+  cl = NULL,
+  ...,
+  tables = list(),
+  source_limit = NULL,
+  debug = FALSE,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{optree}{relop operations tree.}

@@ -4,8 +4,14 @@
 \alias{ex_data_table}
 \title{Execute an \code{rquery} pipeline with \code{data.table} sources.}
 \usage{
-ex_data_table(optree, ..., tables = list(), source_usage = NULL,
-  source_limit = NULL, env = parent.frame())
+ex_data_table(
+  optree,
+  ...,
+  tables = list(),
+  source_usage = NULL,
+  source_limit = NULL,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{optree}{relop operations tree.}

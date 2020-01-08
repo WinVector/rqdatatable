@@ -4,8 +4,14 @@
 \alias{ex_data_table.relop_drop_columns}
 \title{Implement drop columns.}
 \usage{
-\method{ex_data_table}{relop_drop_columns}(optree, ..., tables = list(),
-  source_limit = NULL, source_usage = NULL, env = parent.frame())
+\method{ex_data_table}{relop_drop_columns}(
+  optree,
+  ...,
+  tables = list(),
+  source_limit = NULL,
+  source_usage = NULL,
+  env = parent.frame()
+)
 }
 \arguments{
 \item{optree}{relop operations tree.}

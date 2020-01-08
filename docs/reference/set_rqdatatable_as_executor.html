@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>default non-impementation. — ex_data_table.default • rqdatatable</title>
+<title>Set rqdatatable package as default rquery executor — set_rqdatatable_as_executor • rqdatatable</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="default non-impementation. — ex_data_table.default" />
-<meta property="og:description" content="Throw on error if this method is called, signalling that a specific data.table implemetation is needed for this method." />
+<meta property="og:title" content="Set rqdatatable package as default rquery executor — set_rqdatatable_as_executor" />
+<meta property="og:description" content="Sets rqdatatable (and hence data.table) as the default executor for rquery)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -126,60 +126,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>default non-impementation.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable/blob/master/R/rquery_fns.R'><code>R/rquery_fns.R</code></a></small>
-    <div class="hidden name"><code>ex_data_table.default.Rd</code></div>
+    <h1>Set rqdatatable package as default rquery executor</h1>
+    <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable/blob/master/R/zzz.R'><code>R/zzz.R</code></a></small>
+    <div class="hidden name"><code>set_rqdatatable_as_executor.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Throw on error if this method is called, signalling that a specific <code>data.table</code> implemetation is needed for this method.</p>
+    <p>Sets rqdatatable (and hence data.table) as the default executor for rquery).</p>
     </div>
 
-    <pre class="usage"><span class='co'># S3 method for default</span>
-<span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(
-  <span class='no'>optree</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>source_limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>set_rqdatatable_as_executor</span>()</pre>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>optree</th>
-      <td><p>relop operations tree.</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>not used, force later arguments to bind by name.</p></td>
-    </tr>
-    <tr>
-      <th>tables</th>
-      <td><p>named list map from table names used in nodes to data.tables and data.frames.</p></td>
-    </tr>
-    <tr>
-      <th>source_usage</th>
-      <td><p>list mapping source table names to vectors of columns used.</p></td>
-    </tr>
-    <tr>
-      <th>source_limit</th>
-      <td><p>if not null limit all table sources to no more than this many rows (used for debugging).</p></td>
-    </tr>
-    <tr>
-      <th>env</th>
-      <td><p>environment to work in.</p></td>
-    </tr>
-    </table>
 
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>
