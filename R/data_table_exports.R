@@ -29,7 +29,7 @@ rbindlist_data_table <- function(l,
                                use.names = use.names,
                                fill = fill,
                                idcol = idcol)
-  res <- data.frame(res)
+  res <- as.data.frame(res, stringsAsFactors = FALSE)
   rownames(res) <- NULL
   res
 }
