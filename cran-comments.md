@@ -21,24 +21,24 @@
 ### Windows
 
      rhub::check_for_cran()
-     492#> setting _R_CHECK_FORCE_SUGGESTS_ to false
-     493#> setting R_COMPILE_AND_INSTALL_PACKAGES to never
-     494#> setting R_REMOTES_STANDALONE to true
-     495#> setting R_REMOTES_NO_ERRORS_FROM_WARNINGS to true
-     496#> setting _R_CHECK_FORCE_SUGGESTS_ to true
-     497#> setting _R_CHECK_CRAN_INCOMING_USE_ASPELL_ to true
-     498#> * using log directory 'C:/Users/USERQeSVTgWuoh/rqdatatable.Rcheck'
-     499#> * using R Under development (unstable) (2019-11-08 r77393)
-     500#> * using platform: x86_64-w64-mingw32 (64-bit)
-     501#> * using session charset: ISO8859-1
-     502#> * using option '--as-cran'
-     503#> * checking for file 'rqdatatable/DESCRIPTION' ... OK
-     504#> * checking extension type ... Package
-     505#> * this is package 'rqdatatable' version '1.2.5'
-     506#> * package encoding: UTF-8
-     507#> * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
-     508#> Maintainer: 'John Mount '
-     564#> Status: OK
+     671#> setting _R_CHECK_FORCE_SUGGESTS_ to false
+     672#> setting R_COMPILE_AND_INSTALL_PACKAGES to never
+     673#> setting R_REMOTES_STANDALONE to true
+     674#> setting R_REMOTES_NO_ERRORS_FROM_WARNINGS to true
+     675#> setting _R_CHECK_FORCE_SUGGESTS_ to true
+     676#> setting _R_CHECK_CRAN_INCOMING_USE_ASPELL_ to true
+     677#> * using log directory 'C:/Users/USERLojYUCPwXH/rqdatatable.Rcheck'
+     678#> * using R Under development (unstable) (2020-01-07 r77637)
+     679#> * using platform: x86_64-w64-mingw32 (64-bit)
+     680#> * using session charset: ISO8859-1
+     681#> * using option '--as-cran'
+     682#> * checking for file 'rqdatatable/DESCRIPTION' ... OK
+     683#> * checking extension type ... Package
+     684#> * this is package 'rqdatatable' version '1.2.5'
+     685#> * package encoding: UTF-8
+     686#> * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+     687#> Maintainer: 'John Mount '
+     743#> Status: OK
 
  
 ## Reverse dependencies

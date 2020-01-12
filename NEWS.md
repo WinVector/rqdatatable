@@ -1,5 +1,5 @@
 
-# rqdatatable 1.2.5 2020/01/07
+# rqdatatable 1.2.5 2020/01/12
 
  * Neaten up package startup.
  
