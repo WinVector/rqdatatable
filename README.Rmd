@@ -4,6 +4,8 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![status](https://tinyverse.netlify.com/badge/rqdatatable)](https://CRAN.R-project.org/package=rqdatatable)
+
 ![](https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png)
 
 [`rqdatatable`](https://github.com/WinVector/rqdatatable) is an implementation of

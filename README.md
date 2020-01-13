@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![status](https://tinyverse.netlify.com/badge/rqdatatable)](https://CRAN.R-project.org/package=rqdatatable)
+
 ![](https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png)
 
 [`rqdatatable`](https://github.com/WinVector/rqdatatable) is an
@@ -84,8 +86,8 @@ cat(format(rquery_pipeline))
        row_number <= 1) %.>%
      rename_columns(.,
       c('diagnosis' = 'surveyCategory')) %.>%
-     select_columns(., c(
-       "subjectID", "diagnosis", "probability")) %.>%
+     select_columns(., 
+        c('subjectID', 'diagnosis', 'probability')) %.>%
      order_rows(.,
       c('subjectID'),
       reverse = c(),
