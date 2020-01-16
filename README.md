@@ -1,6 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/rqdatatable)](https://cran.r-project.org/package=rqdatatable)
 [![status](https://tinyverse.netlify.com/badge/rqdatatable)](https://CRAN.R-project.org/package=rqdatatable)
 
 ![](https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png)

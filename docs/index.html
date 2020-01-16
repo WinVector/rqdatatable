@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
       </span>
     </div>
 
@@ -89,6 +89,7 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
+
 <p><img src="https://github.com/WinVector/rqdatatable/raw/master/tools/rqdatatable.png"></p>
 <p><a href="https://github.com/WinVector/rqdatatable"><code>rqdatatable</code></a> is an implementation of the <a href="https://github.com/WinVector/rquery"><code>rquery</code></a> piped Codd-style relational algebra hosted on <a href="http://r-datatable.com"><code>data.table</code></a>. <code>rquery</code> allow the expression of complex transformations as a series of relational operators and <code>rqdatatable</code> implements the operators using <code>data.table</code>.</p>
 <p>A <code>Python</code> version of <code>rquery</code>/<code>rqdatatable</code> is under initial development as <a href="https://github.com/WinVector/data_algebra"><code>data_algebra</code></a>.</p>
@@ -144,8 +145,8 @@
 <a class="sourceLine" id="cb6-18" data-line-number="18">   row_number <span class="op">&lt;=</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%.&gt;%</span></a>
 <a class="sourceLine" id="cb6-19" data-line-number="19"><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/rename_columns.html">rename_columns</a></span>(.,</a>
 <a class="sourceLine" id="cb6-20" data-line-number="20">  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'diagnosis'</span> =<span class="st"> 'surveyCategory'</span>)) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/select_columns.html">select_columns</a></span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
-<a class="sourceLine" id="cb6-22" data-line-number="22">   <span class="st">"subjectID"</span>, <span class="st">"diagnosis"</span>, <span class="st">"probability"</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/select_columns.html">select_columns</a></span>(., </a>
+<a class="sourceLine" id="cb6-22" data-line-number="22">    <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>, <span class="st">'diagnosis'</span>, <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span></a>
 <a class="sourceLine" id="cb6-23" data-line-number="23"><span class="st"> </span><span class="kw">order_rows</span>(.,</a>
 <a class="sourceLine" id="cb6-24" data-line-number="24">  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>),</a>
 <a class="sourceLine" id="cb6-25" data-line-number="25">  <span class="dt">reverse =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(),</a>
@@ -200,7 +201,14 @@
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://cran.r-project.org/package=rqdatatable"><img src="https://www.r-pkg.org/badges/version/rqdatatable" alt="CRAN_Status_Badge"></a></li>
+<li><a href="https://CRAN.R-project.org/package=rqdatatable"><img src="https://tinyverse.netlify.com/badge/rqdatatable" alt="status"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 
