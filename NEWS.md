@@ -1,5 +1,5 @@
 
-# rqdatatable 1.2.6 2020/01/12
+# rqdatatable 1.2.6 2020/01/18
 
  * Belt and suspenders on stringsAsFactors
 
