@@ -87,16 +87,23 @@ build_frame(
 
 Initial bench-marking of `rqdatatable` is very favorable (notes [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
-Note `rqdatatable` has an "immediate mode" which allows direct application of pipelines stages without
-pre-assembling the pipeline. "Immediate mode" is a convenience for ad-hoc analyses, and has some negative
-performance impact, so we encourage users to build pipelines for most work.  Some notes on the issue can be found
-[here](https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md).
 
-`rqdatatable` implements the `rquery` grammar in the style of a "Turing or Cook reduction" (implementing the result in terms of multiple oracle calls to the related system).  For some related work on translating `dplyr` to `data.table` in the style of "Karp reductions" (implementing the result as a translation into a single problem in the related system) please see [`table.express`](https://github.com/asardaes/table.express) and also [`dtplyr`](https://github.com/tidyverse/dtplyr) (though the `0.0.3` and prior versions of `dtplyr` have severe performance issues due to excess table copying, [ref](https://github.com/WinVector/Examples/blob/master/Time_dtplyr/time_dtplyr.md), [ref](https://github.com/WinVector/Examples/blob/master/Time_dtplyr/time_dtplyr_rq.md)).
+Related work includes:
+
+ * [`dtplyr`](https://github.com/tidyverse/dtplyr)
+ * [`table.express`](https://github.com/asardaes/table.express)
+ * [`tidydt`](https://github.com/markfairbanks/tidydt)
 
 To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
 --
 
-Note `rqdatatable` is intended for "simple column names", in particular as `rqdatatable` often uses `eval()` to work over `data.table` escape characters such as "`\`" and "`\\`" are not reliable in column names.  Also `rqdatatable` does not support tables with no columns.
+Note `rqdatatable` has an "immediate mode" which allows direct application of pipelines stages without
+pre-assembling the pipeline. "Immediate mode" is a convenience for ad-hoc analyses, and has some negative
+performance impact, so we encourage users to build pipelines for most work.  Some notes on the issue can be found
+[here](https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md).
+
+`rqdatatable` implements the `rquery` grammar in the style of a "Turing or Cook reduction" (implementing the result in terms of multiple oracle calls to the related system).
+
+`rqdatatable` is intended for "simple column names", in particular as `rqdatatable` often uses `eval()` to work over `data.table` escape characters such as "`\`" and "`\\`" are not reliable in column names.  Also `rqdatatable` does not support tables with no columns.
 

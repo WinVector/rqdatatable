@@ -165,11 +165,17 @@
 <div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="co">##    subjectID           diagnosis probability</span></a>
 <a class="sourceLine" id="cb10-2" data-line-number="2"><span class="co">## 1:         7 positive re-framing   0.9722128</span></a></code></pre></div>
 <p>Initial bench-marking of <code>rqdatatable</code> is very favorable (notes <a href="http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/">here</a>).</p>
-<p>Note <code>rqdatatable</code> has an “immediate mode” which allows direct application of pipelines stages without pre-assembling the pipeline. “Immediate mode” is a convenience for ad-hoc analyses, and has some negative performance impact, so we encourage users to build pipelines for most work. Some notes on the issue can be found <a href="https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md">here</a>.</p>
-<p><code>rqdatatable</code> implements the <code>rquery</code> grammar in the style of a “Turing or Cook reduction” (implementing the result in terms of multiple oracle calls to the related system). For some related work on translating <code>dplyr</code> to <code>data.table</code> in the style of “Karp reductions” (implementing the result as a translation into a single problem in the related system) please see <a href="https://github.com/asardaes/table.express"><code>table.express</code></a> and also <a href="https://github.com/tidyverse/dtplyr"><code>dtplyr</code></a> (though the <code>0.0.3</code> and prior versions of <code>dtplyr</code> have severe performance issues due to excess table copying, <a href="https://github.com/WinVector/Examples/blob/master/Time_dtplyr/time_dtplyr.md">ref</a>, <a href="https://github.com/WinVector/Examples/blob/master/Time_dtplyr/time_dtplyr_rq.md">ref</a>).</p>
+<p>Related work includes:</p>
+<ul>
+<li><a href="https://github.com/tidyverse/dtplyr"><code>dtplyr</code></a></li>
+<li><a href="https://github.com/asardaes/table.express"><code>table.express</code></a></li>
+<li><a href="https://github.com/markfairbanks/tidydt"><code>tidydt</code></a></li>
+</ul>
 <p>To install <code>rqdatatable</code> please use <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("rqdatatable")</a></code>.</p>
 <p>–</p>
-<p>Note <code>rqdatatable</code> is intended for “simple column names”, in particular as <code>rqdatatable</code> often uses <code><a href="https://rdrr.io/r/base/eval.html">eval()</a></code> to work over <code>data.table</code> escape characters such as “<code>\</code>” and “<code>\\</code>” are not reliable in column names. Also <code>rqdatatable</code> does not support tables with no columns.</p>
+<p>Note <code>rqdatatable</code> has an “immediate mode” which allows direct application of pipelines stages without pre-assembling the pipeline. “Immediate mode” is a convenience for ad-hoc analyses, and has some negative performance impact, so we encourage users to build pipelines for most work. Some notes on the issue can be found <a href="https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md">here</a>.</p>
+<p><code>rqdatatable</code> implements the <code>rquery</code> grammar in the style of a “Turing or Cook reduction” (implementing the result in terms of multiple oracle calls to the related system).</p>
+<p><code>rqdatatable</code> is intended for “simple column names”, in particular as <code>rqdatatable</code> often uses <code><a href="https://rdrr.io/r/base/eval.html">eval()</a></code> to work over <code>data.table</code> escape characters such as “<code>\</code>” and “<code>\\</code>” are not reliable in column names. Also <code>rqdatatable</code> does not support tables with no columns.</p>
 
   </div>
 
