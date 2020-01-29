@@ -40,7 +40,7 @@
 #'     sql_node(., "num_missing" %:=% list(expr))
 #'   cat(format(op_tree))
 #'
-#'   ex_data_table(op_tree, tables = list(d = d)) %.>%
+#'   ex_data_table_step(op_tree, tables = list(d = d)) %.>%
 #'     print(.)
 #'   # d %.>% op_tree
 #'
@@ -48,25 +48,25 @@
 #'   DBI::dbDisconnect(my_db)
 #' }
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #' @export
-ex_data_table.relop_sql <- function(optree,
+ex_data_table_step.relop_sql <- function(optree,
                                     ...,
                                     tables = list(),
                                     source_usage = NULL,
                                     source_limit = NULL,
                                     env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_sql")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_sql")
   rquery.rquery_db_executor <- getOption("rquery.rquery_db_executor", default = NULL)
   if(is.null(rquery.rquery_db_executor)) {
-    stop("rqdatatable::ex_data_table.relop_sql attempting to execut SQL node with rquery.rquery_db_executor not set.")
+    stop("rqdatatable::ex_data_table_step.relop_sql attempting to execut SQL node with rquery.rquery_db_executor not set.")
   }
   my_db <- rquery.rquery_db_executor$db
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
-  x <- ex_data_table(optree$source[[1]],
+  x <- ex_data_table_step(optree$source[[1]],
                      tables = tables,
                      source_limit = source_limit,
                      source_usage = source_usage,
@@ -77,7 +77,7 @@ ex_data_table.relop_sql <- function(optree,
   res <- rquery_apply_to_data_frame(x, optree = shallow_copy,
                                     env = env, allow_executor = FALSE)
   if(!is.data.frame(res)) {
-    stop("rqdatatable::ex_data_table.relop_sql input was not a data.frame")
+    stop("rqdatatable::ex_data_table_step.relop_sql input was not a data.frame")
   }
   if(!data.table::is.data.table(res)) {
     res <- data.table::as.data.table(res)

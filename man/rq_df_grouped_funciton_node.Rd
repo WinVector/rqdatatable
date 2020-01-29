@@ -71,10 +71,10 @@ rquery_pipeline <- local_td(d) \%.>\%
 
 cat(format(rquery_pipeline))
 
-ex_data_table(rquery_pipeline)
+ex_data_table_step(rquery_pipeline)
 
 
 }
 \seealso{
-\code{\link[rqdatatable]{ex_data_table.relop_non_sql}}, \code{\link{rq_df_funciton_node}}
+\code{\link[rqdatatable]{ex_data_table_step.relop_non_sql}}, \code{\link{rq_df_funciton_node}}
 }

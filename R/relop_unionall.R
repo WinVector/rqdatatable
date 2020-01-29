@@ -4,7 +4,7 @@
 #'
 #' \code{data.table} based implementation.
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #'
 #' @examples
 #'
@@ -14,10 +14,10 @@
 #'     1L , "a" |
 #'     3L , "c" )
 #' rquery_pipeline <- unionall(list(local_td(dL), local_td(dL)))
-#' ex_data_table(rquery_pipeline)
+#' ex_data_table_step(rquery_pipeline)
 #'
 #' @export
-ex_data_table.relop_unionall <- function(optree,
+ex_data_table_step.relop_unionall <- function(optree,
                                          ...,
                                          tables = list(),
                                          source_usage = NULL,
@@ -29,7 +29,7 @@ ex_data_table.relop_unionall <- function(optree,
   }
   inputs <- lapply(optree$source,
                    function(si) {
-                     ex_data_table(si,
+                     ex_data_table_step(si,
                                    tables = tables,
                                    source_usage = source_usage,
                                    source_limit = source_limit,

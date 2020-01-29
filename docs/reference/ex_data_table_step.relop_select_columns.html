@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table • rqdatatable</title>
+<title>Implement drop columns. — ex_data_table_step.relop_select_columns • rqdatatable</title>
 
 
 <!-- jquery -->
@@ -35,9 +35,8 @@
 
 
 
-<meta property="og:title" content="Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table" />
-<meta property="og:description" content="data.tables are looked for by name in the tables argument and in the execution environment.
-Main external execution interface." />
+<meta property="og:title" content="Implement drop columns. — ex_data_table_step.relop_select_columns" />
+<meta property="og:description" content="data.table based implementation." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -127,17 +126,17 @@ Main external execution interface." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable/blob/master/R/rquery_fns.R'><code>R/rquery_fns.R</code></a></small>
-    <div class="hidden name"><code>ex_data_table.Rd</code></div>
+    <h1>Implement drop columns.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable/blob/master/R/relop_select_columns.R'><code>R/relop_select_columns.R</code></a></small>
+    <div class="hidden name"><code>ex_data_table_step.relop_select_columns.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>data.table</code>s are looked for by name in the <code>tables</code> argument and in the execution environment.
-Main external execution interface.</p>
+    <p><code>data.table</code> based implementation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ex_data_table</span>(
+    <pre class="usage"><span class='co'># S3 method for relop_select_columns</span>
+<span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(
   <span class='no'>optree</span>,
   <span class='no'>...</span>,
   <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
@@ -175,59 +174,20 @@ Main external execution interface.</p>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    
-<ul>
-<li><p><code><a href='ex_data_table_step.relop_drop_columns.html'>ex_data_table_step.relop_drop_columns</a></code>: implement drop columns</p></li>
-<li><p><code><a href='ex_data_table_step.relop_extend.html'>ex_data_table_step.relop_extend</a></code>: implement extend/assign operator</p></li>
-<li><p><code><a href='ex_data_table_step.relop_natural_join.html'>ex_data_table_step.relop_natural_join</a></code>: implement natural join</p></li>
-<li><p><code><a href='ex_data_table_step.relop_non_sql.html'>ex_data_table_step.relop_non_sql</a></code>: direct function (non-sql) operator (not implemented for <code>data.table</code>)</p></li>
-<li><p><code><a href='ex_data_table_step.relop_null_replace.html'>ex_data_table_step.relop_null_replace</a></code>: implement NA/NULL replacement</p></li>
-<li><p><code><a href='ex_data_table_step.relop_orderby.html'>ex_data_table_step.relop_orderby</a></code>: implement row ordering</p></li>
-<li><p><code><a href='ex_data_table_step.relop_project.html'>ex_data_table_step.relop_project</a></code>: implement row ordering</p></li>
-<li><p><code><a href='ex_data_table_step.relop_rename_columns.html'>ex_data_table_step.relop_rename_columns</a></code>: implement column renaming</p></li>
-<li><p><code><a href='ex_data_table_step.relop_select_columns.html'>ex_data_table_step.relop_select_columns</a></code>: implement select columns</p></li>
-<li><p><code><a href='ex_data_table_step.relop_select_rows.html'>ex_data_table_step.relop_select_rows</a></code>: implement select rows</p></li>
-<li><p><code><a href='ex_data_table_step.relop_sql.html'>ex_data_table_step.relop_sql</a></code>: direct sql operator (not implemented for <code>data.table</code>)</p></li>
-<li><p><code><a href='ex_data_table_step.relop_table_source.html'>ex_data_table_step.relop_table_source</a></code>: implement data source</p></li>
-<li><p><code><a href='ex_data_table_step.relop_theta_join.html'>ex_data_table_step.relop_theta_join</a></code>: implement theta join  (not implemented for <code>data.table</code>)</p></li>
-<li><p><code><a href='ex_data_table_step.relop_unionall.html'>ex_data_table_step.relop_unionall</a></code>: implement row binding</p></li>
-</ul>
-
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-  <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>) , <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>30</span>), <span class='kw'>z</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
-  <span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/local_td.html'>local_td</a></span>(<span class='no'>a</span>) <span class='kw'>%.&gt;%</span>
-     <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/select_columns.html'>select_columns</a></span>(<span class='no'>.</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)) <span class='kw'>%.&gt;%</span>
-     <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/select_rows.html'>select_rows_nse</a></span>(<span class='no'>.</span>, <span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>2</span> <span class='kw'>&amp;</span> <span class='no'>y</span><span class='kw'>&lt;</span><span class='fl'>30</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>optree</span>))</div><div class='output co'>#&gt; mk_td("a", c(
-#&gt;   "x",
-#&gt;   "y",
-#&gt;   "z")) %.&gt;%
-#&gt;  select_columns(., 
-#&gt;     c('x', 'y')) %.&gt;%
-#&gt;  select_rows(.,
-#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
-#&gt; 1: 1 20</div><div class='input'>
-  <span class='co'># other ways to execute the pipeline include</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;   x  y
-#&gt; 1 1 20</div><div class='input'>  <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
-#&gt; 1: 1 20</div><div class='input'>  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='fl'>400</span>) <span class='kw'>%.&gt;%</span> <span class='no'>optree</span></div><div class='output co'>#&gt;   x y
-#&gt; 1 0 4</div><div class='input'>
-
+<span class='no'>dL</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/local_td.html'>local_td</a></span>(<span class='no'>dL</span>) <span class='kw'>%.&gt;%</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/select_columns.html'>select_columns</a></span>(<span class='no'>.</span>, <span class='st'>"y"</span>)
+<span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(<span class='no'>rquery_pipeline</span>)</div><div class='output co'>#&gt;    y
+#&gt; 1: 2</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

@@ -7,7 +7,7 @@ NULL
 parallel_f <- function(tables, ...) {
   args <- list(...)
   optree = args[["optree"]]
-  res <- ex_data_table(optree = optree,
+  res <- ex_data_table_step(optree = optree,
                        tables = tables)
   res
 }
@@ -54,6 +54,7 @@ ex_data_table_parallel <- function(optree,
   }
   wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_parallel")
   source_usage <- columns_used(optree)
+  data_table_in <- isTRUE(any(vapply(tables, data.table::is.data.table, logical(1))))
   tablesets <- wrapr::partition_tables(names(source_usage),
                                        partition_column = partition_column,
                                        source_usage = source_usage,
@@ -70,6 +71,9 @@ ex_data_table_parallel <- function(optree,
   res <- data.table::rbindlist(res)
   if("relop_orderby" %in% class(optree)) {
     order_table(res, orderby = optree$orderby, reverse = optree$reverse)
+  }
+  if(!data_table_in) {
+    res <- as.data.frame(res)
   }
   res
 }

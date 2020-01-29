@@ -40,7 +40,7 @@ test_relop_non_sql <- function() {
 
  cat(format(rquery_pipeline))
 
- ex_data_table(rquery_pipeline)[]
+ ex_data_table(rquery_pipeline)
 
 
 
@@ -78,7 +78,7 @@ test_relop_non_sql <- function() {
 
  cat(format(rquery_pipeline))
 
- ex_data_table(rquery_pipeline)[]
+ ex_data_table(rquery_pipeline)
 
  set.seed(3252)
  d <- data.frame(a = rnorm(1000), b = rnorm(1000))
@@ -90,7 +90,7 @@ test_relop_non_sql <- function() {
  p2 <- local_td(d) %.>%
    rsummary_node(.)
  res <- ex_data_table(p2)
- RUnit::checkTrue(data.table::is.data.table(res))
+ RUnit::checkTrue(is.data.frame(res))
 
  invisible(NULL)
 }

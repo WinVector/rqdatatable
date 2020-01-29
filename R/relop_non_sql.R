@@ -30,7 +30,7 @@ mk_f_db_default <- function(f, cols) {
 #' @param orig_columns orig_columns, if TRUE assume all input columns are present in derived table.
 #' @return relop non-sql node implementation.
 #'
-#' @seealso \code{\link[rqdatatable]{ex_data_table.relop_non_sql}}, \code{\link{rq_df_grouped_funciton_node}}
+#' @seealso \code{\link[rqdatatable]{ex_data_table_step.relop_non_sql}}, \code{\link{rq_df_grouped_funciton_node}}
 #'
 #'
 #' @examples
@@ -73,7 +73,7 @@ mk_f_db_default <- function(f, cols) {
 #'
 #' cat(format(rquery_pipeline))
 #'
-#' ex_data_table(rquery_pipeline)
+#' ex_data_table_step(rquery_pipeline)
 #'
 #' @export
 #'
@@ -118,7 +118,7 @@ rq_df_funciton_node <- function(., f,
 #' @param display_form display form for node.
 #' @return relop non-sql node implementation.
 #'
-#' @seealso \code{\link[rqdatatable]{ex_data_table.relop_non_sql}}, \code{\link{rq_df_funciton_node}}
+#' @seealso \code{\link[rqdatatable]{ex_data_table_step.relop_non_sql}}, \code{\link{rq_df_funciton_node}}
 #'
 #'
 #' @examples
@@ -157,7 +157,7 @@ rq_df_funciton_node <- function(., f,
 #'
 #' cat(format(rquery_pipeline))
 #'
-#' ex_data_table(rquery_pipeline)
+#' ex_data_table_step(rquery_pipeline)
 #'
 #'
 #' @export
@@ -223,35 +223,35 @@ rq_df_grouped_funciton_node <- function(., f,
 #'
 #' optree <- local_td(d) %.>%
 #'   quantile_node(.)
-#' ex_data_table(optree)
+#' ex_data_table_step(optree)
 #'
 #' p2 <- local_td(d) %.>%
 #'   rsummary_node(.)
-#' ex_data_table(p2)
+#' ex_data_table_step(p2)
 #'
 #' summary(d)
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #' @export
-ex_data_table.relop_non_sql <- function(optree,
+ex_data_table_step.relop_non_sql <- function(optree,
                                         ...,
                                         tables = list(),
                                         source_usage = NULL,
                                         source_limit = NULL,
                                         env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_non_sql")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_non_sql")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
-  x <- ex_data_table(optree$source[[1]],
+  x <- ex_data_table_step(optree$source[[1]],
                      tables = tables,
                      source_limit = source_limit,
                      source_usage = source_usage,
                      env = env)
   if(isTRUE(optree$check_result_details)) {
     if(!is.data.frame(x)) {
-      stop("rqdatatable::ex_data_table.relop_non_sql sub-expression eval was not a data.frame")
+      stop("rqdatatable::ex_data_table_step.relop_non_sql sub-expression eval was not a data.frame")
     }
   }
   res <- NULL
@@ -272,7 +272,7 @@ ex_data_table.relop_non_sql <- function(optree,
     } else {
       # data.frame impl
       if(is.null(f_df)) {
-        stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
+        stop("rqdatatable::ex_data_table_step.relop_non_sql df is NULL")
       }
       x <- data.frame(x)
       if(length(formals(f_df))>=2) {
@@ -284,7 +284,7 @@ ex_data_table.relop_non_sql <- function(optree,
     }
   } else {
     if(is.null(f_df)) {
-      stop("rqdatatable::ex_data_table.relop_non_sql df is NULL")
+      stop("rqdatatable::ex_data_table_step.relop_non_sql df is NULL")
     }
     if(length(formals(f_df))>=2) {
       res <- f_df(x, optree)
@@ -298,14 +298,14 @@ ex_data_table.relop_non_sql <- function(optree,
       res <- data.table::as.data.table(res)
     }
     if(!is.data.frame(res)) {
-      stop("qdataframe::ex_data_table.relop_non_sql f_df/f_dt did not return a data.frame")
+      stop("qdataframe::ex_data_table_step.relop_non_sql f_df/f_dt did not return a data.frame")
     }
     if(!data.table::is.data.table(res)) {
       res <- data.table::as.data.table(res)
     }
     missing_columns <- setdiff(column_names(optree), colnames(res))
     if(length(missing_columns)>0) {
-      stop(paste("qdataframe::ex_data_table.relop_non_sql columns produced did not meet declared column specification",
+      stop(paste("qdataframe::ex_data_table_step.relop_non_sql columns produced did not meet declared column specification",
                  paste(missing_columns, collapse = ", ")))
     }
   }

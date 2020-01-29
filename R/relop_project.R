@@ -14,7 +14,7 @@ is_keyed_by_columns <- function(d, keys) {
 #'
 #' \code{data.table} based implementation.
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #'
 #' @examples
 #'
@@ -30,22 +30,22 @@ is_keyed_by_columns <- function(d, keys) {
 #'               groupby = 'subjectID',
 #'               count = n())
 #' cat(format(test_p))
-#' ex_data_table(test_p)
+#' ex_data_table_step(test_p)
 #'
 #' @export
-ex_data_table.relop_project <- function(optree,
+ex_data_table_step.relop_project <- function(optree,
                                         ...,
                                         tables = list(),
                                         source_usage = NULL,
                                         source_limit = NULL,
                                         env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_project")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_project")
   n <- length(optree$parsed)
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
-  x <- ex_data_table(optree$source[[1]],
+  x <- ex_data_table_step(optree$source[[1]],
                      tables = tables,
                      source_usage = source_usage,
                      source_limit = source_limit,

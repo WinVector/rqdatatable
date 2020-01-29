@@ -60,7 +60,7 @@ prepare_prased_assignments_for_data_table <- function(parsed) {
 #'
 #' Will re-order columns if there are ordering terms.
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #'
 #' @examples
 #'
@@ -81,21 +81,21 @@ prepare_prased_assignments_for_data_table <- function(parsed) {
 #'              reverse = c("assessmentTotal"),
 #'              partitionby = 'subjectID') %.>%
 #'   orderby(., c("subjectID", "probability"))
-#' ex_data_table(rquery_pipeline)
+#' ex_data_table_step(rquery_pipeline)
 #'
 #' @export
-ex_data_table.relop_extend <- function(optree,
+ex_data_table_step.relop_extend <- function(optree,
                                        ...,
                                        tables = list(),
                                        source_usage = NULL,
                                        source_limit = NULL,
                                        env = parent.frame()) {
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_extend")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_extend")
   force(env)
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
-  x <- ex_data_table(optree$source[[1]],
+  x <- ex_data_table_step(optree$source[[1]],
                      tables = tables,
                      source_usage = source_usage,
                      source_limit = source_limit,

@@ -3,7 +3,7 @@
 #'
 #' \code{data.table} based implementation.
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #'
 #' @examples
 #'
@@ -21,31 +21,31 @@
 #' # key matching join
 #' optree <- natural_join(local_td(d1), local_td(d2),
 #'                        jointype = "FULL", by = 'key')
-#' ex_data_table(optree)
+#' ex_data_table_step(optree)
 #'
 #' # full cross-product join
 #' # (usually with jointype = "FULL", but "LEFT" is more
 #' # compatible with rquery field merge semantics).
 #' optree2 <- natural_join(local_td(d1), local_td(d2),
 #'                         jointype = "LEFT", by = NULL)
-#' ex_data_table(optree2)
+#' ex_data_table_step(optree2)
 #' # notice ALL non-"by" fields take coalese to left table.
 #'
 #' @export
-ex_data_table.relop_natural_join <- function(optree,
+ex_data_table_step.relop_natural_join <- function(optree,
                                              ...,
                                              tables = list(),
                                              source_usage = NULL,
                                              source_limit = NULL,
                                              env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_natural_join")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_natural_join")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
   inputs <- lapply(optree$source,
                    function(si) {
-                     ex_data_table(si,
+                     ex_data_table_step(si,
                                    tables = tables,
                                    source_usage = source_usage,
                                    source_limit = source_limit,

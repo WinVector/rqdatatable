@@ -4,7 +4,7 @@
 #'
 #' \code{data.table} based implementation.
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #'
 #' @examples
 #'
@@ -16,22 +16,22 @@
 #' op_tree <- local_td(d) %.>%
 #'   set_indicator(., "one_two", "a", set) %.>%
 #'   set_indicator(., "z", "a", c())
-#' ex_data_table(op_tree)
+#' ex_data_table_step(op_tree)
 #'
 #'
 #' @export
-ex_data_table.relop_set_indicator <- function(optree,
+ex_data_table_step.relop_set_indicator <- function(optree,
                                               ...,
                                               tables = list(),
                                               source_usage = NULL,
                                               source_limit = NULL,
                                               env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_set_indicator")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_set_indicator")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
-  x <- ex_data_table(optree$source[[1]],
+  x <- ex_data_table_step(optree$source[[1]],
                      tables = tables,
                      source_usage = source_usage,
                      source_limit = source_limit,

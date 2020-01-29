@@ -3,7 +3,7 @@ test_assoc <- function() {
 
   d <- data.frame(t = 1:2)
 
-  target <- data.table::data.table(t = 1:2, u = 2:3, v = 3:4, w = 4:5)
+  target <- data.frame(t = 1:2, u = 2:3, v = 3:4, w = 4:5)
 
   # rquery/rqdatatable gets associativity by leaving value in "." and
   # evaluating right-hand-sides as expresions.

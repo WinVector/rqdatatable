@@ -1,6 +1,7 @@
 
-# rqdatatable 1.2.6 2020/01/18
+# rqdatatable 1.2.6 2020/01/29
 
+ * Return data.frame if we start with data.frame.
  * Belt and suspenders on stringsAsFactors
 
 # rqdatatable 1.2.5 2020/01/12

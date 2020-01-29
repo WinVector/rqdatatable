@@ -9,7 +9,7 @@ test_relop_null_replace <- function() {
      NA , NA )
  rquery_pipeline <- local_td(dL) %.>%
    null_replace(., c("x", "y"), 0, note_col = "nna")
- ex_data_table(rquery_pipeline)[]
+ ex_data_table(rquery_pipeline)
 
  invisible(NULL)
 }

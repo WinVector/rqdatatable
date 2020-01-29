@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table • rqdatatable</title>
+<title>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table_step • rqdatatable</title>
 
 
 <!-- jquery -->
@@ -35,9 +35,9 @@
 
 
 
-<meta property="og:title" content="Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table" />
+<meta property="og:title" content="Execute an <code>rquery</code> pipeline with <code>data.table</code> sources. — ex_data_table_step" />
 <meta property="og:description" content="data.tables are looked for by name in the tables argument and in the execution environment.
-Main external execution interface." />
+Internal execution interface." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -129,15 +129,15 @@ Main external execution interface." />
     <div class="page-header">
     <h1>Execute an <code>rquery</code> pipeline with <code>data.table</code> sources.</h1>
     <small class="dont-index">Source: <a href='https://github.com/WinVector/rqdatatable/blob/master/R/rquery_fns.R'><code>R/rquery_fns.R</code></a></small>
-    <div class="hidden name"><code>ex_data_table.Rd</code></div>
+    <div class="hidden name"><code>ex_data_table_step.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p><code>data.table</code>s are looked for by name in the <code>tables</code> argument and in the execution environment.
-Main external execution interface.</p>
+Internal execution interface.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ex_data_table</span>(
+    <pre class="usage"><span class='fu'>ex_data_table_step</span>(
   <span class='no'>optree</span>,
   <span class='no'>...</span>,
   <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
@@ -212,7 +212,7 @@ Main external execution interface.</p>
 #&gt;  select_columns(., 
 #&gt;     c('x', 'y')) %.&gt;%
 #&gt;  select_rows(.,
-#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
+#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'>ex_data_table_step</span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
 #&gt; 1: 1 20</div><div class='input'>
   <span class='co'># other ways to execute the pipeline include</span>
   <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;   x  y

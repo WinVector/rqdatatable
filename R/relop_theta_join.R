@@ -12,25 +12,25 @@
 #'
 #'  optree <- theta_join_se(local_td(d1), local_td(d2), "AUC >= AUC2")
 #'
-#'  ex_data_table(optree, tables = list(d1 = d1, d2 = d2)) %.>%
+#'  ex_data_table_step(optree, tables = list(d1 = d1, d2 = d2)) %.>%
 #'    print(.)
 #'
-#' @inheritParams ex_data_table
+#' @inheritParams ex_data_table_step
 #' @export
-ex_data_table.relop_theta_join <- function(optree,
+ex_data_table_step.relop_theta_join <- function(optree,
                                            ...,
                                            tables = list(),
                                            source_usage = NULL,
                                            source_limit = NULL,
                                            env = parent.frame()) {
   force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table.relop_theta_join")
+  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::ex_data_table_step.relop_theta_join")
   if(is.null(source_usage)) {
     source_usage <- columns_used(optree)
   }
   inputs <- lapply(optree$source,
                    function(si) {
-                     ex_data_table(si,
+                     ex_data_table_step(si,
                                    tables = tables,
                                    source_usage = source_usage,
                                    source_limit = source_limit,
@@ -63,7 +63,7 @@ ex_data_table.relop_theta_join <- function(optree,
   } else if(optree$jointype=="RIGHT") {
     expr_text <- paste0("B[A, on=.(", eeterm, "), .(", colsterm, "), allow.cartesian = TRUE]")
   } else if(optree$jointype=="FULL") {
-    stop("rqdatatable::ex_data_table.relop_theta_join FULL join not implemented")
+    stop("rqdatatable::ex_data_table_step.relop_theta_join FULL join not implemented")
   } else {
     stop(paste("jointype was", optree$jointype, " but should be one of INNER, LEFT, RIGHT"))
   }
