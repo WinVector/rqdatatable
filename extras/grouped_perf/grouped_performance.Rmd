@@ -28,8 +28,8 @@ packageVersion("rqdatatable")
 
 ops_rqdatatable <- local_td(d, name = 'd') %.>%
   extend(.,
-         rn %:=% row_number(),
-         cs %:=% cumsum(x),
+         rn := row_number(),
+         cs := cumsum(x),
          partitionby = 'g',
          orderby = 'x') %.>%
   order_rows(.,
@@ -62,7 +62,7 @@ f_data.table <- function(d) {
 res_data.table <- f_data.table(d)
 knitr::kable(head(res_data.table))
 
-stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_data.table)))
+stopifnot(all.equal(res_rqdatatable, data.frame(res_data.table)))
 ```
 
 
@@ -83,7 +83,7 @@ ops_dplyr <- . %>%
 res_dplyr <- d %>% ops_dplyr
 
 knitr::kable(head(res_dplyr))
-stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_dplyr)))
+stopifnot(all.equal(res_rqdatatable, data.frame(res_dplyr)))
 ```
 
 Example processing, `dtplyr`.
@@ -99,12 +99,13 @@ f_dtplyr <- function(d) {
     mutate(
       rn = row_number(),
       cs = cumsum(x)) %>%
-    ungroup()
-  return(as_tibble(res_dtplyr))
+    ungroup() %>%
+    as_tibble()
+  return(res_dtplyr)
 }
 
 res_dtplyr <- f_dtplyr(d)
-stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_dtplyr)))
+stopifnot(all.equal(res_rqdatatable, data.frame(res_dtplyr)))
 ```
 
 ```{r microbenchmark}

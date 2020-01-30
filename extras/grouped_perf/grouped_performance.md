@@ -23,25 +23,27 @@ Example processing, `rqdatatable`.
 library(rqdatatable)
 ```
 
+    ## Loading required package: wrapr
+
     ## Loading required package: rquery
 
 ``` r
 packageVersion("rquery")
 ```
 
-    ## [1] '1.4.1'
+    ## [1] '1.4.3'
 
 ``` r
 packageVersion("rqdatatable")
 ```
 
-    ## [1] '1.2.4'
+    ## [1] '1.2.7'
 
 ``` r
 ops_rqdatatable <- local_td(d, name = 'd') %.>%
   extend(.,
-         rn %:=% row_number(),
-         cs %:=% cumsum(x),
+         rn := row_number(),
+         cs := cumsum(x),
          partitionby = 'g',
          orderby = 'x') %.>%
   order_rows(.,
@@ -85,6 +87,16 @@ Example processing `data.table`.
 
 ``` r
 library(data.table)
+```
+
+    ## 
+    ## Attaching package: 'data.table'
+
+    ## The following object is masked from 'package:wrapr':
+    ## 
+    ##     :=
+
+``` r
 packageVersion("data.table")
 ```
 
@@ -111,7 +123,7 @@ knitr::kable(head(res_data.table))
 | \-0.6675965 | level\_000000010 |  1 | \-0.6675965 |
 
 ``` r
-stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_data.table)))
+stopifnot(all.equal(res_rqdatatable, data.frame(res_data.table)))
 ```
 
 Example processing, `dplyr`.
@@ -126,6 +138,10 @@ library(dplyr)
     ## The following objects are masked from 'package:data.table':
     ## 
     ##     between, first, last
+
+    ## The following object is masked from 'package:wrapr':
+    ## 
+    ##     coalesce
 
     ## The following objects are masked from 'package:stats':
     ## 
@@ -165,7 +181,7 @@ knitr::kable(head(res_dplyr))
 | \-0.6675965 | level\_000000010 |  1 | \-0.6675965 |
 
 ``` r
-stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_dplyr)))
+stopifnot(all.equal(res_rqdatatable, data.frame(res_dplyr)))
 ```
 
 Example processing, `dtplyr`.
@@ -185,12 +201,13 @@ f_dtplyr <- function(d) {
     mutate(
       rn = row_number(),
       cs = cumsum(x)) %>%
-    ungroup()
-  return(as_tibble(res_dtplyr))
+    ungroup() %>%
+    as_tibble()
+  return(res_dtplyr)
 }
 
 res_dtplyr <- f_dtplyr(d)
-stopifnot(all.equal(data.frame(res_rqdatatable), data.frame(res_dtplyr)))
+stopifnot(all.equal(res_rqdatatable, data.frame(res_dtplyr)))
 ```
 
 ``` r
@@ -206,7 +223,7 @@ microbenchmark(
 
     ## Unit: seconds
     ##         expr       min        lq      mean    median        uq       max neval
-    ##   data.table  1.761819  1.801918  2.074670  1.907565  2.360966  2.541081     5
-    ##        dplyr 31.293568 33.383398 35.104285 34.324209 36.101260 40.418988     5
-    ##       dtplyr  4.412182  4.692573  5.140682  4.888749  5.618379  6.091527     5
-    ##  rqdatatable  3.365419  3.470157  3.776139  3.580841  4.020857  4.443421     5
+    ##   data.table  1.647990  1.711399  1.794348  1.713328  1.802321  2.096700     5
+    ##        dplyr 31.310196 32.386980 33.813750 32.486036 35.603723 37.281816     5
+    ##       dtplyr  4.385252  4.582455  4.610222  4.621821  4.718904  4.742677     5
+    ##  rqdatatable  3.182464  3.470306  3.750955  3.678086  3.920189  4.503732     5
