@@ -40,9 +40,7 @@
 #'     sql_node(., "num_missing" %:=% list(expr))
 #'   cat(format(op_tree))
 #'
-#'   ex_data_table_step(op_tree, tables = list(d = d)) %.>%
-#'     print(.)
-#'   # d %.>% op_tree
+#'   d %.>% op_tree
 #'
 #'   options(old_o)
 #'   DBI::dbDisconnect(my_db)

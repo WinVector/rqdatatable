@@ -14,7 +14,7 @@
 #'     3L , "c" )
 #' rquery_pipeline <- local_td(dL) %.>%
 #'   order_expr(., abs(x))
-#' ex_data_table_step(rquery_pipeline)
+#' dL %.>% rquery_pipeline
 #'
 #' @export
 ex_data_table_step.relop_order_expr <- function(optree,

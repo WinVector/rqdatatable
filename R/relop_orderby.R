@@ -29,7 +29,7 @@ order_table <- function(x, orderby, reverse) {
 #'     3L , "c" )
 #' rquery_pipeline <- local_td(dL) %.>%
 #'   orderby(., "y")
-#' ex_data_table_step(rquery_pipeline)
+#' dL %.>% rquery_pipeline
 #'
 #' @export
 ex_data_table_step.relop_orderby <- function(optree,

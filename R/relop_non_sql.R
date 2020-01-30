@@ -73,7 +73,7 @@ mk_f_db_default <- function(f, cols) {
 #'
 #' cat(format(rquery_pipeline))
 #'
-#' ex_data_table_step(rquery_pipeline)
+#' d %.>% rquery_pipeline
 #'
 #' @export
 #'
@@ -157,7 +157,7 @@ rq_df_funciton_node <- function(., f,
 #'
 #' cat(format(rquery_pipeline))
 #'
-#' ex_data_table_step(rquery_pipeline)
+#' d %.>% rquery_pipeline
 #'
 #'
 #' @export
@@ -223,11 +223,11 @@ rq_df_grouped_funciton_node <- function(., f,
 #'
 #' optree <- local_td(d) %.>%
 #'   quantile_node(.)
-#' ex_data_table_step(optree)
+#' d %.>% optree
 #'
 #' p2 <- local_td(d) %.>%
 #'   rsummary_node(.)
-#' ex_data_table_step(p2)
+#' d %.>% p2
 #'
 #' summary(d)
 #'
@@ -293,16 +293,10 @@ ex_data_table_step.relop_non_sql <- function(optree,
       res <- f_df(x)
     }
   }
+  if(!data.table::is.data.table(res)) {
+    res <- data.table::as.data.table(res)
+  }
   if(isTRUE(optree$check_result_details)) {
-    if(is.matrix(res)) {
-      res <- data.table::as.data.table(res)
-    }
-    if(!is.data.frame(res)) {
-      stop("qdataframe::ex_data_table_step.relop_non_sql f_df/f_dt did not return a data.frame")
-    }
-    if(!data.table::is.data.table(res)) {
-      res <- data.table::as.data.table(res)
-    }
     missing_columns <- setdiff(column_names(optree), colnames(res))
     if(length(missing_columns)>0) {
       stop(paste("qdataframe::ex_data_table_step.relop_non_sql columns produced did not meet declared column specification",

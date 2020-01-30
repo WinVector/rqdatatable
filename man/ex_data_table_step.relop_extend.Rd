@@ -51,6 +51,6 @@ rquery_pipeline <- local_td(dL) \%.>\%
              reverse = c("assessmentTotal"),
              partitionby = 'subjectID') \%.>\%
   orderby(., c("subjectID", "probability"))
-ex_data_table_step(rquery_pipeline)
+dL \%.>\% rquery_pipeline
 
 }

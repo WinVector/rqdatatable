@@ -36,11 +36,11 @@ d <- data.frame(a = rnorm(1000), b = rnorm(1000))
 
 optree <- local_td(d) \%.>\%
   quantile_node(.)
-ex_data_table_step(optree)
+d \%.>\% optree
 
 p2 <- local_td(d) \%.>\%
   rsummary_node(.)
-ex_data_table_step(p2)
+d \%.>\% p2
 
 summary(d)
 

@@ -75,7 +75,7 @@ rquery_pipeline <- local_td(d) \%.>\%
 
 cat(format(rquery_pipeline))
 
-ex_data_table_step(rquery_pipeline)
+d \%.>\% rquery_pipeline
 
 }
 \seealso{

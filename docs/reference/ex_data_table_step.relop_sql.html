@@ -71,7 +71,7 @@ cost of data transfer).  This implementation is only here for completeness." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
       </span>
     </div>
 
@@ -196,7 +196,7 @@ cost of data transfer).  This implementation is only here for completeness.</p>
                   <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
   <span class='co'># example xform</span>
-  <span class='no'>vars</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/column_names.html'>column_names</a></span>(<span class='no'>d</span>)
+  <span class='no'>vars</span> <span class='kw'>&lt;-</span> <span class='fu'>column_names</span>(<span class='no'>d</span>)
   <span class='co'># build a NA/NULLs per-row counting expression.</span>
   <span class='co'># names are "quoted" by wrapping them with as.name().</span>
   <span class='co'># constants can be quoted by an additional list wrapping.</span>
@@ -210,13 +210,11 @@ cost of data transfer).  This implementation is only here for completeness.</p>
   <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>0.0</span>), <span class='no'>expr</span>)
 
   <span class='co'># instantiate the operator node</span>
-  <span class='no'>op_tree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/local_td.html'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
+  <span class='no'>op_tree</span> <span class='kw'>&lt;-</span> <span class='fu'>local_td</span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
     <span class='fu'>sql_node</span>(<span class='no'>.</span>, <span class='st'>"num_missing"</span> <span class='kw'>%:=%</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>expr</span>))
   <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>op_tree</span>))
 
-  <span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(<span class='no'>op_tree</span>, <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>d</span> <span class='kw'>=</span> <span class='no'>d</span>)) <span class='kw'>%.&gt;%</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>.</span>)
-  <span class='co'># d %.&gt;% op_tree</span>
+  <span class='no'>d</span> <span class='kw'>%.&gt;%</span> <span class='no'>op_tree</span>
 
   <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='no'>old_o</span>)
   <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='https://dbi.r-dbi.org/reference/dbDisconnect.html'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
@@ -226,12 +224,7 @@ cost of data transfer).  This implementation is only here for completeness.</p>
 #&gt;   "v3")) %.&gt;%
 #&gt;  sql_node(.,
 #&gt;           num_missing %:=% 0 + (CASE WHEN ( v1 IS NULL ) THEN 1.0 ELSE 0.0 END) + (CASE WHEN ( v2 IS NULL ) THEN 1.0 ELSE 0.0 END) + (CASE WHEN ( v3 IS NULL ) THEN 1.0 ELSE 0.0 END),
-#&gt;              *=TRUE)
-#&gt;    v3 num_missing v1   v2
-#&gt; 1: NA           2  1 &lt;NA&gt;
-#&gt; 2: NA           1  2    b
-#&gt; 3:  7           2 NA &lt;NA&gt;
-#&gt; 4:  8           0  3    c</div><div class='input'>
+#&gt;              *=TRUE)</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

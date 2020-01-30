@@ -70,7 +70,7 @@ Main external execution interface." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
       </span>
     </div>
 
@@ -202,9 +202,9 @@ Main external execution interface.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
   <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>data.table</span><span class='kw ns'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>) , <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>30</span>), <span class='kw'>z</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
-  <span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/local_td.html'>local_td</a></span>(<span class='no'>a</span>) <span class='kw'>%.&gt;%</span>
-     <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/select_columns.html'>select_columns</a></span>(<span class='no'>.</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)) <span class='kw'>%.&gt;%</span>
-     <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/select_rows.html'>select_rows_nse</a></span>(<span class='no'>.</span>, <span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>2</span> <span class='kw'>&amp;</span> <span class='no'>y</span><span class='kw'>&lt;</span><span class='fl'>30</span>)
+  <span class='no'>optree</span> <span class='kw'>&lt;-</span> <span class='fu'>local_td</span>(<span class='no'>a</span>) <span class='kw'>%.&gt;%</span>
+     <span class='fu'>select_columns</span>(<span class='no'>.</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)) <span class='kw'>%.&gt;%</span>
+     <span class='fu'>select_rows_nse</span>(<span class='no'>.</span>, <span class='no'>x</span><span class='kw'>&lt;</span><span class='fl'>2</span> <span class='kw'>&amp;</span> <span class='no'>y</span><span class='kw'>&lt;</span><span class='fl'>30</span>)
   <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>optree</span>))</div><div class='output co'>#&gt; mk_td("a", c(
 #&gt;   "x",
 #&gt;   "y",
@@ -212,12 +212,10 @@ Main external execution interface.</p>
 #&gt;  select_columns(., 
 #&gt;     c('x', 'y')) %.&gt;%
 #&gt;  select_rows(.,
-#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
-#&gt; 1: 1 20</div><div class='input'>
+#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'>ex_data_table</span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;   x  y
+#&gt; 1 1 20</div><div class='input'>
   <span class='co'># other ways to execute the pipeline include</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;   x  y
-#&gt; 1 1 20</div><div class='input'>  <span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/as.data.table.html'>as.data.table</a></span>(<span class='no'>optree</span>)</div><div class='output co'>#&gt;    x  y
-#&gt; 1: 1 20</div><div class='input'>  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='fl'>400</span>) <span class='kw'>%.&gt;%</span> <span class='no'>optree</span></div><div class='output co'>#&gt;   x y
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>z</span> <span class='kw'>=</span> <span class='fl'>400</span>) <span class='kw'>%.&gt;%</span> <span class='no'>optree</span></div><div class='output co'>#&gt;   x y
 #&gt; 1 0 4</div><div class='input'>
 
 </div></pre>

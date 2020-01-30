@@ -15,7 +15,7 @@
 #'     3L , "c" )
 #' rquery_pipeline <- local_td(dL) %.>%
 #'   rename_columns(., c("x" = "y", "y" = "x"))
-#' ex_data_table_step(rquery_pipeline)
+#' dL %.>% rquery_pipeline
 #'
 #' @export
 ex_data_table_step.relop_rename_columns <- function(optree,

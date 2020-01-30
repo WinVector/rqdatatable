@@ -87,7 +87,7 @@ layout_to_blocks_data_table <- function(data,
     variable.name = nameForNewKeyColumn,
     value.name = nameForNewValueColumn,
     variable.factor = FALSE)
-  res <- data.frame(res)
+  res <- as.data.frame(res)
   rownames(res) <- NULL
   res
 }
@@ -146,7 +146,7 @@ layout_to_rowrecs_data_table <- function(data,
     fill = NA,
     value.var = columnToTakeValuesFrom,
     sep = sep)
-  res <- data.frame(res)
+  res <- as.data.frame(res)
   rownames(res) <- NULL
   res
 }

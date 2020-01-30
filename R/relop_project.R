@@ -25,12 +25,12 @@ is_keyed_by_columns <- function(d, keys) {
 #'     2          , "withdrawal behavior", 3                 |
 #'     2          , "positive re-framing", 4                 )
 #' test_p <- local_td(dL) %.>%
-#'   project_nse(.,
-#'               maxscore = max(assessmentTotal),
-#'               groupby = 'subjectID',
-#'               count = n())
+#'   project(.,
+#'           maxscore := max(assessmentTotal),
+#'           count := n(),
+#'           groupby = 'subjectID')
 #' cat(format(test_p))
-#' ex_data_table_step(test_p)
+#' dL %.>% test_p
 #'
 #' @export
 ex_data_table_step.relop_project <- function(optree,

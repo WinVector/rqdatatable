@@ -81,7 +81,7 @@ prepare_prased_assignments_for_data_table <- function(parsed) {
 #'              reverse = c("assessmentTotal"),
 #'              partitionby = 'subjectID') %.>%
 #'   orderby(., c("subjectID", "probability"))
-#' ex_data_table_step(rquery_pipeline)
+#' dL %.>% rquery_pipeline
 #'
 #' @export
 ex_data_table_step.relop_extend <- function(optree,

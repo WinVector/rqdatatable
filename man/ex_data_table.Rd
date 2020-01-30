@@ -58,11 +58,9 @@ Main external execution interface.
      select_columns(., c("x", "y")) \%.>\%
      select_rows_nse(., x<2 & y<30)
   cat(format(optree))
-  ex_data_table_step(optree)
+  ex_data_table(optree)
 
   # other ways to execute the pipeline include
-  as.data.frame(optree)
-  as.data.table(optree)
   data.frame(x = 0, y = 4, z = 400) \%.>\% optree
 
 

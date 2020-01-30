@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"rqdatatable"</span>)</a></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co">## Loading required package: rquery</span></a></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co"># data example</span></a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">dL &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/wrapr/man/build_frame.html">build_frame</a></span>(</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">dL &lt;-<span class="st"> </span><span class="kw">build_frame</span>(</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="st">   </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span></a>
 <a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">   </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>                 <span class="op">|</span></a>
@@ -106,26 +106,26 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">scale &lt;-<span class="st"> </span><span class="fl">0.237</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co"># example rquery pipeline</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/local_td.html">local_td</a></span>(dL) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/extend.html">extend_nse</a></span>(.,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">rquery_pipeline &lt;-<span class="st"> </span><span class="kw">local_td</span>(dL) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">  </span><span class="kw">extend_nse</span>(.,</a>
 <a class="sourceLine" id="cb4-6" data-line-number="6">             probability <span class="op">:</span><span class="er">=</span></a>
 <a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">               </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale))  <span class="op">%.&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/normalize_cols.html">normalize_cols</a></span>(.,</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="st">  </span><span class="kw">normalize_cols</span>(.,</a>
 <a class="sourceLine" id="cb4-9" data-line-number="9">                 <span class="st">"probability"</span>,</a>
 <a class="sourceLine" id="cb4-10" data-line-number="10">                 <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/pick_top_k.html">pick_top_k</a></span>(.,</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"><span class="st">  </span><span class="kw">pick_top_k</span>(.,</a>
 <a class="sourceLine" id="cb4-12" data-line-number="12">             <span class="dt">k =</span> <span class="dv">1</span>,</a>
 <a class="sourceLine" id="cb4-13" data-line-number="13">             <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>,</a>
 <a class="sourceLine" id="cb4-14" data-line-number="14">             <span class="dt">orderby =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>),</a>
 <a class="sourceLine" id="cb4-15" data-line-number="15">             <span class="dt">reverse =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>)) <span class="op">%.&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/rename_columns.html">rename_columns</a></span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'diagnosis'</span> =<span class="st"> 'surveyCategory'</span>)) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/select_columns.html">select_columns</a></span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>, </a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">  </span><span class="kw">rename_columns</span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'diagnosis'</span> =<span class="st"> 'surveyCategory'</span>)) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="st">  </span><span class="kw">select_columns</span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>, </a>
 <a class="sourceLine" id="cb4-18" data-line-number="18">                      <span class="st">'diagnosis'</span>, </a>
 <a class="sourceLine" id="cb4-19" data-line-number="19">                      <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/orderby.html">orderby</a></span>(., <span class="dt">cols =</span> <span class="st">'subjectID'</span>)</a></code></pre></div>
+<a class="sourceLine" id="cb4-20" data-line-number="20"><span class="st">  </span><span class="kw">orderby</span>(., <span class="dt">cols =</span> <span class="st">'subjectID'</span>)</a></code></pre></div>
 <p>We can show the expanded form of query tree.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/format.html">format</a></span>(rquery_pipeline))</a></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/mk_td.html">mk_td</a></span>(<span class="st">"dL"</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">mk_td</span>(<span class="st">"dL"</span>, <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">  <span class="st">"subjectID"</span>,</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3">  <span class="st">"surveyCategory"</span>,</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="st">"assessmentTotal"</span>)) <span class="op">%.&gt;%</span></a>
@@ -143,9 +143,9 @@
 <a class="sourceLine" id="cb6-16" data-line-number="16">  <span class="dt">reverse =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>)) <span class="op">%.&gt;%</span></a>
 <a class="sourceLine" id="cb6-17" data-line-number="17"><span class="st"> </span><span class="kw">select_rows</span>(.,</a>
 <a class="sourceLine" id="cb6-18" data-line-number="18">   row_number <span class="op">&lt;=</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/rename_columns.html">rename_columns</a></span>(.,</a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="st"> </span><span class="kw">rename_columns</span>(.,</a>
 <a class="sourceLine" id="cb6-20" data-line-number="20">  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'diagnosis'</span> =<span class="st"> 'surveyCategory'</span>)) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/select_columns.html">select_columns</a></span>(., </a>
+<a class="sourceLine" id="cb6-21" data-line-number="21"><span class="st"> </span><span class="kw">select_columns</span>(., </a>
 <a class="sourceLine" id="cb6-22" data-line-number="22">    <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>, <span class="st">'diagnosis'</span>, <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span></a>
 <a class="sourceLine" id="cb6-23" data-line-number="23"><span class="st"> </span><span class="kw">order_rows</span>(.,</a>
 <a class="sourceLine" id="cb6-24" data-line-number="24">  <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>),</a>
@@ -157,7 +157,7 @@
 <a class="sourceLine" id="cb8-2" data-line-number="2"><span class="co">## 1:         1 withdrawal behavior   0.6706221</span></a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="co">## 2:         2 positive re-framing   0.5589742</span></a></code></pre></div>
 <p>One can also apply the pipeline to new tables.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/pkg/wrapr/man/build_frame.html">build_frame</a></span>(</a>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">build_frame</span>(</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2">   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="st">   </span><span class="dv">7</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>                 <span class="op">|</span></a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="st">   </span><span class="dv">7</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">20</span>                ) <span class="op">%.&gt;%</span></a>

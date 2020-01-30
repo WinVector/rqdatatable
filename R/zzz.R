@@ -1,6 +1,6 @@
 
-
-. = NULL # don't look unbound
+# don't let . look like an unbound reference
+. = NULL
 
 
 #' Set rqdatatable package as default rquery executor

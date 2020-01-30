@@ -16,7 +16,7 @@
 #' op_tree <- local_td(d) %.>%
 #'   set_indicator(., "one_two", "a", set) %.>%
 #'   set_indicator(., "z", "a", c())
-#' ex_data_table_step(op_tree)
+#' d %.>% op_tree
 #'
 #'
 #' @export

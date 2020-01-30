@@ -61,9 +61,9 @@ Internal execution interface.
   ex_data_table_step(optree)
 
   # other ways to execute the pipeline include
-  as.data.frame(optree)
-  as.data.table(optree)
+  ex_data_table(optree)
   data.frame(x = 0, y = 4, z = 400) \%.>\% optree
 
 
 }
+\keyword{internal}

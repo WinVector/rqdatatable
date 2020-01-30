@@ -38,6 +38,6 @@ dL <- build_frame(
     3L , "c" )
 rquery_pipeline <- local_td(dL) \%.>\%
   select_rows_nse(., x <= 2)
-ex_data_table_step(rquery_pipeline)
+dL \%.>\% rquery_pipeline
 
 }

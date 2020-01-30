@@ -6,64 +6,8 @@
 #' @importFrom data.table :=
 NULL
 
-
-#' @importFrom wrapr mk_tmp_name_source
-#' @export
-wrapr::mk_tmp_name_source
-
-#' @importFrom wrapr map_to_char
-#' @export
-wrapr::map_to_char
-
-#' @importFrom wrapr %.>%
-#' @export
-wrapr::`%.>%`
-
 #' @importFrom wrapr %:=%
-#' @export
-wrapr::`%:=%`
-
-#' @importFrom wrapr let
-#' @export
-wrapr::let
-
-#' @importFrom wrapr qc
-#' @export
-wrapr::qc
-
-#' @importFrom wrapr qc
-#' @export
-wrapr::qc
-
-#' @importFrom wrapr qe
-#' @export
-wrapr::qe
-
-#' @importFrom wrapr build_frame
-#' @export
-wrapr::build_frame
-
-#' @importFrom wrapr draw_frame
-#' @export
-wrapr::draw_frame
-
-#' @importFrom wrapr qchar_frame
-#' @export
-wrapr::qchar_frame
-
-#' @importFrom wrapr apply_left
-#' @export
-wrapr::apply_left
-
-#' @importFrom wrapr apply_right
-#' @export
-wrapr::apply_right
-
-
-
-
-# don't let . look like an unbound reference
-. <- NULL
+NULL
 
 
 
@@ -105,11 +49,9 @@ wrapr::apply_right
 #'      select_columns(., c("x", "y")) %.>%
 #'      select_rows_nse(., x<2 & y<30)
 #'   cat(format(optree))
-#'   ex_data_table_step(optree)
+#'   ex_data_table(optree)
 #'
 #'   # other ways to execute the pipeline include
-#'   as.data.frame(optree)
-#'   as.data.table(optree)
 #'   data.frame(x = 0, y = 4, z = 400) %.>% optree
 #'
 #'
@@ -161,6 +103,8 @@ ex_data_table <- function(optree,
 #' @param env environment to work in.
 #' @return resulting data.table (intermediate tables can somtimes be mutated as is practice with data.table).
 #'
+#' @keywords internal
+#'
 #' @examples
 #'
 #'   a <- data.table::data.table(x = c(1, 2) , y = c(20, 30), z = c(300, 400))
@@ -171,8 +115,7 @@ ex_data_table <- function(optree,
 #'   ex_data_table_step(optree)
 #'
 #'   # other ways to execute the pipeline include
-#'   as.data.frame(optree)
-#'   as.data.table(optree)
+#'   ex_data_table(optree)
 #'   data.frame(x = 0, y = 4, z = 400) %.>% optree
 #'
 #'
@@ -209,53 +152,12 @@ ex_data_table_step.default <- function(optree,
 }
 
 
-#' @export
-as.data.frame.relop <- function(x, row.names = NULL, optional = FALSE,
-                                ...,
-                                stringsAsFactors = FALSE,
-                                env = parent.frame()) {
-  force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.frame.relop")
-  if(!is.null(row.names)) {
-    stop("rqdatatable::as.data.frame.relop row.names should not be set")
-  }
-  if(!isTRUE(optional==FALSE)) {
-    stop("rqdatatable::as.data.frame.relop optional should not be set")
-  }
-  if(!isTRUE(stringsAsFactors==FALSE)) {
-    stop("rqdatatable::as.data.frame.relop stringsAsFactors should not be set")
-  }
-  res <- ex_data_table_step(x, env = env)
-  if(!is.data.frame(res)) {
-    stop("qdatatable::as.data.frame.relop result was not a data.frame")
-  }
-  as.data.frame(res)
-}
 
 #' @importFrom data.table as.data.table is.data.table
 #' @export
 data.table::as.data.table
 
-#' @export
-as.data.table.relop <- function(x, keep.rownames = FALSE,
-                                ...,
-                                stringsAsFactors = FALSE,
-                                env = parent.frame()) {
-  force(env)
-  wrapr::stop_if_dot_args(substitute(list(...)), "rqdatatable::as.data.table.relop")
-  if(!isTRUE(keep.rownames==FALSE)) {
-    stop("rqdatatable::as.data.table.relop keep.rownames should not be set")
-  }
-  if(!isTRUE(stringsAsFactors==FALSE)) {
-    stop("rqdatatable::as.data.table.relop stringsAsFactors should not be set")
-  }
-  res <- ex_data_table_step(x, env = env)
-  if(!is.data.frame(res)) {
-    stop("qdatatable::as.data.table.relop result was not a data.frame")
-  }
-  if(!data.table::is.data.table(res)) {
-    res <- data.table::as.data.table(res)
-  }
-  res
-}
+#' @importFrom rquery column_names columns_used local_td non_sql_node rquery_apply_to_data_frame
+NULL
+
 

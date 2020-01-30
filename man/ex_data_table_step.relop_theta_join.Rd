@@ -36,7 +36,7 @@ Limited implementation.  All terms must be of the form: "(table1.col CMP table2.
 
  optree <- theta_join_se(local_td(d1), local_td(d2), "AUC >= AUC2")
 
- ex_data_table_step(optree, tables = list(d1 = d1, d2 = d2)) \%.>\%
+ ex_data_table(optree, tables = list(d1 = d1, d2 = d2)) \%.>\%
    print(.)
 
 }

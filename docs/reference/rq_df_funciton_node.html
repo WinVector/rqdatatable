@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
       </span>
     </div>
 
@@ -220,7 +220,7 @@
                 <span class='kw'>group</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>5</span>], <span class='fl'>1000</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
                 <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/rquery/man/local_td.html'>local_td</a></span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
+<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'>local_td</span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
   <span class='fu'>grouped_regression_node</span>(<span class='no'>.</span>)
 
 <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>rquery_pipeline</span>))</div><div class='output co'>#&gt; mk_td("d", c(
@@ -228,17 +228,17 @@
 #&gt;   "y",
 #&gt;   "group")) %.&gt;%
 #&gt;  non_sql_node(., y~x grouped by group)</div><div class='input'>
-<span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(<span class='no'>rquery_pipeline</span>)</div><div class='output co'>#&gt;        Estimate Std. Error    t value   Pr(&gt;|t|)    Variable group
-#&gt;  1:  0.05921097 0.06246165  0.9479572 0.34421552 (Intercept)     a
-#&gt;  2: -0.02301646 0.06093971 -0.3776924 0.70603174           x     a
-#&gt;  3:  0.09793586 0.06666844  1.4689988 0.14335117 (Intercept)     b
-#&gt;  4:  0.05703537 0.06963630  0.8190466 0.41370179           x     b
-#&gt;  5: -0.05184909 0.07556010 -0.6861967 0.49348193 (Intercept)     c
-#&gt;  6:  0.05554476 0.08019680  0.6926057 0.48945965           x     c
-#&gt;  7:  0.15331654 0.07004124  2.1889469 0.02985964 (Intercept)     d
-#&gt;  8:  0.02056881 0.06921107  0.2971896 0.76665700           x     d
-#&gt;  9:  0.02250647 0.06919627  0.3252556 0.74531773 (Intercept)     e
-#&gt; 10: -0.08785792 0.06864886 -1.2798162 0.20204920           x     e</div><div class='input'>
+<span class='no'>d</span> <span class='kw'>%.&gt;%</span> <span class='no'>rquery_pipeline</span></div><div class='output co'>#&gt;       Estimate Std. Error    t value   Pr(&gt;|t|)    Variable group
+#&gt; 1   0.05921097 0.06246165  0.9479572 0.34421552 (Intercept)     a
+#&gt; 2  -0.02301646 0.06093971 -0.3776924 0.70603174           x     a
+#&gt; 3   0.09793586 0.06666844  1.4689988 0.14335117 (Intercept)     b
+#&gt; 4   0.05703537 0.06963630  0.8190466 0.41370179           x     b
+#&gt; 5  -0.05184909 0.07556010 -0.6861967 0.49348193 (Intercept)     c
+#&gt; 6   0.05554476 0.08019680  0.6926057 0.48945965           x     c
+#&gt; 7   0.15331654 0.07004124  2.1889469 0.02985964 (Intercept)     d
+#&gt; 8   0.02056881 0.06921107  0.2971896 0.76665700           x     d
+#&gt; 9   0.02250647 0.06919627  0.3252556 0.74531773 (Intercept)     e
+#&gt; 10 -0.08785792 0.06864886 -1.2798162 0.20204920           x     e</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

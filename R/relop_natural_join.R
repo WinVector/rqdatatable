@@ -21,14 +21,14 @@
 #' # key matching join
 #' optree <- natural_join(local_td(d1), local_td(d2),
 #'                        jointype = "FULL", by = 'key')
-#' ex_data_table_step(optree)
+#' ex_data_table(optree)
 #'
 #' # full cross-product join
 #' # (usually with jointype = "FULL", but "LEFT" is more
 #' # compatible with rquery field merge semantics).
 #' optree2 <- natural_join(local_td(d1), local_td(d2),
 #'                         jointype = "LEFT", by = NULL)
-#' ex_data_table_step(optree2)
+#' ex_data_table(optree2)
 #' # notice ALL non-"by" fields take coalese to left table.
 #'
 #' @export

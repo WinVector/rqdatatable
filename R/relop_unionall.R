@@ -14,7 +14,7 @@
 #'     1L , "a" |
 #'     3L , "c" )
 #' rquery_pipeline <- unionall(list(local_td(dL), local_td(dL)))
-#' ex_data_table_step(rquery_pipeline)
+#' dL %.>% rquery_pipeline
 #'
 #' @export
 ex_data_table_step.relop_unionall <- function(optree,

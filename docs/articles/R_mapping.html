@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.7</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
       <h1>R mapping</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2020-01-29</h4>
+            <h4 class="date">2020-01-30</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/R_mapping.Rmd"><code>vignettes/R_mapping.Rmd</code></a></small>
       <div class="hidden name"><code>R_mapping.Rmd</code></div>
@@ -102,31 +102,32 @@
     
 <p><code>rqdatatable</code> re-maps a number of symbols for <code>data.table</code> translation (for <code>rquery</code>/<code>SQL</code> re-mappings, please see <a href="https://winvector.github.io/rquery/articles/R_mapping.html">here</a>). For instance, please take note of the <code>n()</code> and <code><a href="https://rdrr.io/r/base/rank.html">rank()</a></code> functions in the following code example.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"rqdatatable"</span>)</a></code></pre></div>
+<pre><code>## Loading required package: wrapr</code></pre>
 <pre><code>## Loading required package: rquery</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"wrapr"</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">dL &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/wrapr/man/build_frame.html">build_frame</a></span>(</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span><span class="op">|</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>              <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>              <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">3</span>              <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">4</span>              <span class="op">|</span></a>
-<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"other"</span>              , <span class="dv">0</span>              )</a>
-<a class="sourceLine" id="cb3-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb3-11" data-line-number="11">scale &lt;-<span class="st"> </span><span class="fl">0.237</span></a>
-<a class="sourceLine" id="cb3-12" data-line-number="12">rquery_pipeline &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/local_td.html">local_td</a></span>(dL) <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/extend.html">extend_nse</a></span>(.,</a>
-<a class="sourceLine" id="cb3-14" data-line-number="14">             probability <span class="op">:</span><span class="er">=</span></a>
-<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="st">               </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)<span class="op">/</span></a>
-<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="st">               </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)),</a>
-<a class="sourceLine" id="cb3-17" data-line-number="17">             count <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">n</span>(),</a>
-<a class="sourceLine" id="cb3-18" data-line-number="18">             rank <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rank.html">rank</a></span>(),</a>
-<a class="sourceLine" id="cb3-19" data-line-number="19">             <span class="dt">orderby =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>, <span class="st">"surveyCategory"</span>),</a>
-<a class="sourceLine" id="cb3-20" data-line-number="20">             <span class="dt">reverse =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>),</a>
-<a class="sourceLine" id="cb3-21" data-line-number="21">             <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>)  <span class="op">%.&gt;%</span></a>
-<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="st">  </span><span class="kw"><a href="https://rdrr.io/pkg/rquery/man/orderby.html">orderby</a></span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"subjectID"</span>, <span class="st">"probability"</span>))</a>
-<a class="sourceLine" id="cb3-23" data-line-number="23">res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline, <span class="dt">tables =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">dL =</span> dL))</a>
-<a class="sourceLine" id="cb3-24" data-line-number="24">knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(res)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"wrapr"</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">dL &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/wrapr/man/build_frame.html">build_frame</a></span>(</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">  <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span><span class="op">|</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">5</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">    </span><span class="dv">1</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">2</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="dv">3</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"positive re-framing"</span>, <span class="dv">4</span>              <span class="op">|</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="st">    </span><span class="dv">2</span>          , <span class="st">"other"</span>              , <span class="dv">0</span>              )</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">scale &lt;-<span class="st"> </span><span class="fl">0.237</span></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">rquery_pipeline &lt;-<span class="st"> </span><span class="kw">local_td</span>(dL) <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-13" data-line-number="13"><span class="st">  </span><span class="kw">extend_nse</span>(.,</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">             probability <span class="op">:</span><span class="er">=</span></a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="st">               </span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)<span class="op">/</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">               </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(assessmentTotal <span class="op">*</span><span class="st"> </span>scale)),</a>
+<a class="sourceLine" id="cb4-17" data-line-number="17">             count <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw">n</span>(),</a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">             rank <span class="op">:</span><span class="er">=</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/rank.html">rank</a></span>(),</a>
+<a class="sourceLine" id="cb4-19" data-line-number="19">             <span class="dt">orderby =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>, <span class="st">"surveyCategory"</span>),</a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">             <span class="dt">reverse =</span> <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>),</a>
+<a class="sourceLine" id="cb4-21" data-line-number="21">             <span class="dt">partitionby =</span> <span class="st">'subjectID'</span>)  <span class="op">%.&gt;%</span></a>
+<a class="sourceLine" id="cb4-22" data-line-number="22"><span class="st">  </span><span class="kw">orderby</span>(., <span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"subjectID"</span>, <span class="st">"probability"</span>))</a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">res &lt;-<span class="st"> </span><span class="kw"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(rquery_pipeline, <span class="dt">tables =</span> <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dt">dL =</span> dL))</a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">knitr<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(res)</a></code></pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">subjectID</th>
@@ -180,7 +181,7 @@
 </tbody>
 </table>
 <p>The common re-mappings are can be found in the package-private variable <code>rqdatatable:::data_table_extend_fns</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(rqdatatable<span class="op">:::</span>data_table_extend_fns)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(rqdatatable<span class="op">:::</span>data_table_extend_fns)</a></code></pre></div>
 <pre><code>## List of 6
 ##  $ ngroup    :List of 2
 ##   ..$ data.table_version: chr ".GRP"
