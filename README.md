@@ -26,6 +26,8 @@ User”](http://www.win-vector.com/blog/2017/08/lets-have-some-sympathy-for-the-
 library("rqdatatable")
 ```
 
+    ## Loading required package: wrapr
+
     ## Loading required package: rquery
 
 ``` r
@@ -100,9 +102,9 @@ And execute it using `data.table`.
 ex_data_table(rquery_pipeline)
 ```
 
-    ##    subjectID           diagnosis probability
-    ## 1:         1 withdrawal behavior   0.6706221
-    ## 2:         2 positive re-framing   0.5589742
+    ##   subjectID           diagnosis probability
+    ## 1         1 withdrawal behavior   0.6706221
+    ## 2         2 positive re-framing   0.5589742
 
 One can also apply the pipeline to new tables.
 
@@ -114,8 +116,8 @@ build_frame(
   rquery_pipeline
 ```
 
-    ##    subjectID           diagnosis probability
-    ## 1:         7 positive re-framing   0.9722128
+    ##   subjectID           diagnosis probability
+    ## 1         7 positive re-framing   0.9722128
 
 Initial bench-marking of `rqdatatable` is very favorable (notes
 [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
