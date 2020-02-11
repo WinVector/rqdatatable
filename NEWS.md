@@ -1,5 +1,5 @@
 
-# rqdatatable 1.2.7 2020/02/01
+# rqdatatable 1.2.7 2020/02/11
 
  * Move wrapr to Depends.
  * Delete some unsuable as-functions.

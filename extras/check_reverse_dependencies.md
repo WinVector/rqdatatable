@@ -8,7 +8,7 @@ package = "rqdatatable"
 date()
 ```
 
-    ## [1] "Thu Jan 30 10:36:25 2020"
+    ## [1] "Tue Feb 11 08:24:43 2020"
 
 ``` r
 packageVersion(package)
@@ -34,7 +34,7 @@ setwd(td)
 print(td)
 ```
 
-    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//RtmpuNJufW"
+    ## [1] "/var/folders/7q/h_jp2vj131g5799gfnpzhdp80000gn/T//RtmpaMEIpO"
 
 ``` r
 options(repos = c(CRAN="https://cloud.r-project.org"))
@@ -60,8 +60,8 @@ if(!is.null(parallelCluster)) {
 }
 ```
 
-    ## cdata_1.1.5 started at 2020-01-30 10:36:27 success at 2020-01-30 10:37:10 (1/0/0) 
-    ## WVPlots_1.2.3 started at 2020-01-30 10:37:10 success at 2020-01-30 10:38:59 (2/0/0)
+    ## cdata_1.1.6 started at 2020-02-11 08:24:46 success at 2020-02-11 08:25:28 (1/0/0) 
+    ## WVPlots_1.2.3 started at 2020-02-11 08:25:28 success at 2020-02-11 08:26:57 (2/0/0)
 
     ## [1] id     title  status
     ## <0 rows> (or 0-length row.names)
@@ -71,8 +71,8 @@ summariseQueue(package=package, directory=td)
 ```
 
     ## Test of rqdatatable had 2 successes, 0 failures, and 0 skipped packages. 
-    ## Ran from 2020-01-30 10:36:27 to 2020-01-30 10:38:59 for 2.533 mins 
-    ## Average of 76 secs relative to 75.896 secs using 1 runners
+    ## Ran from 2020-02-11 08:24:46 to 2020-02-11 08:26:57 for 2.183 mins 
+    ## Average of 65.5 secs relative to 65.493 secs using 1 runners
     ## 
     ## Failed packages:   
     ## 
