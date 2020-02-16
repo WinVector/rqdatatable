@@ -122,17 +122,24 @@ build_frame(
 Initial bench-marking of `rqdatatable` is very favorable (notes
 [here](http://www.win-vector.com/blog/2018/06/rqdatatable-rquery-powered-by-data-table/)).
 
+To install `rqdatatable` please use `install.packages("rqdatatable")`.
+
 Related work includes:
 
+  - [`data.table`](http://r-datatable.com)
+  - [`disk.frame`](https://github.com/xiaodaigh/disk.frame)
+  - [`dplyr`](https://dplyr.tidyverse.org)
   - [`dtplyr`](https://github.com/tidyverse/dtplyr)
   - [`maditr`](https://github.com/gdemin/maditr)
   - [`nc`](https://github.com/tdhock/nc)
+  - [`rquery`](https://github.com/WinVector/rquery)
+  - [`sqldf`](https://github.com/ggrothendieck/sqldf)
   - [`table.express`](https://github.com/asardaes/table.express)
   - [`tidydt`](https://github.com/markfairbanks/tidydt)
   - [`tidyfast`](https://github.com/TysonStanley/tidyfast)
+  - [`tidyquery`](https://github.com/ianmcook/tidyquery)
+  - [`tidyr`](https://tidyr.tidyverse.org)
   - [`tidytable`](https://github.com/markfairbanks/tidytable)
-
-To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
 –
 
