@@ -1,4 +1,8 @@
 
+# rqdatatable 1.2.8 2020/02/16
+
+ * Documentation updates.
+
 # rqdatatable 1.2.7 2020/02/11
 
  * Move wrapr to Depends.

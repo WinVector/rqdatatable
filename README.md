@@ -125,8 +125,12 @@ Initial bench-marking of `rqdatatable` is very favorable (notes
 Related work includes:
 
   - [`dtplyr`](https://github.com/tidyverse/dtplyr)
+  - [`maditr`](https://github.com/gdemin/maditr)
+  - [`nc`](https://github.com/tdhock/nc)
   - [`table.express`](https://github.com/asardaes/table.express)
   - [`tidydt`](https://github.com/markfairbanks/tidydt)
+  - [`tidyfast`](https://github.com/TysonStanley/tidyfast)
+  - [`tidytable`](https://github.com/markfairbanks/tidytable)
 
 To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
