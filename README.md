@@ -124,7 +124,7 @@ Initial bench-marking of `rqdatatable` is very favorable (notes
 
 To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
-Related work includes:
+Some related work includes:
 
   - [`data.table`](http://r-datatable.com)
   - [`disk.frame`](https://github.com/xiaodaigh/disk.frame)
@@ -135,11 +135,11 @@ Related work includes:
   - [`rquery`](https://github.com/WinVector/rquery)
   - [`sqldf`](https://github.com/ggrothendieck/sqldf)
   - [`table.express`](https://github.com/asardaes/table.express)
-  - [`tidydt`](https://github.com/markfairbanks/tidydt)
   - [`tidyfast`](https://github.com/TysonStanley/tidyfast)
   - [`tidyquery`](https://github.com/ianmcook/tidyquery)
   - [`tidyr`](https://tidyr.tidyverse.org)
-  - [`tidytable`](https://github.com/markfairbanks/tidytable)
+  - [`tidytable`](https://github.com/markfairbanks/tidytable) (formerly
+    `gdt`/`tidydt`)
 
 –
 
