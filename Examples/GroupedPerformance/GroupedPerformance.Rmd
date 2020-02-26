@@ -1,0 +1,196 @@
+---
+title: "Grouped Performance Demonstration"
+output: github_document
+---
+
+For this example we will look at a per-group maximum calculation over many rows and a few columns. 
+
+First we make the example data.
+
+```{r setup}
+set.seed(2020)
+nrow <- 1000000
+ndcol <- 10
+
+mk_data <- function(nrow, ndcol) {
+  d <- data.frame(
+    g = sprintf("level_%09g", sample.int(nrow, size = nrow, replace = TRUE)),
+    stringsAsFactors = FALSE)
+  for(j in seq_len(ndcol)) {
+    v <- sprintf("v_%05g", j)
+    d[[v]] <- rnorm(nrow)
+  }
+  return(d)
+}
+
+d <- mk_data(nrow, ndcol)
+write.csv(d, file = gzfile("d.csv.gz"), quote = FALSE, row.names = FALSE)
+vars <- setdiff(colnames(d), 'g')
+```
+
+Example processing, `rqdatatable`.
+
+```{r rqdatatable}
+library(rqdatatable)
+packageVersion("rquery")
+packageVersion("rqdatatable")
+
+ops_rquery <- local_td(d, name = 'd') %.>%
+  extend_se(.,
+         paste0('max_', vars) %:=% paste0('max(', vars, ')'),
+         partitionby = 'g') %.>%
+  order_rows(.,
+             c('g', vars))
+
+cat(format(ops_rquery))
+
+res_rqdatatable <- d %.>% ops_rquery
+
+knitr::kable(head(res_rqdatatable))
+
+write.csv(res_rqdatatable, file = gzfile("res.csv.gz"), quote = FALSE, row.names = FALSE)
+```
+
+Example processing `rquery/db`.
+
+```{r rquerydb}
+packageVersion('DBI')
+packageVersion('RSQLite')
+
+raw_connection <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+RSQLite::initExtension(raw_connection)
+db <- rquery_db_info(
+  connection = raw_connection,
+  is_dbi = TRUE,
+  connection_options = rq_connection_tests(raw_connection))
+
+cat(to_sql(ops_rquery, db))
+
+f_rquery_db <- function(d) {
+  rquery::rq_copy_to(db, "d", d, 
+                     temporary = TRUE, overwrite = TRUE)
+  res <- execute(db, ops_rquery)
+  return(res)
+}
+
+
+res_rquery_db <- f_rquery_db(d)
+
+stopifnot(isTRUE(all.equal(data.frame(res_rquery_db), data.frame(res_rqdatatable))))
+```
+
+
+
+Example processing `data.table`.
+
+```{r data.table}
+library(data.table)
+packageVersion("data.table")
+
+f_data.table <- function(d) {
+  dt <- data.table(d)
+  exprs <- paste0('max_', vars, ' = max(', vars, ')')
+  stmt <- paste0('dt[, `:=`(', paste(exprs, collapse = ', '), '), by = g]')
+  dt <- eval(parse(text=stmt))
+  setorderv(dt, c('g', vars))
+  return(dt)
+}
+
+res_data.table <- f_data.table(d)
+
+stopifnot(isTRUE(all.equal(res_rqdatatable, data.frame(res_data.table))))
+```
+
+
+Example processing, `dplyr`.
+
+```{r dplyr}
+library(dplyr)
+library(rlang)
+packageVersion("dplyr")
+
+exprs <- paste0('max_', vars, ' := max(', vars, ')')
+rlang_expr <- eval(parse(text=paste0('exprs(', paste(exprs, collapse = ', '), ')')))
+rlang_cols <- syms(c('g', vars))
+
+ops_dplyr <- . %>%
+  group_by(g) %>%
+  mutate(!!!rlang_expr) %>%
+  ungroup() %>%
+  arrange(!!!rlang_cols)
+
+res_dplyr <- d %>% ops_dplyr
+
+stopifnot(isTRUE(all.equal(res_rqdatatable, data.frame(res_dplyr))))
+```
+
+Example processing, `dbplyr`.
+
+```{r dbplyr}
+library(dbplyr)
+packageVersion("dplyr")
+
+ops_dbplyr <- tbl(raw_connection, "d") %>%
+  group_by(g) %>%
+  mutate(!!!rlang_expr) %>%
+  ungroup() %>%
+  arrange(!!!rlang_cols)
+
+show_query(ops_dbplyr)
+
+f_dbplyr <- function(d) {
+  dplyr::copy_to(raw_connection, df=d, name="d", 
+                     temporary = TRUE, overwrite = TRUE)
+  res <- compute(ops_dbplyr)
+  return(res)
+}
+
+res_dbplyr <- f_dbplyr(d)
+
+stopifnot(isTRUE(all.equal(data.frame(res_dbplyr), data.frame(res_rqdatatable))))
+```
+
+
+Example processing, `dtplyr`.
+
+```{r dtplyr}
+library(dtplyr)
+packageVersion("dtplyr")
+
+exprs <- paste0('max_', vars, ' := max(', vars, ')')
+rlang_expr <- eval(parse(text=paste0('exprs(', paste(exprs, collapse = ', '), ')')))
+rlang_cols <- syms(c('g', vars))
+  
+ops_dtplyr <- . %>%
+  lazy_dt() %>%
+  group_by(g) %>%
+  mutate(!!!rlang_expr) %>%
+  ungroup() %>%
+  arrange(!!!rlang_cols) %>%
+  as_tibble()
+
+res_dtplyr <- d %>% ops_dtplyr
+stopifnot(isTRUE(all.equal(res_rqdatatable, data.frame(res_dtplyr))))
+```
+
+```{r microbenchmark}
+library(microbenchmark)
+
+microbenchmark(
+  data.table = f_data.table(d),
+  dplyr = d %>% ops_dplyr,
+  dbplyr = f_dbplyr(d),
+  dtplyr = d %>% ops_dtplyr,
+  rqdatatable = d %.>% ops_rquery,
+  rquery_db = f_rquery_db(d),
+  times = 5L)
+```
+
+
+Details for a small performance comparison run on 2020-02-26.
+
+Machine was an idle Late 2013 Mac Mini running macOS High Sierra 10.13.6, Processor 2.8 GHz Intel Core i5, Memory 8 GB 1600 MHz DDR3.
+
+```{r rversion}
+R.version
+```
