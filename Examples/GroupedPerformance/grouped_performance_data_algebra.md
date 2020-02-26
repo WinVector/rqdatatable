@@ -10,9 +10,12 @@ import data_algebra.SQLite
 import data_algebra.test_util
 ```
 
+Load example
+
 
 ```python
 d = pandas.read_csv('d.csv.gz')
+vars = [c for c in d.columns if not c == 'g']
 
 d.head()
 ```
@@ -140,10 +143,17 @@ d.shape
 
 
 
+Set timing reps
+
 
 ```python
-vars = [c for c in d.columns if not c == 'g']
+reps = 5
+```
 
+data_algebra pandas solution
+
+
+```python
 ops = describe_table(d, table_name='d'). \
     extend({'max_' + v: v + '.max()' for v in vars},
         partition_by=['g']). \
@@ -541,10 +551,6 @@ assert data_algebra.test_util.equivalent_frames(res, expect)
 
 
 ```python
-
-
-reps = 5
-
 def f():
     return ops.transform(d)
 
@@ -555,7 +561,7 @@ time_pandas
 
 
 
-    162.44369801099998
+    116.65613596700001
 
 
 
@@ -567,14 +573,83 @@ time_pandas/reps
 
 
 
-    32.4887396022
+    23.331227193400004
+
+
+
+data_algebra modin[ray] solution
+
+
+```python
+import importlib
+
+from data_algebra.modin_model import ModinModel
+```
+
+
+```python
+modin_pandas = importlib.import_module("modin.pandas")
+data_model = ModinModel(modin_engine='ray')
+```
+
+
+```python
+data_map = {'d':  modin_pandas.DataFrame(d)}
+```
+
+    UserWarning: Distributing <class 'pandas.core.frame.DataFrame'> object. This may take some time.
+
+
+Note: modin may not be in parallel mode for many of the steps.
+
+
+```python
+%%capture
+res_name = data_model.eval(ops, data_map=data_map)
+```
+
+
+```python
+res_modin = data_map[res_name]
+res_pandas = data_model.to_pandas(res_modin, data_map=data_map)
+assert data_algebra.test_util.equivalent_frames(res_pandas, expect)
+```
+
+
+```python
+%%capture
+def f_modin():
+    data_map = {'d':  modin_pandas.DataFrame(d)}
+    data_model.eval(ops, data_map=data_map)
+
+time_modin = timeit.timeit(f_modin, number=reps)
+```
+
+
+```python
+time_modin
+```
+
+
+
+
+    574.112759528
 
 
 
 
 ```python
-
+time_modin/reps
 ```
+
+
+
+
+    114.8225519056
+
+
+
+data_algebra SQL solution
 
 
 ```python
@@ -676,7 +751,7 @@ time_sql
 
 
 
-    147.825360993
+    108.49377427799993
 
 
 
@@ -688,9 +763,11 @@ time_sql/reps
 
 
 
-    29.5650721986
+    21.698754855599987
 
 
+
+Clean up
 
 
 ```python
