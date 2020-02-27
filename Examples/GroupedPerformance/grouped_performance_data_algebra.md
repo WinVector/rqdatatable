@@ -24,7 +24,19 @@ d.head()
 
 
 <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -185,7 +197,19 @@ res.head()
 
 
 <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -352,7 +376,19 @@ expect.head()
 
 
 <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -525,7 +561,7 @@ time_pandas
 
 
 
-    116.65613596700001
+    120.24371862499999
 
 
 
@@ -537,7 +573,7 @@ time_pandas/reps
 
 
 
-    23.331227193400004
+    24.048743724999998
 
 
 
@@ -554,27 +590,33 @@ from data_algebra.modin_model import ModinModel
 ```python
 modin_pandas = importlib.import_module("modin.pandas")
 data_model = ModinModel(modin_engine='ray')
-```
-
-
-```python
-data_map = {'d':  modin_pandas.DataFrame(d)}
+d_modin = modin_pandas.DataFrame(d)
 ```
 
     UserWarning: Distributing <class 'pandas.core.frame.DataFrame'> object. This may take some time.
 
+
+
+```python
+data_map = {'d':  d_modin}
+```
 
 Note: modin may not be in parallel mode for many of the steps.
 
 
 ```python
 %%capture
-res_name = data_model.eval(ops, data_map=data_map)
+def f_modin():
+    data_map = {'d':  d_modin}
+    res_name = data_model.eval(ops, data_map=data_map)
+    return data_map[res_name]
+
+res_modin = f_modin()
 ```
 
 
 ```python
-res_modin = data_map[res_name]
+
 res_pandas = data_model.to_pandas(res_modin, data_map=data_map)
 assert data_algebra.test_util.equivalent_frames(res_pandas, expect)
 ```
@@ -582,10 +624,6 @@ assert data_algebra.test_util.equivalent_frames(res_pandas, expect)
 
 ```python
 %%capture
-def f_modin():
-    data_map = {'d':  modin_pandas.DataFrame(d)}
-    data_model.eval(ops, data_map=data_map)
-
 time_modin = timeit.timeit(f_modin, number=reps)
 ```
 
@@ -597,7 +635,7 @@ time_modin
 
 
 
-    574.112759528
+    617.5326229
 
 
 
@@ -609,7 +647,7 @@ time_modin/reps
 
 
 
-    114.8225519056
+    123.50652457999999
 
 
 
@@ -715,7 +753,7 @@ time_sql
 
 
 
-    108.49377427799993
+    109.80290423500003
 
 
 
@@ -727,7 +765,7 @@ time_sql/reps
 
 
 
-    21.698754855599987
+    21.960580847000006
 
 
 
@@ -743,4 +781,3 @@ conn.close()
 ```python
 
 ```
-

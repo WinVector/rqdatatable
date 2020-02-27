@@ -28,24 +28,6 @@ write.csv(d, file = gzfile("d.csv.gz"), quote = FALSE, row.names = FALSE)
 vars <- setdiff(colnames(d), 'g')
 ```
 
-Example processing, `base R`.
-
-```{r baseR}
-f_base <- function(d) {
-  d_res <- d
-  perm <- do.call(order, as.list(d_res[, c('g', vars), drop= FALSE]))
-  d_res <- d_res[perm, , drop=FALSE]
-  rownames(d_res) <- NULL
-  for(v in vars) {
-    d_res[[paste0('max_', v)]] = as.numeric(tapply(d_res[[v]], d_res$g, max)[d_res$g])
-  }
-  d_res
-}
-
-res_base <- f_base(d)
-```
-
-
 Example processing, `rqdatatable`.
 
 ```{r rqdatatable}
@@ -64,12 +46,35 @@ cat(format(ops_rquery))
 
 res_rqdatatable <- d %.>% ops_rquery
 
-stopifnot(isTRUE(all.equal(data.frame(res_base), data.frame(res_rqdatatable))))
-
 knitr::kable(head(res_rqdatatable))
 
 write.csv(res_rqdatatable, file = gzfile("res.csv.gz"), quote = FALSE, row.names = FALSE)
 ```
+
+
+Example processing, `base R`.
+
+```{r baseR}
+f_base <- function(d) {
+  d_res <- d
+  perm <- do.call(order, as.list(d_res[, c('g', vars), drop= FALSE]))
+  d_res <- d_res[perm, , drop=FALSE]
+  rownames(d_res) <- NULL
+  for(v in vars) {
+    agg <- tapply(d_res[[v]], d_res$g, max)
+    agg_v <- as.numeric(agg)
+    names(agg_v) <- names(agg)
+    d_res[[paste0('max_', v)]] = agg_v[d_res$g]
+  }
+  d_res
+}
+
+res_base <- f_base(d)
+
+stopifnot(isTRUE(all.equal(data.frame(res_base), data.frame(res_rqdatatable))))
+```
+
+
 
 Example processing `rquery/db`.
 

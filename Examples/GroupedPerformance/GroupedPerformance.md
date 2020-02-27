@@ -27,23 +27,6 @@ write.csv(d, file = gzfile("d.csv.gz"), quote = FALSE, row.names = FALSE)
 vars <- setdiff(colnames(d), 'g')
 ```
 
-Example processing, `base R`.
-
-``` r
-f_base <- function(d) {
-  d_res <- d
-  perm <- do.call(order, as.list(d_res[, c('g', vars), drop= FALSE]))
-  d_res <- d_res[perm, , drop=FALSE]
-  rownames(d_res) <- NULL
-  for(v in vars) {
-    d_res[[paste0('max_', v)]] = as.numeric(tapply(d_res[[v]], d_res$g, max)[d_res$g])
-  }
-  d_res
-}
-
-res_base <- f_base(d)
-```
-
 Example processing, `rqdatatable`.
 
 ``` r
@@ -111,8 +94,6 @@ cat(format(ops_rquery))
 ``` r
 res_rqdatatable <- d %.>% ops_rquery
 
-stopifnot(isTRUE(all.equal(data.frame(res_base), data.frame(res_rqdatatable))))
-
 knitr::kable(head(res_rqdatatable))
 ```
 
@@ -127,6 +108,28 @@ knitr::kable(head(res_rqdatatable))
 
 ``` r
 write.csv(res_rqdatatable, file = gzfile("res.csv.gz"), quote = FALSE, row.names = FALSE)
+```
+
+Example processing, `base R`.
+
+``` r
+f_base <- function(d) {
+  d_res <- d
+  perm <- do.call(order, as.list(d_res[, c('g', vars), drop= FALSE]))
+  d_res <- d_res[perm, , drop=FALSE]
+  rownames(d_res) <- NULL
+  for(v in vars) {
+    agg <- tapply(d_res[[v]], d_res$g, max)
+    agg_v <- as.numeric(agg)
+    names(agg_v) <- names(agg)
+    d_res[[paste0('max_', v)]] = agg_v[d_res$g]
+  }
+  d_res
+}
+
+res_base <- f_base(d)
+
+stopifnot(isTRUE(all.equal(data.frame(res_base), data.frame(res_rqdatatable))))
 ```
 
 Example processing `rquery/db`.
@@ -399,13 +402,13 @@ microbenchmark(
 
     ## Unit: seconds
     ##         expr       min        lq      mean    median        uq       max neval
-    ##       base_R 57.611768 58.101021 58.770239 58.768229 59.264879 60.105297     5
-    ##   data.table  6.521356  6.685142  7.020999  6.802743  7.077913  8.017842     5
-    ##        dplyr 31.092226 31.267037 31.968190 31.535250 32.567790 33.378649     5
-    ##       dbplyr 11.551588 11.594668 11.950547 11.755394 11.922455 12.928628     5
-    ##       dtplyr  8.868604  9.014988  9.128540  9.075615  9.140794  9.542698     5
-    ##  rqdatatable  6.871106  7.214296  7.351650  7.232854  7.497225  7.942769     5
-    ##    rquery_db 14.203216 14.477573 14.928164 14.918116 15.184861 15.857052     5
+    ##       base_R 62.887651 62.923738 63.750470 63.590133 64.425760 64.925069     5
+    ##   data.table  6.987237  7.122194  7.477244  7.513078  7.657816  8.105896     5
+    ##        dplyr 31.126465 31.162979 31.493564 31.242731 31.489243 32.446402     5
+    ##       dbplyr 11.907045 11.926958 12.276748 12.331318 12.588768 12.629650     5
+    ##       dtplyr  8.621169  9.160520  9.922092  9.455926 10.583315 11.789530     5
+    ##  rqdatatable  7.577565  7.584150  7.844445  7.805707  7.991885  8.262919     5
+    ##    rquery_db 14.274705 14.931324 15.387234 15.800935 15.850284 16.078924     5
 
 Details for a small performance comparison run on 2020-02-26.
 
