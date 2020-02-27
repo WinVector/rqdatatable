@@ -6,6 +6,7 @@ import timeit
 import pandas
 
 from data_algebra.data_ops import *
+import data_algebra.db_model
 import data_algebra.SQLite
 import data_algebra.test_util
 ```
@@ -516,6 +517,8 @@ assert data_algebra.test_util.equivalent_frames(res, expect)
 
 ```python
 def f():
+    global d
+    global ops
     return ops.transform(d)
 
 time_pandas = timeit.timeit(f, number=reps)
@@ -525,7 +528,7 @@ time_pandas
 
 
 
-    120.24371862499999
+    132.60187957200003
 
 
 
@@ -537,7 +540,7 @@ time_pandas/reps
 
 
 
-    24.048743724999998
+    26.520375914400006
 
 
 
@@ -555,15 +558,11 @@ from data_algebra.modin_model import ModinModel
 modin_pandas = importlib.import_module("modin.pandas")
 data_model = ModinModel(modin_engine='ray')
 d_modin = modin_pandas.DataFrame(d)
+data_map = {'d':  d_modin}
 ```
 
     UserWarning: Distributing <class 'pandas.core.frame.DataFrame'> object. This may take some time.
 
-
-
-```python
-data_map = {'d':  d_modin}
-```
 
 Note: modin may not be in parallel mode for many of the steps.
 
@@ -571,16 +570,34 @@ Note: modin may not be in parallel mode for many of the steps.
 ```python
 %%capture
 def f_modin():
-    data_map = {'d':  d_modin}
-    res_name = data_model.eval(ops, data_map=data_map)
-    return data_map[res_name]
+    global d_modin
+    global data_model
+    global ops
+    global data_map
+    # cleanup 
+    to_del = [k for k in data_map.keys() if k != 'd']
+    for k in to_del:
+        del data_map[k]
+    # execute
+    return data_model.eval(ops, data_map=data_map)
 
 res_modin = f_modin()
 ```
 
 
 ```python
+res_modin
+```
 
+
+
+
+    'TMP_0000000_T'
+
+
+
+
+```python
 res_pandas = data_model.to_pandas(res_modin, data_map=data_map)
 assert data_algebra.test_util.equivalent_frames(res_pandas, expect)
 ```
@@ -599,7 +616,7 @@ time_modin
 
 
 
-    617.5326229
+    705.69513869
 
 
 
@@ -611,20 +628,20 @@ time_modin/reps
 
 
 
-    123.50652457999999
+    141.139027738
 
 
 
-data_algebra SQL solution
+data_algebra SQL solution with copy in/out time
 
 
 ```python
-dbmodel = data_algebra.SQLite.SQLiteModel()
+db_model = data_algebra.SQLite.SQLiteModel()
 ```
 
 
 ```python
-print(ops.to_sql(dbmodel, pretty=True))
+print(ops.to_sql(db_model, pretty=True))
 ```
 
     SELECT "g",
@@ -687,18 +704,18 @@ print(ops.to_sql(dbmodel, pretty=True))
 
 ```python
 conn = sqlite3.connect(':memory:')
-dbmodel.prepare_connection(conn)
+db_model.prepare_connection(conn)
 ```
 
 
 ```python
 def f_db():
-    try:
-        dbmodel.read_query(conn, "DROP TABLE d")
-    except:
-        pass
-    dbmodel.insert_table(conn, d, 'd')
-    return dbmodel.read_query(conn, ops.to_sql(dbmodel))
+    global d
+    global db_model
+    global conn
+    global ops
+    db_model.insert_table(conn, d, 'd', allow_overwrite=True)
+    return db_model.read_query(conn, ops.to_sql(db_model))
 ```
 
 
@@ -717,7 +734,7 @@ time_sql
 
 
 
-    109.80290423500003
+    152.14413754099996
 
 
 
@@ -729,7 +746,62 @@ time_sql/reps
 
 
 
-    21.960580847000006
+    30.428827508199994
+
+
+
+data_algebra SQL solution without copy in/out time
+
+
+```python
+db_handle = data_algebra.db_model.DBHandle(db_model, conn)
+```
+
+
+```python
+data_map = {'d': db_handle.insert_table(d, table_name='d', allow_overwrite=True)}
+```
+
+
+```python
+def f_db_eval():
+    global data_map
+    global db_handle
+    # cleanup 
+    to_del = [k for k in data_map.keys() if k != 'd']
+    for k in to_del:
+        db_handle.db_model.execute(conn, "DROP TABLE " + db_handle.db_model.quote_table_name(k))
+        del data_map[k]
+    # execute
+    return db_handle.eval(ops, data_map=data_map)
+
+res_db = f_db_eval()
+res_db_pandas = db_handle.to_pandas(res_db, data_map=data_map)
+assert data_algebra.test_util.equivalent_frames(res_db_pandas, expect)
+```
+
+
+```python
+time_sql_only = timeit.timeit(f_db_eval, number=reps)
+time_sql_only
+```
+
+
+
+
+    58.05729188400005
+
+
+
+
+```python
+time_sql_only/reps
+```
+
+
+
+
+    11.61145837680001
 
 
 
