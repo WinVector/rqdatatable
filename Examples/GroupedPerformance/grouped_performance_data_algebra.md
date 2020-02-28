@@ -528,7 +528,7 @@ time_pandas
 
 
 
-    124.042735408
+    121.25399759000001
 
 
 
@@ -540,7 +540,7 @@ time_pandas/reps
 
 
 
-    24.8085470816
+    24.250799518
 
 
 
@@ -616,7 +616,7 @@ time_modin
 
 
 
-    617.855656249
+    605.750196339
 
 
 
@@ -628,7 +628,7 @@ time_modin/reps
 
 
 
-    123.5711312498
+    121.1500392678
 
 
 
@@ -734,7 +734,7 @@ time_sql
 
 
 
-    114.20101239200005
+    111.5820258849999
 
 
 
@@ -746,7 +746,7 @@ time_sql/reps
 
 
 
-    22.84020247840001
+    22.31640517699998
 
 
 
@@ -789,7 +789,7 @@ time_sql_only
 
 
 
-    59.879613174999804
+    50.91133955200007
 
 
 
@@ -801,15 +801,80 @@ time_sql_only/reps
 
 
 
-    11.97592263499996
+    10.182267910400014
 
 
-
-Clean up
 
 
 ```python
-# neaten up
+# clean up
+conn.close()
+```
+
+SQL only, PostgreSQL
+
+
+```python
+import psycopg2  
+import data_algebra.PostgreSQL
+```
+
+
+```python
+conn = psycopg2.connect(
+    database="johnmount",
+    user="johnmount",
+    host="localhost",
+    password=""
+)
+conn.autocommit=True
+db_model = data_algebra.PostgreSQL.PostgreSQLModel() 
+db_model.prepare_connection(conn)  # define any user functions and settings we want/need
+```
+
+
+```python
+db_handle = data_algebra.db_model.DBHandle(db_model, conn)
+data_map = {'d': db_handle.insert_table(d, table_name='d', allow_overwrite=True)}
+```
+
+
+```python
+res_PostgreSQL = f_db_eval()
+res_PostgreSQL_pandas = db_handle.to_pandas(res_PostgreSQL, data_map=data_map)
+assert data_algebra.test_util.equivalent_frames(res_PostgreSQL_pandas, expect)
+```
+
+
+```python
+time_PostgreSQL_only = timeit.timeit(f_db_eval, number=reps)
+time_PostgreSQL_only
+```
+
+
+
+
+    45.7188854059998
+
+
+
+
+```python
+time_PostgreSQL_only/reps
+```
+
+
+
+
+    9.14377708119996
+
+
+
+
+```python
+# clean up
+for k in data_map.keys():
+    db_handle.db_model.execute(conn, "DROP TABLE " + db_handle.db_model.quote_table_name(k))
 conn.close()
 ```
 
