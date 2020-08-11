@@ -11,3 +11,4 @@
 ^revdep$
 ^LICENSE$
 ^Examples$
+^_pkgdown\.yml$

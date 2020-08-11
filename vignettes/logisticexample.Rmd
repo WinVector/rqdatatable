@@ -10,7 +10,7 @@ vignette: >
 ---
 
 
-We can work an example similar to the [`rquery`](https://winvector.github.io/rquery/) [example](https://winvector.github.io/rquery/index.html) using a [`data.table`](http://r-datatable.com/) 
+We can work an example similar to the [`rquery`](https://winvector.github.io/rquery/) [example](https://winvector.github.io/rquery/index.html) using a [`data.table`](https://rdatatable.gitlab.io/data.table/) 
 back-end.
 
 ```{r}
