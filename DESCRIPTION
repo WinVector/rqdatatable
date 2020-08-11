@@ -2,7 +2,7 @@ Package: rqdatatable
 Type: Package
 Title: 'rquery' for 'data.table'
 Version: 1.2.8
-Date: 2020-02-24
+Date: 2020-08-11
 Authors@R: c(
     person("John", "Mount", email = "jmount@win-vector.com", role = c("aut", "cre")),
     person(family = "Win-Vector LLC", role = c("cph"))
@@ -23,7 +23,7 @@ Depends:
   rquery (>= 1.4.3)
 Imports:
   data.table (>= 1.12.2)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
 Suggests: knitr,
     rmarkdown,
     DBI,

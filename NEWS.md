@@ -1,5 +1,5 @@
 
-# rqdatatable 1.2.8 2020/02/24
+# rqdatatable 1.2.8 2020/08/11
 
  * Documentation updates.
  * Add more related work links.
