@@ -88,7 +88,7 @@
       <h1 data-toc-skip>Grouped Sampling</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2020-08-12</h4>
+            <h4 class="date">2020-09-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/GroupedSampling.Rmd"><code>vignettes/GroupedSampling.Rmd</code></a></small>
       <div class="hidden name"><code>GroupedSampling.Rmd</code></div>
@@ -99,30 +99,32 @@
     
 <p>This is an example of the current idiomatic way to sample per-group using <a href="https://github.com/WinVector/rqdatatable"><code>rqdatatable</code></a> or <a href="https://github.com/WinVector/rquery"><code>rquery</code></a>.</p>
 <p>The idea is to use a random order and per-group row numbering. This works well in-memory.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"rqdatatable"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="#base/library.html">library</a></span>(<span class="st"><a href="https://github.com/WinVector/rqdatatable/">"rqdatatable"</a></span>)</pre></div>
 <pre><code>## Loading required package: wrapr</code></pre>
 <pre><code>## Loading required package: rquery</code></pre>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">n</span> <span class="kw">&lt;-</span> <span class="fl">100000</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">325235</span>)
-<span class="no">d</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(
-  <span class="kw">x</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="no">letters</span>, <span class="no">n</span>, <span class="kw">replace</span> <span class="kw">=</span> <span class="fl">TRUE</span>),
-  <span class="kw">y</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="no">letters</span>, <span class="no">n</span>, <span class="kw">replace</span> <span class="kw">=</span> <span class="fl">TRUE</span>),
-  <span class="kw">z</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span>(<span class="no">letters</span>, <span class="no">n</span>, <span class="kw">replace</span> <span class="kw">=</span> <span class="fl">TRUE</span>),
-  <span class="kw">id</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="no">n</span>),
-  <span class="kw">stringsAsFactors</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">n</span> <span class="op">&lt;-</span> <span class="fl">100000</span>
+<span class="fu"><a href="#base/Random.html">set.seed</a></span>(<span class="fl">325235</span>)
+<span class="kw">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="#base/data.frame.html">data.frame</a></span>(
+  x = <span class="fu"><a href="#base/sample.html">sample</a></span>(<span class="kw">letters</span>, <span class="kw">n</span>, replace = <span class="fl">TRUE</span>),
+  y = <span class="fu"><a href="#base/sample.html">sample</a></span>(<span class="kw">letters</span>, <span class="kw">n</span>, replace = <span class="fl">TRUE</span>),
+  z = <span class="fu"><a href="#base/sample.html">sample</a></span>(<span class="kw">letters</span>, <span class="kw">n</span>, replace = <span class="fl">TRUE</span>),
+  id = <span class="fu"><a href="#base/seq.html">seq_len</a></span>(<span class="kw">n</span>),
+  stringsAsFactors = <span class="fl">FALSE</span>)
 
-<span class="no">grouping_vars</span> <span class="kw">&lt;-</span> <span class="fu">qc</span>(<span class="no">x</span>, <span class="no">y</span>, <span class="no">z</span>)
+<span class="kw">grouping_vars</span> <span class="op">&lt;-</span> <span class="fu">qc</span>(<span class="kw">x</span>, <span class="kw">y</span>, <span class="kw">z</span>)
 
-<span class="no">sample_ops</span> <span class="kw">&lt;-</span> <span class="fu">local_td</span>(<span class="no">d</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">extend_nse</span>(<span class="no">.</span>, <span class="no">one</span> <span class="kw">:=</span> <span class="fl">1</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">extend_nse</span>(<span class="no">.</span>, <span class="no">ord</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">one</span>))) <span class="kw">%.&gt;%</span>
-  <span class="fu">pick_top_k</span>(<span class="no">.</span>,
-             <span class="kw">k</span> <span class="kw">=</span> <span class="fl">5</span>,
-             <span class="kw">partitionby</span> <span class="kw">=</span> <span class="no">grouping_vars</span>,
-             <span class="kw">orderby</span> <span class="kw">=</span> <span class="st">"ord"</span>)
+<span class="kw">sample_ops</span> <span class="op">&lt;-</span> <span class="fu">local_td</span>(<span class="kw">d</span>) <span class="op">%.&gt;%</span>
+  <span class="fu">extend_nse</span>(<span class="kw">.</span>, <span class="kw">one</span> <span class="op">:=</span> <span class="fl">1</span>) <span class="op">%.&gt;%</span>
+  <span class="fu">extend_nse</span>(<span class="kw">.</span>, <span class="kw">ord</span> <span class="op">:=</span> <span class="fu"><a href="#stats/Uniform.html">runif</a></span>(<span class="fu"><a href="#base/sum.html">sum</a></span>(<span class="kw">one</span>))) <span class="op">%.&gt;%</span>
+  <span class="fu">pick_top_k</span>(<span class="kw">.</span>, 
+             k = <span class="fl">5</span>,
+             partitionby = <span class="kw">grouping_vars</span>,
+             orderby = <span class="st">"ord"</span>)
 
-<span class="no">samp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(<span class="no">sample_ops</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">samp</span>)</pre></body></html></div>
+<span class="kw">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(<span class="kw">sample_ops</span>)
+<span class="fu"><a href="#utils/head.html">head</a></span>(<span class="kw">samp</span>)</pre></div>
 <pre><code>##   x y z    id one        ord row_number
 ## 1 a a a 99342   1 0.29592013          1
 ## 2 a a a 41989   1 0.45891485          2
@@ -131,8 +133,8 @@
 ## 5 a a b 20897   1 0.22383060          2
 ## 6 a a b 59731   1 0.54500068          3</code></pre>
 <p>And the database version is very similar (on databases with window functions).</p>
-<p>The main issue is landing the random order without having to translate the <code>R</code> <code><a href="https://rdrr.io/r/stats/Uniform.html">runif(sum(one))</a></code> code into database operations.</p>
-<pre><code><a href="https://rdrr.io/pkg/rquery/man">library("rquery")
+<p>The main issue is landing the random order without having to translate the <code>R</code> <code><a href="#stats/Uniform.html">runif(sum(one))</a></code> code into database operations.</p>
+<pre><code><a href="https://github.com/WinVector/rquery/">library("rquery")
 
 db &lt;- DBI::dbConnect(RPostgreSQL::PostgreSQL(),
                      host = 'localhost',
@@ -156,15 +158,16 @@ samp &lt;- execute(db, sample_ops, allow_executor = FALSE)
 DBI::dbDisconnect(db)</a></code></pre>
 <p>The main issue is the different notation used in each pipeline to land the random column.</p>
 <p>We can unify this by supplying translations from some common database notations (such as no-argument <code>random()</code>) to the <code>data.table</code> implementation.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">sample_ops</span> <span class="kw">&lt;-</span> <span class="fu">local_td</span>(<span class="no">d</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">extend_nse</span>(<span class="no">.</span>, <span class="no">ord</span> <span class="kw">:=</span> <span class="fu">random</span>()) <span class="kw">%.&gt;%</span>
-  <span class="fu">pick_top_k</span>(<span class="no">.</span>,
-             <span class="kw">k</span> <span class="kw">=</span> <span class="fl">5</span>,
-             <span class="kw">partitionby</span> <span class="kw">=</span> <span class="no">grouping_vars</span>,
-             <span class="kw">orderby</span> <span class="kw">=</span> <span class="st">"ord"</span>)
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="kw">sample_ops</span> <span class="op">&lt;-</span> <span class="fu">local_td</span>(<span class="kw">d</span>) <span class="op">%.&gt;%</span>
+  <span class="fu">extend_nse</span>(<span class="kw">.</span>, <span class="kw">ord</span> <span class="op">:=</span> <span class="fu">random</span>()) <span class="op">%.&gt;%</span>
+  <span class="fu">pick_top_k</span>(<span class="kw">.</span>, 
+             k = <span class="fl">5</span>,
+             partitionby = <span class="kw">grouping_vars</span>,
+             orderby = <span class="st">"ord"</span>)
 
-<span class="no">samp</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(<span class="no">sample_ops</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">samp</span>)</pre></body></html></div>
+<span class="kw">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(<span class="kw">sample_ops</span>)
+<span class="fu"><a href="#utils/head.html">head</a></span>(<span class="kw">samp</span>)</pre></div>
 <pre><code>##   x y z    id        ord row_number
 ## 1 a a a 12254 0.47605028          1
 ## 2 a a a 41989 0.61569890          2
@@ -173,7 +176,8 @@ DBI::dbDisconnect(db)</a></code></pre>
 ## 5 a a b 59731 0.03065273          2
 ## 6 a a b 30135 0.25620100          3</code></pre>
 <p>The translations available are listed in the package variable <code>rqdatatable:::data_table_extend_fns</code>.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw pkg">rqdatatable</span><span class="kw ns">:::</span><span class="no">data_table_extend_fns</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="fu"><a href="#utils/str.html">str</a></span>(<span class="kw">rqdatatable</span>:::<span class="kw">data_table_extend_fns</span>)</pre></div>
 <pre><code>## List of 6
 ##  $ ngroup    :List of 2
 ##   ..$ data.table_version: chr ".GRP"
@@ -208,7 +212,7 @@ DBI::dbDisconnect(db)</a></code></pre>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

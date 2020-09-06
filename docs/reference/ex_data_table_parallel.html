@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Execute an <code>rquery</code> pipeline with <code>data.table</code> in parallel. — ex_data_table_parallel • rqdatatable</title>
+<title>Execute an rquery pipeline with data.table in parallel. — ex_data_table_parallel • rqdatatable</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Execute an <code>rquery</code> pipeline with <code>data.table</code> in parallel. — ex_data_table_parallel" />
+<meta property="og:title" content="Execute an rquery pipeline with data.table in parallel. — ex_data_table_parallel" />
 <meta property="og:description" content="Execute an rquery pipeline with data.table in parallel, partitioned by a given column.
 Note: usually the overhead of partitioning and distributing the work will by far overwhelm any parallel speedup.
 Also data.table itself already seems to exploit some thread-level parallelism (one often sees user time &amp;gt; elapsed time).
@@ -142,14 +142,14 @@ Requires the <code>parallel</code> package.  For a worked example with significa
     </div>
 
     <pre class="usage"><span class='fu'>ex_data_table_parallel</span>(
-  <span class='no'>optree</span>,
-  <span class='no'>partition_column</span>,
-  <span class='kw'>cl</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>source_limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>debug</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>()
+  <span class='kw'>optree</span>,
+  <span class='kw'>partition_column</span>,
+  cl = <span class='kw'>NULL</span>,
+  <span class='kw'>...</span>,
+  tables = <span class='fu'><a href='#base/list.html'>list</a></span>(),
+  source_limit = <span class='kw'>NULL</span>,
+  debug = <span class='fl'>FALSE</span>,
+  env = <span class='fu'><a href='#base/sys.parent.html'>parent.frame</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -213,7 +213,7 @@ in the same level of the partition.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

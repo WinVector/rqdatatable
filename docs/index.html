@@ -91,39 +91,43 @@
 <p><a href="https://github.com/WinVector/rqdatatable"><code>rqdatatable</code></a> is an implementation of the <a href="https://github.com/WinVector/rquery"><code>rquery</code></a> piped Codd-style relational algebra hosted on <a href="https://rdatatable.gitlab.io/data.table/"><code>data.table</code></a>. <code>rquery</code> allow the expression of complex transformations as a series of relational operators and <code>rqdatatable</code> implements the operators using <code>data.table</code>.</p>
 <p>A <code>Python</code> version of <code>rquery</code>/<code>rqdatatable</code> is under initial development as <a href="https://github.com/WinVector/data_algebra"><code>data_algebra</code></a>.</p>
 <p>For example scoring a logistic regression model (which requires grouping, ordering, and ranking) is organized as follows. For more on this example please see <a href="https://win-vector.com/2017/08/04/lets-have-some-sympathy-for-the-part-time-r-user/">“Let’s Have Some Sympathy For The Part-time R User”</a>.</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"rqdatatable"</span>)</pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="#base/library.html">library</a></span>(<span class="st"><a href="https://github.com/WinVector/rqdatatable/">"rqdatatable"</a></span>)</pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">## Loading required package: wrapr</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a></span>
 <span id="cb2-3"><a href="#cb2-3"></a><span class="co">## Loading required package: rquery</span></span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="r"><span class="co"># data example</span>
-<span class="no">dL</span> <span class="kw">&lt;-</span> <span class="fu">build_frame</span>(
-   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="kw">|</span>
-   <span class="fl">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">5</span>                 <span class="kw">|</span>
-   <span class="fl">1</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">2</span>                 <span class="kw">|</span>
-   <span class="fl">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">3</span>                 <span class="kw">|</span>
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="co"># data example</span>
+<span class="kw">dL</span> <span class="op">&lt;-</span> <span class="fu">build_frame</span>(
+   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span>
+   <span class="fl">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">5</span>                 <span class="op">|</span>
+   <span class="fl">1</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">2</span>                 <span class="op">|</span>
+   <span class="fl">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">3</span>                 <span class="op">|</span>
    <span class="fl">2</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">4</span>                 )</pre></div>
-<div class="sourceCode" id="cb4"><pre class="r"><span class="no">scale</span> <span class="kw">&lt;-</span> <span class="fl">0.237</span>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="kw">scale</span> <span class="op">&lt;-</span> <span class="fl">0.237</span>
 
 <span class="co"># example rquery pipeline</span>
-<span class="no">rquery_pipeline</span> <span class="kw">&lt;-</span> <span class="fu">local_td</span>(<span class="no">dL</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">extend_nse</span>(<span class="no">.</span>,
-             <span class="no">probability</span> <span class="kw">:=</span>
-               <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">assessmentTotal</span> * <span class="no">scale</span>))  <span class="kw">%.&gt;%</span>
-  <span class="fu">normalize_cols</span>(<span class="no">.</span>,
+<span class="kw">rquery_pipeline</span> <span class="op">&lt;-</span> <span class="fu">local_td</span>(<span class="kw">dL</span>) <span class="op">%.&gt;%</span>
+  <span class="fu">extend_nse</span>(<span class="kw">.</span>,
+             <span class="kw">probability</span> <span class="op">:=</span>
+               <span class="fu"><a href="#base/Log.html">exp</a></span>(<span class="kw">assessmentTotal</span> <span class="op">*</span> <span class="kw">scale</span>))  <span class="op">%.&gt;%</span> 
+  <span class="fu">normalize_cols</span>(<span class="kw">.</span>,
                  <span class="st">"probability"</span>,
-                 <span class="kw">partitionby</span> <span class="kw">=</span> <span class="st">'subjectID'</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">pick_top_k</span>(<span class="no">.</span>,
-             <span class="kw">k</span> <span class="kw">=</span> <span class="fl">1</span>,
-             <span class="kw">partitionby</span> <span class="kw">=</span> <span class="st">'subjectID'</span>,
-             <span class="kw">orderby</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>),
-             <span class="kw">reverse</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu">rename_columns</span>(<span class="no">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'diagnosis'</span> <span class="kw">=</span> <span class="st">'surveyCategory'</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu">select_columns</span>(<span class="no">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'subjectID'</span>,
-                      <span class="st">'diagnosis'</span>,
-                      <span class="st">'probability'</span>)) <span class="kw">%.&gt;%</span>
-  <span class="fu">orderby</span>(<span class="no">.</span>, <span class="kw">cols</span> <span class="kw">=</span> <span class="st">'subjectID'</span>)</pre></div>
+                 partitionby = <span class="st">'subjectID'</span>) <span class="op">%.&gt;%</span>
+  <span class="fu">pick_top_k</span>(<span class="kw">.</span>,
+             k = <span class="fl">1</span>,
+             partitionby = <span class="st">'subjectID'</span>,
+             orderby = <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>),
+             reverse = <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">'probability'</span>, <span class="st">'surveyCategory'</span>)) <span class="op">%.&gt;%</span> 
+  <span class="fu">rename_columns</span>(<span class="kw">.</span>, <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">'diagnosis'</span> = <span class="st">'surveyCategory'</span>)) <span class="op">%.&gt;%</span>
+  <span class="fu">select_columns</span>(<span class="kw">.</span>, <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">'subjectID'</span>, 
+                      <span class="st">'diagnosis'</span>, 
+                      <span class="st">'probability'</span>)) <span class="op">%.&gt;%</span>
+  <span class="fu">orderby</span>(<span class="kw">.</span>, cols = <span class="st">'subjectID'</span>)</pre></div>
 <p>We can show the expanded form of query tree.</p>
-<div class="sourceCode" id="cb5"><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/cat.html">cat</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/format.html">format</a></span>(<span class="no">rquery_pipeline</span>))</pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="#base/cat.html">cat</a></span>(<span class="fu"><a href="#base/format.html">format</a></span>(<span class="kw">rquery_pipeline</span>))</pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">mk_td</span>(<span class="st">"dL"</span>, <span class="kw">c</span>(</span>
 <span id="cb6-2"><a href="#cb6-2"></a>  <span class="st">"subjectID"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3"></a>  <span class="st">"surveyCategory"</span>,</span>
@@ -151,20 +155,22 @@
 <span id="cb6-25"><a href="#cb6-25"></a>  <span class="dt">reverse =</span> <span class="kw">c</span>(),</span>
 <span id="cb6-26"><a href="#cb6-26"></a>  <span class="dt">limit =</span> <span class="ot">NULL</span>)</span></code></pre></div>
 <p>And execute it using <code>data.table</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="r"><span class="fu"><a href="reference/ex_data_table.html">ex_data_table</a></span>(<span class="no">rquery_pipeline</span>)</pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit">
+<span class="fu"><a href="reference/ex_data_table.html">ex_data_table</a></span>(<span class="kw">rquery_pipeline</span>)</pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co">##   subjectID           diagnosis probability</span></span>
 <span id="cb8-2"><a href="#cb8-2"></a><span class="co">## 1         1 withdrawal behavior   0.6706221</span></span>
 <span id="cb8-3"><a href="#cb8-3"></a><span class="co">## 2         2 positive re-framing   0.5589742</span></span></code></pre></div>
 <p>One can also apply the pipeline to new tables.</p>
-<div class="sourceCode" id="cb9"><pre class="r"><span class="fu">build_frame</span>(
-   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="kw">|</span>
-   <span class="fl">7</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">5</span>                 <span class="kw">|</span>
-   <span class="fl">7</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">20</span>                ) <span class="kw">%.&gt;%</span>
-  <span class="no">rquery_pipeline</span></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit">
+<span class="fu">build_frame</span>(
+   <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span> <span class="op">|</span>
+   <span class="fl">7</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">5</span>                 <span class="op">|</span>
+   <span class="fl">7</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">20</span>                ) <span class="op">%.&gt;%</span>
+  <span class="kw">rquery_pipeline</span></pre></div>
 <div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">##   subjectID           diagnosis probability</span></span>
 <span id="cb10-2"><a href="#cb10-2"></a><span class="co">## 1         7 positive re-framing   0.9722128</span></span></code></pre></div>
 <p>Initial bench-marking of <code>rqdatatable</code> is very favorable (notes <a href="https://win-vector.com/2018/06/03/rqdatatable-rquery-powered-by-data-table/">here</a>).</p>
-<p>To install <code>rqdatatable</code> please use <code><a href="https://rdrr.io/r/utils/install.packages.html">install.packages("rqdatatable")</a></code>.</p>
+<p>To install <code>rqdatatable</code> please use <code><a href="#utils/install.packages.html">install.packages("rqdatatable")</a></code>.</p>
 <p>Some related work includes:</p>
 <ul>
 <li><a href="https://rdatatable.gitlab.io/data.table/"><code>data.table</code></a></li>
@@ -190,7 +196,7 @@
 <p>–</p>
 <p>Note <code>rqdatatable</code> has an “immediate mode” which allows direct application of pipelines stages without pre-assembling the pipeline. “Immediate mode” is a convenience for ad-hoc analyses, and has some negative performance impact, so we encourage users to build pipelines for most work. Some notes on the issue can be found <a href="https://github.com/WinVector/rqdatatable/blob/master/extras/ImmediateIssue.md">here</a>.</p>
 <p><code>rqdatatable</code> implements the <code>rquery</code> grammar in the style of a “Turing or Cook reduction” (implementing the result in terms of multiple oracle calls to the related system).</p>
-<p><code>rqdatatable</code> is intended for “simple column names”, in particular as <code>rqdatatable</code> often uses <code><a href="https://rdrr.io/r/base/eval.html">eval()</a></code> to work over <code>data.table</code> escape characters such as “<code>\</code>” and “<code>\\</code>” are not reliable in column names. Also <code>rqdatatable</code> does not support tables with no columns.</p>
+<p><code>rqdatatable</code> is intended for “simple column names”, in particular as <code>rqdatatable</code> often uses <code><a href="#base/eval.html">eval()</a></code> to work over <code>data.table</code> escape characters such as “<code>\</code>” and “<code>\\</code>” are not reliable in column names. Also <code>rqdatatable</code> does not support tables with no columns.</p>
 
   </div>
 
@@ -238,7 +244,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

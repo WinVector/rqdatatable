@@ -136,13 +136,13 @@
     </div>
 
     <pre class="usage"><span class='fu'>rq_df_grouped_funciton_node</span>(
-  <span class='no'>.</span>,
-  <span class='no'>f</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>f_db</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>columns_produced</span>,
-  <span class='no'>group_col</span>,
-  <span class='no'>display_form</span>
+  <span class='kw'>.</span>,
+  <span class='kw'>f</span>,
+  <span class='kw'>...</span>,
+  f_db = <span class='kw'>NULL</span>,
+  <span class='kw'>columns_produced</span>,
+  <span class='kw'>group_col</span>,
+  <span class='kw'>display_form</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -189,42 +189,44 @@
     <pre class="examples"><div class='input'>
 <span class='co'># a node generator is something an expert can</span>
 <span class='co'># write and part-time R users can use.</span>
-<span class='no'>grouped_regression_node</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>.</span>, <span class='no'>group_col</span> <span class='kw'>=</span> <span class='st'>"group"</span>, <span class='no'>xvar</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='no'>yvar</span> <span class='kw'>=</span> <span class='st'>"y"</span>) {
-  <span class='fu'><a href='https://rdrr.io/r/base/force.html'>force</a></span>(<span class='no'>group_col</span>)
-  <span class='no'>formula_str</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste</a></span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>)
-  <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>di</span>) {
-    <span class='no'>mi</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/formula.html'>as.formula</a></span>(<span class='no'>formula_str</span>), <span class='kw'>data</span> <span class='kw'>=</span> <span class='no'>di</span>)
-    <span class='no'>ci</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span>(<span class='no'>mi</span>)$<span class='no'>coefficients</span>)
-    <span class='no'>ci</span>$<span class='no'>Variable</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>ci</span>)
-    <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>ci</span>) <span class='kw'>&lt;-</span> <span class='kw'>NULL</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>ci</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Estimate"</span>, <span class='st'>"Std_Error"</span>, <span class='st'>"t_value"</span>, <span class='st'>"p_value"</span>, <span class='st'>"Variable"</span>)
-    <span class='no'>ci</span>
+<span class='kw'>grouped_regression_node</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>.</span>, <span class='kw'>group_col</span> = <span class='st'>"group"</span>, <span class='kw'>xvar</span> = <span class='st'>"x"</span>, <span class='kw'>yvar</span> = <span class='st'>"y"</span>) {
+  <span class='fu'><a href='#base/force.html'>force</a></span>(<span class='kw'>group_col</span>)
+  <span class='kw'>formula_str</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/paste.html'>paste</a></span>(<span class='kw'>yvar</span>, <span class='st'>"~"</span>, <span class='kw'>xvar</span>)
+  <span class='kw'>f</span> <span class='op'>&lt;-</span> <span class='fu'>function</span>(<span class='kw'>di</span>) {
+    <span class='kw'>mi</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#stats/lm.html'>lm</a></span>(<span class='fu'><a href='#stats/formula.html'>as.formula</a></span>(<span class='kw'>formula_str</span>), data = <span class='kw'>di</span>)
+    <span class='kw'>ci</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/as.data.frame.html'>as.data.frame</a></span>(<span class='fu'><a href='#base/summary.html'>summary</a></span>(<span class='kw'>mi</span>)<span class='op'>$</span><span class='kw'>coefficients</span>)
+    <span class='kw'>ci</span><span class='op'>$</span><span class='kw'>Variable</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/colnames.html'>rownames</a></span>(<span class='kw'>ci</span>)
+    <span class='fu'><a href='#base/colnames.html'>rownames</a></span>(<span class='kw'>ci</span>) <span class='op'>&lt;-</span> <span class='kw'>NULL</span>
+    <span class='fu'><a href='#base/colnames.html'>colnames</a></span>(<span class='kw'>ci</span>) <span class='op'>&lt;-</span> <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='st'>"Estimate"</span>, <span class='st'>"Std_Error"</span>, <span class='st'>"t_value"</span>, <span class='st'>"p_value"</span>, <span class='st'>"Variable"</span>)
+    <span class='kw'>ci</span>
   }
-  <span class='no'>columns_produced</span> <span class='kw'>=</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Estimate"</span>, <span class='st'>"Std_Error"</span>, <span class='st'>"t_value"</span>, <span class='st'>"p_value"</span>, <span class='st'>"Variable"</span>, <span class='no'>group_col</span>)
+  <span class='kw'>columns_produced</span> <span class='op'>=</span>
+    <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='st'>"Estimate"</span>, <span class='st'>"Std_Error"</span>, <span class='st'>"t_value"</span>, <span class='st'>"p_value"</span>, <span class='st'>"Variable"</span>, <span class='kw'>group_col</span>)
   <span class='fu'>rq_df_grouped_funciton_node</span>(
-    <span class='no'>.</span>, <span class='no'>f</span>,
-    <span class='kw'>columns_produced</span> <span class='kw'>=</span> <span class='no'>columns_produced</span>,
-    <span class='kw'>group_col</span> <span class='kw'>=</span> <span class='no'>group_col</span>,
-    <span class='kw'>display_form</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/paste.html'>paste0</a></span>(<span class='no'>yvar</span>, <span class='st'>"~"</span>, <span class='no'>xvar</span>, <span class='st'>" grouped by "</span>, <span class='no'>group_col</span>))
+    <span class='kw'>.</span>, <span class='kw'>f</span>,
+    columns_produced = <span class='kw'>columns_produced</span>,
+    group_col = <span class='kw'>group_col</span>,
+    display_form = <span class='fu'><a href='#base/paste.html'>paste0</a></span>(<span class='kw'>yvar</span>, <span class='st'>"~"</span>, <span class='kw'>xvar</span>, <span class='st'>" grouped by "</span>, <span class='kw'>group_col</span>))
 }
 
 <span class='co'># work an example</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>3265</span>)
-<span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>),
-                <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>),
-                <span class='kw'>group</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='no'>letters</span>[<span class='fl'>1</span>:<span class='fl'>5</span>], <span class='fl'>1000</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-                <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='#base/Random.html'>set.seed</a></span>(<span class='fl'>3265</span>)
+<span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(x = <span class='fu'><a href='#stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>),
+                y = <span class='fu'><a href='#stats/Normal.html'>rnorm</a></span>(<span class='fl'>1000</span>),
+                group = <span class='fu'><a href='#base/sample.html'>sample</a></span>(<span class='kw'>letters</span>[<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>], <span class='fl'>1000</span>, replace = <span class='fl'>TRUE</span>),
+                stringsAsFactors = <span class='fl'>FALSE</span>)
 
-<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'>local_td</span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
-  <span class='fu'>grouped_regression_node</span>(<span class='no'>.</span>)
+<span class='kw'>rquery_pipeline</span> <span class='op'>&lt;-</span> <span class='fu'>local_td</span>(<span class='kw'>d</span>) <span class='op'>%.&gt;%</span>
+  <span class='fu'>grouped_regression_node</span>(<span class='kw'>.</span>)
 
-<span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>rquery_pipeline</span>))</div><div class='output co'>#&gt; mk_td("d", c(
+<span class='fu'><a href='#base/cat.html'>cat</a></span>(<span class='fu'><a href='#base/format.html'>format</a></span>(<span class='kw'>rquery_pipeline</span>))
+</div><div class='output co'>#&gt; mk_td("d", c(
 #&gt;   "x",
 #&gt;   "y",
 #&gt;   "group")) %.&gt;%
 #&gt;  non_sql_node(., y~x grouped by group grouped by group)</div><div class='input'>
-<span class='no'>d</span> <span class='kw'>%.&gt;%</span> <span class='no'>rquery_pipeline</span></div><div class='output co'>#&gt;       Estimate  Std_Error    t_value    p_value    Variable group
+<span class='kw'>d</span> <span class='op'>%.&gt;%</span> <span class='kw'>rquery_pipeline</span>
+</div><div class='output co'>#&gt;       Estimate  Std_Error    t_value    p_value    Variable group
 #&gt; 1   0.05921097 0.06246165  0.9479572 0.34421552 (Intercept)     a
 #&gt; 2  -0.02301646 0.06093971 -0.3776924 0.70603174           x     a
 #&gt; 3   0.09793586 0.06666844  1.4689988 0.14335117 (Intercept)     b
@@ -252,7 +254,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

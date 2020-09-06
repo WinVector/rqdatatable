@@ -141,12 +141,12 @@ cost of data transfer).  This implementation is only here for completeness.</p>
 
     <pre class="usage"><span class='co'># S3 method for relop_sql</span>
 <span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(
-  <span class='no'>optree</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>source_limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>()
+  <span class='kw'>optree</span>,
+  <span class='kw'>...</span>,
+  tables = <span class='fu'><a href='#base/list.html'>list</a></span>(),
+  source_usage = <span class='kw'>NULL</span>,
+  source_limit = <span class='kw'>NULL</span>,
+  env = <span class='fu'><a href='#base/sys.parent.html'>parent.frame</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -182,43 +182,44 @@ cost of data transfer).  This implementation is only here for completeness.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'># WARNING: example tries to change rquery.rquery_db_executor option to RSQLite and back.</span>
-<span class='kw'>if</span> (<span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"DBI"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='kw'>&amp;&amp;</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"RSQLite"</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)) {
+<span class='co'>if</span> (<span class='fu'><a href='#base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"DBI"</span>, quietly = <span class='fl'>TRUE</span>) <span class='op'>&amp;&amp;</span>
+    <span class='fu'><a href='#base/ns-load.html'>requireNamespace</a></span>(<span class='st'>"RSQLite"</span>, quietly = <span class='fl'>TRUE</span>)) {
   <span class='co'># example database connection</span>
-  <span class='no'>my_db</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span>(<span class='kw pkg'>RSQLite</span><span class='kw ns'>::</span><span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span>(),
+  <span class='kw'>my_db</span> <span class='op'>&lt;-</span> <span class='kw'>DBI</span>::<span class='fu'><a href='https://dbi.r-dbi.org/reference/dbConnect.html'>dbConnect</a></span>(<span class='kw'>RSQLite</span>::<span class='fu'><a href='https://rsqlite.r-dbi.org/reference/SQLite.html'>SQLite</a></span>(),
                           <span class='st'>":memory:"</span>)
-  <span class='no'>old_o</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"rquery.rquery_db_executor"</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>db</span> <span class='kw'>=</span> <span class='no'>my_db</span>)))
+  <span class='kw'>old_o</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/options.html'>options</a></span>(<span class='fu'><a href='#base/list.html'>list</a></span>(<span class='st'>"rquery.rquery_db_executor"</span> = <span class='fu'><a href='#base/list.html'>list</a></span>(db = <span class='kw'>my_db</span>)))
 
   <span class='co'># example data</span>
-  <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>v1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>NA</span>, <span class='fl'>3</span>),
-                  <span class='kw'>v2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='st'>"b"</span>, <span class='fl'>NA</span>, <span class='st'>"c"</span>),
-                  <span class='kw'>v3</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>7</span>, <span class='fl'>8</span>),
-                  <span class='kw'>stringsAsFactors</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='kw'>d</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(v1 = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>, <span class='fl'>NA</span>, <span class='fl'>3</span>),
+                  v2 = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='st'>"b"</span>, <span class='fl'>NA</span>, <span class='st'>"c"</span>),
+                  v3 = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>NA</span>, <span class='fl'>7</span>, <span class='fl'>8</span>),
+                  stringsAsFactors = <span class='fl'>FALSE</span>)
 
   <span class='co'># example xform</span>
-  <span class='no'>vars</span> <span class='kw'>&lt;-</span> <span class='fu'>column_names</span>(<span class='no'>d</span>)
+  <span class='kw'>vars</span> <span class='op'>&lt;-</span> <span class='fu'>column_names</span>(<span class='kw'>d</span>)
   <span class='co'># build a NA/NULLs per-row counting expression.</span>
   <span class='co'># names are "quoted" by wrapping them with as.name().</span>
   <span class='co'># constants can be quoted by an additional list wrapping.</span>
-  <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='no'>vars</span>,
-                 <span class='kw'>function</span>(<span class='no'>vi</span>) {
-                   <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='st'>"+ (CASE WHEN ("</span>,
-                        <span class='fu'><a href='https://rdrr.io/r/base/name.html'>as.name</a></span>(<span class='no'>vi</span>),
+  <span class='kw'>expr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/lapply.html'>lapply</a></span>(<span class='kw'>vars</span>,
+                 <span class='fu'>function</span>(<span class='kw'>vi</span>) {
+                   <span class='fu'><a href='#base/list.html'>list</a></span>(<span class='st'>"+ (CASE WHEN ("</span>,
+                        <span class='fu'><a href='#base/name.html'>as.name</a></span>(<span class='kw'>vi</span>),
                         <span class='st'>"IS NULL ) THEN 1.0 ELSE 0.0 END)"</span>)
                  })
-  <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/unlist.html'>unlist</a></span>(<span class='no'>expr</span>, <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-  <span class='no'>expr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fl'>0.0</span>), <span class='no'>expr</span>)
+  <span class='kw'>expr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/unlist.html'>unlist</a></span>(<span class='kw'>expr</span>, recursive = <span class='fl'>FALSE</span>)
+  <span class='kw'>expr</span> <span class='op'>&lt;-</span> <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fu'><a href='#base/list.html'>list</a></span>(<span class='fl'>0.0</span>), <span class='kw'>expr</span>)
 
   <span class='co'># instantiate the operator node</span>
-  <span class='no'>op_tree</span> <span class='kw'>&lt;-</span> <span class='fu'>local_td</span>(<span class='no'>d</span>) <span class='kw'>%.&gt;%</span>
-    <span class='fu'>sql_node</span>(<span class='no'>.</span>, <span class='st'>"num_missing"</span> <span class='kw'>%:=%</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>expr</span>))
-  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span>(<span class='no'>op_tree</span>))
+  <span class='kw'>op_tree</span> <span class='op'>&lt;-</span> <span class='fu'>local_td</span>(<span class='kw'>d</span>) <span class='op'>%.&gt;%</span>
+    <span class='fu'>sql_node</span>(<span class='kw'>.</span>, <span class='st'>"num_missing"</span> <span class='op'>%:=%</span> <span class='fu'><a href='#base/list.html'>list</a></span>(<span class='kw'>expr</span>))
+  <span class='fu'><a href='#base/cat.html'>cat</a></span>(<span class='fu'><a href='#base/format.html'>format</a></span>(<span class='kw'>op_tree</span>))
 
-  <span class='no'>d</span> <span class='kw'>%.&gt;%</span> <span class='no'>op_tree</span>
+  <span class='kw'>d</span> <span class='op'>%.&gt;%</span> <span class='kw'>op_tree</span>
 
-  <span class='fu'><a href='https://rdrr.io/r/base/options.html'>options</a></span>(<span class='no'>old_o</span>)
-  <span class='kw pkg'>DBI</span><span class='kw ns'>::</span><span class='fu'><a href='https://dbi.r-dbi.org/reference/dbDisconnect.html'>dbDisconnect</a></span>(<span class='no'>my_db</span>)
-}</div><div class='output co'>#&gt; mk_td("d", c(
+  <span class='fu'><a href='#base/options.html'>options</a></span>(<span class='kw'>old_o</span>)
+  <span class='kw'>DBI</span>::<span class='fu'><a href='https://dbi.r-dbi.org/reference/dbDisconnect.html'>dbDisconnect</a></span>(<span class='kw'>my_db</span>)
+}
+</div><div class='output co'>#&gt; mk_td("d", c(
 #&gt;   "v1",
 #&gt;   "v2",
 #&gt;   "v3")) %.&gt;%
@@ -241,7 +242,7 @@ cost of data transfer).  This implementation is only here for completeness.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

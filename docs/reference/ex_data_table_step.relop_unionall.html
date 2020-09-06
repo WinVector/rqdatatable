@@ -137,12 +137,12 @@
 
     <pre class="usage"><span class='co'># S3 method for relop_unionall</span>
 <span class='fu'><a href='ex_data_table_step.html'>ex_data_table_step</a></span>(
-  <span class='no'>optree</span>,
-  <span class='no'>...</span>,
-  <span class='kw'>tables</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(),
-  <span class='kw'>source_usage</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>source_limit</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span>()
+  <span class='kw'>optree</span>,
+  <span class='kw'>...</span>,
+  tables = <span class='fu'><a href='#base/list.html'>list</a></span>(),
+  source_usage = <span class='kw'>NULL</span>,
+  source_limit = <span class='kw'>NULL</span>,
+  env = <span class='fu'><a href='#base/sys.parent.html'>parent.frame</a></span>()
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -177,13 +177,14 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>dL</span> <span class='kw'>&lt;-</span> <span class='fu'>build_frame</span>(
-    <span class='st'>"x"</span>, <span class='st'>"y"</span> <span class='kw'>|</span>
-    <span class='fl'>2L</span> , <span class='st'>"b"</span> <span class='kw'>|</span>
-    <span class='fl'>1L</span> , <span class='st'>"a"</span> <span class='kw'>|</span>
+<span class='kw'>dL</span> <span class='op'>&lt;-</span> <span class='fu'>build_frame</span>(
+    <span class='st'>"x"</span>, <span class='st'>"y"</span> <span class='op'>|</span>
+    <span class='fl'>2L</span> , <span class='st'>"b"</span> <span class='op'>|</span>
+    <span class='fl'>1L</span> , <span class='st'>"a"</span> <span class='op'>|</span>
     <span class='fl'>3L</span> , <span class='st'>"c"</span> )
-<span class='no'>rquery_pipeline</span> <span class='kw'>&lt;-</span> <span class='fu'>unionall</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='fu'>local_td</span>(<span class='no'>dL</span>), <span class='fu'>local_td</span>(<span class='no'>dL</span>)))
-<span class='no'>dL</span> <span class='kw'>%.&gt;%</span> <span class='no'>rquery_pipeline</span></div><div class='output co'>#&gt;   x y
+<span class='kw'>rquery_pipeline</span> <span class='op'>&lt;-</span> <span class='fu'>unionall</span>(<span class='fu'><a href='#base/list.html'>list</a></span>(<span class='fu'>local_td</span>(<span class='kw'>dL</span>), <span class='fu'>local_td</span>(<span class='kw'>dL</span>)))
+<span class='kw'>dL</span> <span class='op'>%.&gt;%</span> <span class='kw'>rquery_pipeline</span>
+</div><div class='output co'>#&gt;   x y
 #&gt; 1 2 b
 #&gt; 2 1 a
 #&gt; 3 3 c
@@ -206,7 +207,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

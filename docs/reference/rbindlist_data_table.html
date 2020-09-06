@@ -135,7 +135,7 @@
     <p>Note: different argument defaults than data.table::rbindlist.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rbindlist_data_table</span>(<span class='no'>l</span>, <span class='kw'>use.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>fill</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>idcol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>rbindlist_data_table</span>(<span class='kw'>l</span>, use.names = <span class='fl'>TRUE</span>, fill = <span class='fl'>TRUE</span>, idcol = <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,9 +164,10 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'>rbindlist_data_table</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='fl'>2</span>),
-  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>3</span>), <span class='kw'>y</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>4</span>))))</div><div class='output co'>#&gt;   x  y
+<span class='fu'>rbindlist_data_table</span>(<span class='fu'><a href='#base/list.html'>list</a></span>(
+  <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>, y = <span class='fl'>2</span>),
+  <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(x = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>3</span>), y = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>4</span>))))
+</div><div class='output co'>#&gt;   x  y
 #&gt; 1 1  2
 #&gt; 2 2 NA
 #&gt; 3 3  4</div><div class='input'>
@@ -186,7 +187,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

@@ -88,7 +88,7 @@
       <h1 data-toc-skip>R mapping</h1>
                         <h4 class="author">John Mount</h4>
             
-            <h4 class="date">2020-08-12</h4>
+            <h4 class="date">2020-09-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/WinVector/rqdatatable/blob/master/vignettes/R_mapping.Rmd"><code>vignettes/R_mapping.Rmd</code></a></small>
       <div class="hidden name"><code>R_mapping.Rmd</code></div>
@@ -97,34 +97,36 @@
 
     
     
-<p><code>rqdatatable</code> re-maps a number of symbols for <code>data.table</code> translation (for <code>rquery</code>/<code>SQL</code> re-mappings, please see <a href="https://winvector.github.io/rquery/articles/R_mapping.html">here</a>). For instance, please take note of the <code>n()</code> and <code><a href="https://rdrr.io/r/base/rank.html">rank()</a></code> functions in the following code example.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"rqdatatable"</span>)</pre></body></html></div>
+<p><code>rqdatatable</code> re-maps a number of symbols for <code>data.table</code> translation (for <code>rquery</code>/<code>SQL</code> re-mappings, please see <a href="https://winvector.github.io/rquery/articles/R_mapping.html">here</a>). For instance, please take note of the <code>n()</code> and <code><a href="#base/rank.html">rank()</a></code> functions in the following code example.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="#base/library.html">library</a></span>(<span class="st"><a href="https://github.com/WinVector/rqdatatable/">"rqdatatable"</a></span>)</pre></div>
 <pre><code>## Loading required package: wrapr</code></pre>
 <pre><code>## Loading required package: rquery</code></pre>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"wrapr"</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="fu"><a href="#base/library.html">library</a></span>(<span class="st"><a href="https://github.com/WinVector/wrapr">"wrapr"</a></span>)
 
-<span class="no">dL</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/wrapr/man/build_frame.html">build_frame</a></span>(
-  <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span><span class="kw">|</span>
-    <span class="fl">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">5</span>              <span class="kw">|</span>
-    <span class="fl">1</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">2</span>              <span class="kw">|</span>
-    <span class="fl">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">3</span>              <span class="kw">|</span>
-    <span class="fl">2</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">4</span>              <span class="kw">|</span>
+<span class="kw">dL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://winvector.github.io/wrapr//reference/build_frame.html">build_frame</a></span>(
+  <span class="st">"subjectID"</span>, <span class="st">"surveyCategory"</span>     , <span class="st">"assessmentTotal"</span><span class="op">|</span>
+    <span class="fl">1</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">5</span>              <span class="op">|</span>
+    <span class="fl">1</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">2</span>              <span class="op">|</span>
+    <span class="fl">2</span>          , <span class="st">"withdrawal behavior"</span>, <span class="fl">3</span>              <span class="op">|</span>
+    <span class="fl">2</span>          , <span class="st">"positive re-framing"</span>, <span class="fl">4</span>              <span class="op">|</span>
     <span class="fl">2</span>          , <span class="st">"other"</span>              , <span class="fl">0</span>              )
 
-<span class="no">scale</span> <span class="kw">&lt;-</span> <span class="fl">0.237</span>
-<span class="no">rquery_pipeline</span> <span class="kw">&lt;-</span> <span class="fu">local_td</span>(<span class="no">dL</span>) <span class="kw">%.&gt;%</span>
-  <span class="fu">extend_nse</span>(<span class="no">.</span>,
-             <span class="no">probability</span> <span class="kw">:=</span>
-               <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">assessmentTotal</span> * <span class="no">scale</span>)/
-               <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span>(<span class="no">assessmentTotal</span> * <span class="no">scale</span>)),
-             <span class="no">count</span> <span class="kw">:=</span> <span class="fu">n</span>(),
-             <span class="no">rank</span> <span class="kw">:=</span> <span class="fu"><a href="https://rdrr.io/r/base/rank.html">rank</a></span>(),
-             <span class="kw">orderby</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>, <span class="st">"surveyCategory"</span>),
-             <span class="kw">reverse</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>),
-             <span class="kw">partitionby</span> <span class="kw">=</span> <span class="st">'subjectID'</span>)  <span class="kw">%.&gt;%</span>
-  <span class="fu">orderby</span>(<span class="no">.</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"subjectID"</span>, <span class="st">"probability"</span>))
-<span class="no">res</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(<span class="no">rquery_pipeline</span>, <span class="kw">tables</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">dL</span> <span class="kw">=</span> <span class="no">dL</span>))
-<span class="kw pkg">knitr</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span>(<span class="no">res</span>)</pre></body></html></div>
+<span class="kw">scale</span> <span class="op">&lt;-</span> <span class="fl">0.237</span>
+<span class="kw">rquery_pipeline</span> <span class="op">&lt;-</span> <span class="fu">local_td</span>(<span class="kw">dL</span>) <span class="op">%.&gt;%</span>
+  <span class="fu">extend_nse</span>(<span class="kw">.</span>,
+             <span class="kw">probability</span> <span class="op">:=</span>
+               <span class="fu"><a href="#base/Log.html">exp</a></span>(<span class="kw">assessmentTotal</span> <span class="op">*</span> <span class="kw">scale</span>)<span class="op">/</span>
+               <span class="fu"><a href="#base/sum.html">sum</a></span>(<span class="fu"><a href="#base/Log.html">exp</a></span>(<span class="kw">assessmentTotal</span> <span class="op">*</span> <span class="kw">scale</span>)),
+             <span class="kw">count</span> <span class="op">:=</span> <span class="fu">n</span>(),
+             <span class="kw">rank</span> <span class="op">:=</span> <span class="fu"><a href="#base/rank.html">rank</a></span>(),
+             orderby = <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>, <span class="st">"surveyCategory"</span>),
+             reverse = <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">"assessmentTotal"</span>),
+             partitionby = <span class="st">'subjectID'</span>)  <span class="op">%.&gt;%</span>
+  <span class="fu">orderby</span>(<span class="kw">.</span>, <span class="fu"><a href="#base/c.html">c</a></span>(<span class="st">"subjectID"</span>, <span class="st">"probability"</span>))
+<span class="kw">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ex_data_table.html">ex_data_table</a></span>(<span class="kw">rquery_pipeline</span>, tables = <span class="fu"><a href="#base/list.html">list</a></span>(dL = <span class="kw">dL</span>))
+<span class="kw">knitr</span>::<span class="fu"><a href="#knitr/kable.html">kable</a></span>(<span class="kw">res</span>)</pre></div>
 <table class="table">
 <thead><tr class="header">
 <th align="right">subjectID</th>
@@ -178,7 +180,8 @@
 </tbody>
 </table>
 <p>The common re-mappings are can be found in the package-private variable <code>rqdatatable:::data_table_extend_fns</code>.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span>(<span class="kw pkg">rqdatatable</span><span class="kw ns">:::</span><span class="no">data_table_extend_fns</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="fu"><a href="#utils/str.html">str</a></span>(<span class="kw">rqdatatable</span>:::<span class="kw">data_table_extend_fns</span>)</pre></div>
 <pre><code>## List of 6
 ##  $ ngroup    :List of 2
 ##   ..$ data.table_version: chr ".GRP"
@@ -215,7 +218,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>
