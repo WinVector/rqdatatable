@@ -43,7 +43,18 @@
 
  
     devtools::check_win_devel()
- 
+    * using R Under development (unstable) (2020-10-15 r79342)
+    * using platform: x86_64-w64-mingw32 (64-bit)
+    * using session charset: ISO8859-1
+    * checking for file 'rqdatatable/DESCRIPTION' ... OK
+    * checking extension type ... Package
+    * this is package 'rqdatatable' version '1.2.9'
+    * package encoding: UTF-8
+    * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    Maintainer: 'John Mount <jmount@win-vector.com>'
+    ...
+    Status: OK
+
 
 ## Reverse dependencies
 
