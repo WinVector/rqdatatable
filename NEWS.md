@@ -1,4 +1,8 @@
 
+# rqdatatable 1.2.9 2020/10/17
+
+ * Move to tinytest.
+
 # rqdatatable 1.2.8 2020/08/12
 
  * Documentation updates.
