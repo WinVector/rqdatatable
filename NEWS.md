@@ -1,4 +1,9 @@
 
+
+# rqdatatable 1.3.0 2021/06/11
+
+ * Remove LazyData decl.
+ 
 # rqdatatable 1.2.9 2020/10/17
 
  * Move to tinytest.
