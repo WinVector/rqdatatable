@@ -20,13 +20,31 @@
 
 ### Windows
 
-    rhub::check_for_cran()
+    
 
 
  
     devtools::check_win_devel()
     ...
 
+
+### Linux
+
+    rhub::check_for_cran()
+    2212#> About to run xvfb-run R CMD check --as-cran rqdatatable_1.3.0.tar.gz
+    2218#> * using R version 4.1.0 (2021-05-18)
+    2219#> * using platform: x86_64-pc-linux-gnu (64-bit)
+    2226#> * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    2227#> Maintainer: ‘John Mount ’
+    2284#> Status: OK
+
+    rhub::check_for_cran()
+    1878#> About to run xvfb-run R CMD check --as-cran rqdatatable_1.3.0.tar.gz
+    1882#> * using R Under development (unstable) (2021-06-10 r80480)
+    1883#> * using platform: x86_64-pc-linux-gnu (64-bit)
+    1890#> * checking CRAN incoming feasibility ... Note_to_CRAN_maintainers
+    1891#> Maintainer: ‘John Mount ’
+    1948#> Status: OK
 
 ## Reverse dependencies
 
