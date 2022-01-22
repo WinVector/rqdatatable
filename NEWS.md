@@ -1,5 +1,5 @@
 
-# rqdatatable 1.3.1 2021/01/22
+# rqdatatable 1.3.1 2022/01/22
 
  * Fix misuse of rank().
 
