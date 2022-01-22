@@ -73,7 +73,7 @@ Internal execution interface." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ Internal execution interface." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -137,14 +137,14 @@ Internal execution interface." />
 Internal execution interface.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ex_data_table_step</span>(
-  <span class='kw'>optree</span>,
-  <span class='kw'>...</span>,
-  tables = <span class='fu'><a href='#base/list.html'>list</a></span>(),
-  source_usage = <span class='kw'>NULL</span>,
-  source_limit = <span class='kw'>NULL</span>,
-  env = <span class='fu'><a href='#base/sys.parent.html'>parent.frame</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>ex_data_table_step</span><span class='op'>(</span>
+  <span class='va'>optree</span>,
+  <span class='va'>...</span>,
+  tables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  source_usage <span class='op'>=</span> <span class='cn'>NULL</span>,
+  source_limit <span class='op'>=</span> <span class='cn'>NULL</span>,
+  env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,11 +201,11 @@ Internal execution interface.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-  <span class='kw'>a</span> <span class='op'>&lt;-</span> <span class='kw'>data.table</span>::<span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span>(x = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>) , y = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>20</span>, <span class='fl'>30</span>), z = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
-  <span class='kw'>optree</span> <span class='op'>&lt;-</span> <span class='fu'>local_td</span>(<span class='kw'>a</span>) <span class='op'>%.&gt;%</span>
-     <span class='fu'>select_columns</span>(<span class='kw'>.</span>, <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='st'>"x"</span>, <span class='st'>"y"</span>)) <span class='op'>%.&gt;%</span>
-     <span class='fu'>select_rows_nse</span>(<span class='kw'>.</span>, <span class='kw'>x</span><span class='op'>&lt;</span><span class='fl'>2</span> <span class='op'>&amp;</span> <span class='kw'>y</span><span class='op'>&lt;</span><span class='fl'>30</span>)
-  <span class='fu'><a href='#base/cat.html'>cat</a></span>(<span class='fu'><a href='#base/format.html'>format</a></span>(<span class='kw'>optree</span>))
+  <span class='va'>a</span> <span class='op'>&lt;-</span> <span class='fu'>data.table</span><span class='fu'>::</span><span class='fu'><a href='https://Rdatatable.gitlab.io/data.table/reference/data.table.html'>data.table</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span> , y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>20</span>, <span class='fl'>30</span><span class='op'>)</span>, z <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>300</span>, <span class='fl'>400</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='va'>optree</span> <span class='op'>&lt;-</span> <span class='fu'>local_td</span><span class='op'>(</span><span class='va'>a</span><span class='op'>)</span> <span class='op'>%.&gt;%</span>
+     <span class='fu'>select_columns</span><span class='op'>(</span><span class='va'>.</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"x"</span>, <span class='st'>"y"</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%.&gt;%</span>
+     <span class='fu'>select_rows_nse</span><span class='op'>(</span><span class='va'>.</span>, <span class='va'>x</span><span class='op'>&lt;</span><span class='fl'>2</span> <span class='op'>&amp;</span> <span class='va'>y</span><span class='op'>&lt;</span><span class='fl'>30</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/cat.html'>cat</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/format.html'>format</a></span><span class='op'>(</span><span class='va'>optree</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; mk_td("a", c(
 #&gt;   "x",
 #&gt;   "y",
@@ -213,13 +213,13 @@ Internal execution interface.</p>
 #&gt;  select_columns(., 
 #&gt;     c('x', 'y')) %.&gt;%
 #&gt;  select_rows(.,
-#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'>ex_data_table_step</span>(<span class='kw'>optree</span>)
+#&gt;    x &lt; 2 &amp; y &lt; 30)</div><div class='input'>  <span class='fu'>ex_data_table_step</span><span class='op'>(</span><span class='va'>optree</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;    x  y
 #&gt; 1: 1 20</div><div class='input'>
   <span class='co'># other ways to execute the pipeline include</span>
-  <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span>(<span class='kw'>optree</span>)
+  <span class='fu'><a href='ex_data_table.html'>ex_data_table</a></span><span class='op'>(</span><span class='va'>optree</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   x  y
-#&gt; 1 1 20</div><div class='input'>  <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>0</span>, y = <span class='fl'>4</span>, z = <span class='fl'>400</span>) <span class='op'>%.&gt;%</span> <span class='kw'>optree</span>
+#&gt; 1 1 20</div><div class='input'>  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>0</span>, y <span class='op'>=</span> <span class='fl'>4</span>, z <span class='op'>=</span> <span class='fl'>400</span><span class='op'>)</span> <span class='op'>%.&gt;%</span> <span class='va'>optree</span>
 </div><div class='output co'>#&gt;   x y
 #&gt; 1 0 4</div><div class='input'>
 
@@ -239,7 +239,7 @@ Internal execution interface.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

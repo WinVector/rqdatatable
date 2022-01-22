@@ -75,7 +75,7 @@ Requires the parallel package.  For a worked example with significant speedup pl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -83,7 +83,7 @@ Requires the parallel package.  For a worked example with significant speedup pl
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -141,16 +141,16 @@ Also <code>data.table</code> itself already seems to exploit some thread-level p
 Requires the <code>parallel</code> package.  For a worked example with significant speedup please see <a href='https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md'>https://github.com/WinVector/rqdatatable/blob/master/extras/Parallel_rqdatatable.md</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ex_data_table_parallel</span>(
-  <span class='kw'>optree</span>,
-  <span class='kw'>partition_column</span>,
-  cl = <span class='kw'>NULL</span>,
-  <span class='kw'>...</span>,
-  tables = <span class='fu'><a href='#base/list.html'>list</a></span>(),
-  source_limit = <span class='kw'>NULL</span>,
-  debug = <span class='fl'>FALSE</span>,
-  env = <span class='fu'><a href='#base/sys.parent.html'>parent.frame</a></span>()
-)</pre>
+    <pre class="usage"><span class='fu'>ex_data_table_parallel</span><span class='op'>(</span>
+  <span class='va'>optree</span>,
+  <span class='va'>partition_column</span>,
+  cl <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>,
+  tables <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  source_limit <span class='op'>=</span> <span class='cn'>NULL</span>,
+  debug <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  env <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sys.parent.html'>parent.frame</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -213,7 +213,7 @@ in the same level of the partition.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">rqdatatable</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -135,7 +135,7 @@
     <p>Note: different argument defaults than data.table::rbindlist.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rbindlist_data_table</span>(<span class='kw'>l</span>, use.names = <span class='fl'>TRUE</span>, fill = <span class='fl'>TRUE</span>, idcol = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>rbindlist_data_table</span><span class='op'>(</span><span class='va'>l</span>, use.names <span class='op'>=</span> <span class='cn'>TRUE</span>, fill <span class='op'>=</span> <span class='cn'>TRUE</span>, idcol <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -164,9 +164,9 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'>rbindlist_data_table</span>(<span class='fu'><a href='#base/list.html'>list</a></span>(
-  <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(x = <span class='fl'>1</span>, y = <span class='fl'>2</span>),
-  <span class='fu'><a href='#base/data.frame.html'>data.frame</a></span>(x = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>3</span>), y = <span class='fu'><a href='#base/c.html'>c</a></span>(<span class='fl'>NA</span>, <span class='fl'>4</span>))))
+<span class='fu'>rbindlist_data_table</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fl'>1</span>, y <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>,
+  <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>3</span><span class='op'>)</span>, y <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='cn'>NA</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   x  y
 #&gt; 1 1  2
 #&gt; 2 2 NA
@@ -187,7 +187,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
