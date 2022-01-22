@@ -126,24 +126,24 @@ To install `rqdatatable` please use `install.packages("rqdatatable")`.
 
 Some related work includes:
 
-  - [`data.table`](https://rdatatable.gitlab.io/data.table/)
-  - [`disk.frame`](https://github.com/xiaodaigh/disk.frame)
-  - [`dbplyr`](https://dbplyr.tidyverse.org)
-  - [`dplyr`](https://dplyr.tidyverse.org)
-  - [`dtplyr`](https://github.com/tidyverse/dtplyr)
-  - [`maditr`](https://github.com/gdemin/maditr)
-  - [`nc`](https://github.com/tdhock/nc)
-  - [`poorman`](https://github.com/nathaneastwood/poorman)
-  - [`rquery`](https://github.com/WinVector/rquery)
-  - [`SparkR`](https://CRAN.R-project.org/package=SparkR)
-  - [`sparklyr`](https://spark.rstudio.com)
-  - [`sqldf`](https://github.com/ggrothendieck/sqldf)
-  - [`table.express`](https://github.com/asardaes/table.express)
-  - [`tidyfast`](https://github.com/TysonStanley/tidyfast)
-  - [`tidyfst`](https://github.com/hope-data-science/tidyfst)
-  - [`tidyquery`](https://github.com/ianmcook/tidyquery)
-  - [`tidyr`](https://tidyr.tidyverse.org)
-  - [`tidytable`](https://github.com/markfairbanks/tidytable) (formerly
+-   [`data.table`](https://rdatatable.gitlab.io/data.table/)
+-   [`disk.frame`](https://github.com/xiaodaigh/disk.frame)
+-   [`dbplyr`](https://dbplyr.tidyverse.org)
+-   [`dplyr`](https://dplyr.tidyverse.org)
+-   [`dtplyr`](https://github.com/tidyverse/dtplyr)
+-   [`maditr`](https://github.com/gdemin/maditr)
+-   [`nc`](https://github.com/tdhock/nc)
+-   [`poorman`](https://github.com/nathaneastwood/poorman)
+-   [`rquery`](https://github.com/WinVector/rquery)
+-   [`SparkR`](https://CRAN.R-project.org/package=SparkR)
+-   [`sparklyr`](https://spark.rstudio.com)
+-   [`sqldf`](https://github.com/ggrothendieck/sqldf)
+-   [`table.express`](https://github.com/asardaes/table.express)
+-   [`tidyfast`](https://github.com/TysonStanley/tidyfast)
+-   [`tidyfst`](https://github.com/hope-data-science/tidyfst)
+-   [`tidyquery`](https://github.com/ianmcook/tidyquery)
+-   [`tidyr`](https://tidyr.tidyverse.org)
+-   [`tidytable`](https://github.com/markfairbanks/tidytable) (formerly
     `gdt`/`tidydt`)
 
 –
