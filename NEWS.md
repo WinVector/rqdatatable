@@ -1,4 +1,8 @@
 
+# rqdatatable 1.3.2 2023/08/14
+
+ * Default to 1 thread to be safe during CRAN checks. User can override later.
+
 # rqdatatable 1.3.1 2022/01/22
 
  * Fix misuse of rank().

@@ -1,4 +1,4 @@
-check\_reverse\_dependencies
+check_reverse_dependencies
 ================
 
 ``` r
@@ -8,13 +8,13 @@ package = "rqdatatable"
 date()
 ```
 
-    ## [1] "Sat Jan 22 08:42:30 2022"
+    ## [1] "Mon Aug 14 07:48:28 2023"
 
 ``` r
 packageVersion(package)
 ```
 
-    ## [1] '1.3.1'
+    ## [1] '1.3.2'
 
 ``` r
 parallelCluster <- NULL
@@ -34,7 +34,7 @@ setwd(td)
 print(td)
 ```
 
-    ## [1] "/var/folders/7f/sdjycp_d08n8wwytsbgwqgsw0000gn/T//Rtmp150jf4"
+    ## [1] "/var/folders/7f/sdjycp_d08n8wwytsbgwqgsw0000gn/T//Rtmp7QHahc"
 
 ``` r
 options(repos = c(CRAN="https://cloud.r-project.org"))
@@ -60,9 +60,9 @@ if(!is.null(parallelCluster)) {
 }
 ```
 
-    ## ## Reverse depends check of rqdatatable 1.3.1 
-    ## cdata_1.2.0 started at 2022-01-22 08:42:32 success at 2022-01-22 08:42:52 (1/0/0) 
-    ## WVPlots_1.3.2 started at 2022-01-22 08:42:52 success at 2022-01-22 08:43:44 (2/0/0)
+    ## ## Reverse depends check of rqdatatable 1.3.2 
+    ## cdata_1.2.0 started at 2023-08-14 07:48:29 success at 2023-08-14 07:48:49 (1/0/0) 
+    ## WVPlots_1.3.5 started at 2023-08-14 07:48:49 success at 2023-08-14 07:49:46 (2/0/0)
 
     ## [1] id     title  status
     ## <0 rows> (or 0-length row.names)
@@ -71,9 +71,9 @@ if(!is.null(parallelCluster)) {
 summariseQueue(package=package, directory=td)
 ```
 
-    ## Test of rqdatatable 1.3.1 had 2 successes, 0 failures, and 0 skipped packages. 
-    ## Ran from 2022-01-22 08:42:32 to 2022-01-22 08:43:44 for 1.2 mins 
-    ## Average of 36 secs relative to 35.937 secs using 1 runners
+    ## Test of rqdatatable 1.3.2 had 2 successes, 0 failures, and 0 skipped packages. 
+    ## Ran from 2023-08-14 07:48:29 to 2023-08-14 07:49:46 for 1.283 mins 
+    ## Average of 38.5 secs relative to 38.297 secs using 1 runners
     ## 
     ## Failed packages:   
     ## 

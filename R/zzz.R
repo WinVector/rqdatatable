@@ -14,11 +14,17 @@ set_rqdatatable_as_executor <- function() {
   invisible(NULL)
 }
 
+
 .onAttach <- function(libname, pkgname) {
   # attach happens after load, so set as the executor only in the attach case
   prev_exec <- getOption("rquery.rquery_executor", default = NULL)
   if(is.null(prev_exec) || (is.list(prev_exec) && isTRUE(prev_exec$name == "rqdatable"))) {
     set_rqdatatable_as_executor()
+  }
+  cur_exec <- getOption("rquery.rquery_executor", default = NULL)
+  if(isTRUE(cur_exec$name == "rqdatable")) {
+    # don't multi-thread unless user sets thread higher, safer during CRAN checks
+    data.table::setDTthreads(1)
   }
   invisible(NULL)
 }
