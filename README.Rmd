@@ -92,7 +92,9 @@ To install `rqdatatable` please use `install.packages("rqdatatable")`.
 Some related work includes:
 
  * [`data.table`](https://rdatatable.gitlab.io/data.table/)
- * [`disk.frame`](https://github.com/xiaodaigh/disk.frame)
+ * [`Polars`](https://www.pola.rs)
+ * [`data algebra`](https://github.com/WinVector/data_algebra)
+ * [`disk.frame`](https://github.com/DiskFrame/disk.frame)
  * [`dbplyr`](https://dbplyr.tidyverse.org)
  * [`dplyr`](https://dplyr.tidyverse.org)
  * [`dtplyr`](https://github.com/tidyverse/dtplyr)
