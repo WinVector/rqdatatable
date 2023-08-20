@@ -5,8 +5,6 @@
 #' Implements the \code{rquery} piped query algebra using \code{data.table}.  This allows
 #' for a high-speed in memory implementation of Codd-style data manipulation tools.
 #'
-#' @docType package
-#' @name rqdatatable
-NULL
+"_PACKAGE"
 
 .datatable.aware <- TRUE

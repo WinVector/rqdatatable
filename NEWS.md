@@ -1,4 +1,8 @@
 
+# rqdatatable 1.3.3 2023/08/19
+
+ * Work around https://github.com/r-lib/roxygen2/issues/1491
+
 # rqdatatable 1.3.2 2023/08/14
 
  * Default to 1 thread to be safe during CRAN checks. User can override later.
